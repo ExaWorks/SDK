@@ -13,9 +13,15 @@ ENV SWIFT_ROOT=/opt/swift-t
 RUN yum -y install mpich-devel # OpenMPI is fine too
 RUN yum -y install swig
 RUN yum -y install zsh
+RUN wget https://prdownloads.sourceforge.net/tcl/tcl8.6.11-src.tar.gz
+RUN tar xfz tcl8.6.11-src.tar.gz
+RUN cd tcl8.6.11/unix \
+  && ./configure --prefix=/opt/tcl-8.6.11 \
+  && make -j binaries libraries \
+  && make install-binaries install-libraries install-headers
 
 # Configure environment
-ENV PATH=/usr/lib64/mpich/bin:$PATH
+ENV PATH=/usr/lib64/mpich/bin:/opt/tcl-8.6.11/bin:$PATH
 
 # Get Swift/T and setup
 RUN mkdir -pv /tmp/build-swift-t
