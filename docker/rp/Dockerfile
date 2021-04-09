@@ -2,7 +2,7 @@
 # RP DOCKERFILE
 
 # The ExaWorks SDK Base
-# this expectes something like `docker build base -t base`
+# this expects something like `docker build base -t base`
 FROM exaworks/sdk-base
 
 # Install dependencies
