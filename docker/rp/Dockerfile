@@ -3,7 +3,7 @@
 
 # The ExaWorks SDK Base
 # this expectes something like `docker build base -t base`
-FROM base
+FROM exaworks/sdk-base
 
 # Install dependencies
 RUN yum -y install openmpi python3-pip
@@ -34,4 +34,3 @@ RUN git clone https://github.com/radical-cybertools/radical.pilot.git
 # start mongodb and test
 COPY run_rp_test.sh run_rp_test.sh
 CMD  /bin/sh ./run_rp_test.sh
-
