@@ -16,8 +16,8 @@ baseurl  = https://repo.mongodb.org/yum/redhat/7Server/mongodb-org/3.0/x86_64/ \
 gpgcheck = 0 \n\
 enabled  = 1 \n" >> /etc/yum.repos.d/mongodb.repo
 
-RUN yum update -y && yum -y install mongodb-org
-RUN mkdir -p /data/db /var/log/mongodb /var/run/mongodb
+RUN yum update -y && yum -y install mongodb-org \
+ && mkdir -p /data/db /var/log/mongodb /var/run/mongodb
 ENV RADICAL_PILOT_DBURL=mongodb://localhost/am
 
 # RP install
@@ -25,7 +25,8 @@ ENV VIRTUAL_ENV=/ve_rp
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-RUN pip install --upgrade pip setuptools radical.pilot pytest
+RUN pip install --upgrade pip setuptools pytest \
+ && pip install radical.pilot
 
 # also clone the RP to get the test suite
 RUN git clone https://github.com/radical-cybertools/radical.pilot.git
