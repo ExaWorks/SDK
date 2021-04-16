@@ -24,7 +24,7 @@ RUN cd tcl8.6.11/unix \
   && sed -i 92,+2s@^@//@ tclLoadDl.c
 RUN cd tcl8.6.11/unix \
   && ./configure --prefix=/opt/tcl-8.6.11 \
-  && make -j 4 binaries libraries \
+  && make binaries libraries \
   && make install-binaries install-libraries install-headers
 
 # Configure environment
@@ -38,8 +38,7 @@ WORKDIR /tmp/build-swift-t
 RUN git clone https://github.com/swift-lang/swift-t.git
 RUN cd swift-t/dev/build \
     && cp -v swift-t-settings.sh.template swift-t-settings.sh \
-    && sed -i "/SWIFT_T_PREFIX=/s@=.*@=$SWIFT_ROOT@" swift-t-settings.sh \
-    && sed -i "/PARALLELISM=/s@=.*@=4@"              swift-t-settings.sh
+    && sed -i "/SWIFT_T_PREFIX=/s@=.*@=$SWIFT_ROOT@" swift-t-settings.sh
 
 # Build and install it!
 RUN swift-t/dev/build/build-swift-t.sh
