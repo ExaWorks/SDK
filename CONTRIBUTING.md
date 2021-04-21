@@ -7,6 +7,8 @@ workflow](https://matplotlib.org/stable/devel/gitwash/development_workflow.html#
 details how to contribute in a standardized and efficient manner.
 
 ## Git Workflow Summary
+    - Ensure that you've opened an issue on Github and consensus around the
+      solution has be reached.
     - [Create your own
       fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo)
     - When you are starting a new set of changes, [fetch any changes from the
@@ -45,7 +47,9 @@ details how to contribute in a standardized and efficient manner.
 
 - To work on an issue, a Contributor SHALL fork the project repository and then
   work on their forked repository.
-- 
+- [Each commit SHOULD make one
+  change](https://dev.to/ruanbrandao/how-to-make-good-git-commits-256k) to aide
+  reviewing and (in the worst case) simplify reverting it in the future.
 - A patch commit message SHOULD consist of a single short (less than 50
   character) line summarizing the change, optionally followed by a blank line
   and then a more thorough description.
