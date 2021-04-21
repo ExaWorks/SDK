@@ -1,0 +1,17 @@
+# Parsl addition to ExaWorks SDK 
+# See https://parsl.readthedocs.io/en/stable/quickstart.html
+
+# The ExaWorks SDK Base
+FROM exaworks/sdk-base
+
+# Base has Python 3.6 installed
+
+# Recent versions of cryptography require Rust (the language) to be
+# installed. However, the version that comes with Centos 7 is too old.
+# Installing Rust using the install script on rust-lang.org requires
+# interactivity.
+# cyptography 3.3.2 appears to be a recent version that does not use
+# the rust build, so we'll use that until a more sensible solution
+# is found.
+
+run python3 -m pip install "cryptography==3.3.2" parsl
