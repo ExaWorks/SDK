@@ -1,8 +1,27 @@
 # Contribution Guide
 
 This project welcomes all contributors. This short guide (based loosely on [
-Collective Code Construction Contract](http://zeromq-rfc.wikidot.com/spec:22))
+Collective Code Construction Contract](http://zeromq-rfc.wikidot.com/spec:22)
+and [matplotlib's development
+workflow](https://matplotlib.org/stable/devel/gitwash/development_workflow.html#development-workflow))
 details how to contribute in a standardized and efficient manner.
+
+## Git Workflow Summary
+    - [Create your own
+      fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo)
+    - When you are starting a new set of changes, [fetch any changes from the
+      upstream
+      repo](https://matplotlib.org/stable/devel/gitwash/development_workflow.html#update-the-mirror-of-trunk),
+      and [start a new feature branch on your fork from
+      that](https://matplotlib.org/stable/devel/gitwash/development_workflow.html#make-a-new-feature-branch).
+    - Make a new branch for each separable set of changes — ["one task, one
+      branch"](https://mail.python.org/pipermail/ipython-dev/2010-October/005632.html)
+    - If you can possibly avoid it, avoid merging upstream branches or any other
+      branches into your feature branch while you are working.
+    - If you do find yourself merging from upstream, consider [Rebasing on
+      upstream](https://matplotlib.org/stable/devel/gitwash/development_workflow.html#rebase-on-trunk)
+    - Ask on the [Exaworks slack](https://exaworks.slack.com) if you get stuck
+    - Submit a Pull Request from your feature branch against upstream
 
 ## Development Process
 
