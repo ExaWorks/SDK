@@ -6,16 +6,31 @@ details how to contribute in a standardized and efficient manner.
 
 ## Development Process
 
-- A contributor shall not commit changes directly to the project
-- To submit a patch, a contributor shall create a pull request back to the
+- Change on the project SHALL be governed by the pattern of accurately
+  identifying problems and applying minimal, accurate solutions to these
+  problems.
+- To request changes, a user SHOULD log an issue on the project Platform issue
+  tracker.
+- The user or Contributor SHOULD write the issue by describing the problem they
+  face or observe.
+- The user or Contributor SHOULD seek consensus on the accuracy of their
+  observation, and the value of solving the problem.
+- Before submitting a patch, an Issue describing the problem SHOULD be
+  submitted, and a generally consensus around the solution should be achieved.
+  - Minor changes (e.g., grammatical fixes) do not require an Issue first.
+- A contributor SHALL NOT commit changes directly to the project
+- To submit a patch, a contributor SHALL create a pull request back to the
   project.
 
 ## Submitting a Pull Request (PR)
 
-- Before submitting a PR, an Issue describing the problem should be submitted,
-  and a generally consensus around the solution should be achieved.
-  - Minor changes (e.g., grammatical fixes) do not require an Issue first.
-- A PR should be a minimal and accurate answer to exactly one identified and
+- To work on an issue, a Contributor SHALL fork the project repository and then
+  work on their forked repository.
+- 
+- A patch commit message SHOULD consist of a single short (less than 50
+  character) line summarizing the change, optionally followed by a blank line
+  and then a more thorough description.
+- A PR SHOULD be a minimal and accurate answer to exactly one identified and
   agreed problem. PRs that tackle multiple problems are harder to review and
   slower to merge when the uncontroversial changes are held up by the more
   discussed changes.
@@ -30,10 +45,12 @@ details how to contribute in a standardized and efficient manner.
   attempt at resolving the conversation as quickly as possible.
 - PR reviews exist to check obvious things aren't missed, not to achieve
   perfection.
-- A PR is eligible for merging if it has at least one approval from a project
-  maintainer and no outstanding requested changes or discussions.
-- Discussions created via an inline comment on GitHub should only be "resolved"
+- A PR SHALL be eligible for merging if it has at least one approval from a
+  project maintainer and no outstanding requested changes or discussions.
+- Discussions created via an inline comment on GitHub SHOULD only be "resolved"
   by whomever opened the discussion.
-- The person to mark the last open discussion "resolved" should also merge the
+- The person to mark the last open discussion "resolved" SHOULD also merge the
   PR ("close the door when you leave")
-  - Note: this usually implies that someone should not merge their own PR
+- Maintainers SHOULD NOT merge their own patches except in exceptional cases,
+  such as non-responsiveness from other Maintainers for an extended period (more
+  than 1-2 days).
