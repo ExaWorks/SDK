@@ -1,4 +1,4 @@
-name: CI Test RP
+name: CI Test
 on:
   pull_request:
   push: { branches: master }
@@ -14,11 +14,15 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker build -t base docker/base
+        docker build -t exaworks/sdk-base docker/base
         docker build -t rp   docker/rp
         docker build -t flux docker/flux
+        docker build -t swift-t docker/swift-t
+        docker build -t parsl docker/Parsl
 
     - name: Run tests
       run: |
-        docker run rp && docker run flux
-
+        docker run rp
+        docker run flux
+        docker run swift-t
+        docker run parsl
