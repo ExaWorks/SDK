@@ -14,7 +14,7 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker build -t exaworks/sdk-base docker/base
+        docker build -t exaworks/sdk-base --cache-from exaworks/sdk-base docker/base
         docker build -t rp   docker/rp
         docker build -t flux docker/flux
         docker build -t swift-t docker/swift-t
