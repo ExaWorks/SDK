@@ -16,8 +16,9 @@ jobs:
       run: |
         docker build -t base docker/base
         docker build -t rp   docker/rp
+        docker build -t flux docker/flux
 
     - name: Run tests
       run: |
-        docker run rp
+        docker run rp && docker run flux
 
