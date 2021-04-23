@@ -1,0 +1,17 @@
+pull_request_rules:
+  - name: Automatic merge on approval
+    conditions:
+      - base=master
+      - status-success="Run test suite"
+      - status-success="validate commits"
+      - label="merge-when-passing"
+      - label!="work-in-progress"
+      - "#approved-reviews-by>=1"
+      - "#changes-requested-reviews-by=0"
+      - -title~=^\[*[Ww][Ii][Pp]
+    actions:
+      merge:
+        method: rebase
+        rebase_fallback: merge
+        strict: smart+fasttrack
+
