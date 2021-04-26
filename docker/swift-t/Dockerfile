@@ -12,9 +12,7 @@ ENV SWIFT_ROOT=/opt/swift-t
 # Setup build environment
 RUN mkdir -pv /tmp/build-swift-t
 WORKDIR       /tmp/build-swift-t
-COPY install-deps.sh    .
-COPY install-swift-t.sh .
-COPY test-sanity.sh     .
+COPY install-deps.sh install-swift-t.sh test-sanity.sh .
 
 RUN ./install-deps.sh
 
