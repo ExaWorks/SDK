@@ -1,0 +1,39 @@
+name: CI Test
+on:
+  pull_request:
+  push: { branches: [master] }
+
+jobs:
+  test:
+    name: Run test suite
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Build docker images
+      run: |
+        docker build -t exaworks/sdk-base --cache-from exaworks/sdk-base docker/base
+        docker build -t rp   docker/rp
+        docker build -t flux docker/flux
+        docker build -t swift-t docker/swift-t
+        docker build -t parsl docker/Parsl
+
+    - name: Run tests
+      run: |
+        docker run rp
+        docker run flux
+        docker run swift-t
+        docker run parsl
+
+  check-pr:
+    name: validate commits
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: 0
+    - run: git fetch origin master
+    - uses: flux-framework/pr-validator@master
