@@ -17,6 +17,3 @@ cp -v swift-t-settings.sh.template swift-t-settings.sh
 sed -i "/SWIFT_T_PREFIX=/s@=.*@=$SWIFT_ROOT@" swift-t-settings.sh
 ./build-swift-t.sh
 popd
-
-# Test it
-./test-sanity.sh
