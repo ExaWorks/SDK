@@ -10,9 +10,10 @@ FROM exaworks/sdk-base
 ENV SWIFT_ROOT=/opt/swift-t
 
 # Setup build environment
-RUN mkdir -pv /tmp/build-swift-t
-WORKDIR       /tmp/build-swift-t
-COPY install-deps.sh install-swift-t.sh test-sanity.sh .
+ARG SWIFT_BUILD_DIR=/tmp/build-swift-t
+RUN mkdir -pv ${SWIFT_BUILD_DIR}
+WORKDIR       ${SWIFT_BUILD_DIR}
+COPY install-deps.sh install-swift-t.sh ${SWIFT_BUILD_DIR}/
 
 RUN ./install-deps.sh
 
@@ -21,4 +22,5 @@ ENV PATH=$SWIFT_ROOT/stc/bin:$PATH
 RUN ./install-swift-t.sh
 
 # Simple sanity tests
-CMD /tmp/build-swift-t/test-sanity.sh
+COPY test-sanity.sh ${SWIFT_ROOT}/stc/bin
+CMD test-sanity.sh
