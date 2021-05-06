@@ -5,10 +5,6 @@ import os
 from parsl.app.app import python_app, bash_app
 from parsl.configs.local_threads import config
 
-#parsl.set_stream_logger() # <-- log everything to stdout
-
-print(parsl.__version__)
-
 parsl.load(config)
 
 @python_app
