@@ -1,0 +1,63 @@
+
+= Dockerfile: Swift/T
+
+== Overview
+
+This Dockerfile will install Swift/T using the OpenMPI provided by the ExaWorks SDK Base image.  It is a vanilla installation with no integrated language support.
+
+== Usage
+
+----
+$ docker build .
+----
+
+== Method
+
+=== Usage of Base
+
+This image relies on several packages from the ExaWorks SDK Base (Centos 7), particularly the C tools and OpenMPI.
+
+=== Dependencies
+
+Dependencies are considered in the shell script `install-deps.sh`.
+
+ZSH and SWIG are installed from Yum.
+
+Swift/T relies on Tcl 8.6, which is not supported in Centos 7, so we build that manually.
+
+=== Build
+
+Swift/T is built from source in `install-swift-t.sh`.
+
+This is a standard build from the Swift/T GitHub repo. `sed` is used to populate the Swift/T settings file before the build.
+
+You can find more information about compiling Swift/T http://swift-lang.github.io/swift-t/guide.html#install_source[here].
+
+== Tests
+
+Currently, a small test suite is run from shell script `test-sanity.sh`.
+
+These tests:
+
+. tell Swift/T to show its build settings and
+. run a simple single-command workflow from a string.
+
+Because of the Swift/T architecture, this is enough to capture and diagnose most build problems, such as the use of inconsistent MPI or Java settings.  If these work, it is almost certain that other language uses will work.
+
+== Further information
+
+* http://swift-lang.org/Swift-T[Swift/T Front Page]
++
+Main page for Swift/T information.
++
+* http://swift-lang.github.io/swift-t/guide.html[Swift/T Guide]
++
+The detailed manual.
++
+* http://swift-lang.github.io/swift-t/gallery.html[Swift/T Gallery]
++
+Some example programs.
++
+* https://github.com/swift-lang/swift-t[Swift/T GitHub]
++
+The repository, issue tracker, etc.
