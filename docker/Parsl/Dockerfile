@@ -16,4 +16,6 @@ FROM ${BASE_IMAGE}
 
 run python3 -m pip install parsl
 
-CMD echo "Success!"
+COPY test.py /
+CMD /test.py
+
