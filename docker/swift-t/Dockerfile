@@ -3,8 +3,8 @@
 # Follows instructions at:
 # http://swift-lang.github.io/swift-t/guide.html#install_source
 
-# The ExaWorks SDK Base
-FROM exaworks/sdk-base
+ARG BASE_IMAGE=exaworks/sdk-base
+FROM ${BASE_IMAGE}
 
 # Customize the Swift/T root directory here:
 ENV SWIFT_ROOT=/opt/swift-t

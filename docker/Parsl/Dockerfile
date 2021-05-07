@@ -1,8 +1,8 @@
 # Parsl addition to ExaWorks SDK 
 # See https://parsl.readthedocs.io/en/stable/quickstart.html
 
-# The ExaWorks SDK Base
-FROM exaworks/sdk-base
+ARG BASE_IMAGE=exaworks/sdk-base
+FROM ${BASE_IMAGE}
 
 # Base has Python 3.6 installed
 
