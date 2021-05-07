@@ -20,6 +20,7 @@ RUN ./install-deps.sh
 ENV PATH=$SWIFT_ROOT/stc/bin:$PATH
 
 RUN ./install-swift-t.sh
+WORKDIR /
 
 # Simple sanity tests
 COPY test-sanity.sh ${SWIFT_ROOT}/stc/bin
