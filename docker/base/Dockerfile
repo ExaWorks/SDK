@@ -1,5 +1,7 @@
 FROM centos:7
 
+ARG MPI=openmpi-devel
+
 RUN yum -y update \
  && yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
  && yum -y update \
@@ -31,7 +33,6 @@ RUN yum -y update \
     lua \
     lua-devel \
     lua-posix \
-    openmpi-devel \
     pkgconfig \
     python36-devel \
     python36-cffi \
@@ -54,6 +55,8 @@ RUN yum -y update \
     java-1.7.0-openjdk-headless \
     java-1.7.0-openjdk-devel \
     tcl \
+    # MPI Dep
+    ${MPI} \
  && yum clean all
 
 # Swift/T Dependency on Apache Ant

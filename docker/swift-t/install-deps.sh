@@ -4,8 +4,6 @@ set -eux
 # INSTALL DEPENDENCIES
 
 # Yums
-# yum -y install mpich-devel
-yum -y install openmpi-devel
 yum -y install swig
 yum -y install zsh
 
