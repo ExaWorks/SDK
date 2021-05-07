@@ -1,9 +1,8 @@
 
 # RP DOCKERFILE
 
-# The ExaWorks SDK Base
-# this expects something like `docker build base -t base`
-FROM exaworks/sdk-base
+ARG BASE_IMAGE=exaworks/sdk-base
+FROM ${BASE_IMAGE}
 
 # Install dependencies
 RUN yum -y install openmpi python3-pip

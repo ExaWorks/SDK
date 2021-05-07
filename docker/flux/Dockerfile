@@ -1,4 +1,5 @@
-FROM exaworks/sdk-base
+ARG BASE_IMAGE=exaworks/sdk-base
+FROM ${BASE_IMAGE}
 
 ARG FLUX_CORE_VERSION=0.24.0
 ARG FLUX_SCHED_VERSION=0.15.0
