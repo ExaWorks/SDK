@@ -5,7 +5,7 @@ ARG BASE_IMAGE=exaworks/sdk-base
 FROM ${BASE_IMAGE}
 
 # Install dependencies
-RUN yum -y install openmpi python3-pip
+RUN yum -y install python3-pip
 
 # MongoDB install
 RUN echo -e "\
