@@ -14,6 +14,6 @@ FROM ${BASE_IMAGE}
 # the rust build, so we'll use that until a more sensible solution
 # is found.
 
-run python3 -m pip install "cryptography==3.3.2" parsl
+run python3 -m pip install parsl
 
 CMD echo "Success!"

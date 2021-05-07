@@ -1,6 +1,8 @@
 FROM centos:7
 
 ARG MPI=openmpi-devel
+ENV VIRTUAL_ENV=/ve_exaworks
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # MongoDB install
 RUN echo -e "\
@@ -43,10 +45,6 @@ RUN yum -y update \
     lua-posix \
     pkgconfig \
     python36-devel \
-    python36-cffi \
-    python36-six \
-    python36-yaml \
-    python36-jsonschema \
     sqlite \
     man-db \
     lz4-devel \
@@ -70,7 +68,13 @@ RUN yum -y update \
     mongodb-org \
     # MPI Dep
     ${MPI} \
- && yum clean all
+ && yum clean all \
+ && python3 -m venv ${VIRTUAL_ENV} \
+ && pip install --upgrade pip setuptools pytest \
+ # Flux python deps
+ && pip install cffi six pyyaml jsonschema \
+ # Parsl python deps
+ && pip install "cryptography==3.3.2"
 
 # Swift/T Dependency on Apache Ant
 RUN wget https://apache.claz.org//ant/binaries/apache-ant-1.9.15-bin.tar.gz \
