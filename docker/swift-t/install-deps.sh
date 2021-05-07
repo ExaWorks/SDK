@@ -3,10 +3,6 @@ set -eux
 
 # INSTALL DEPENDENCIES
 
-# Yums
-yum -y install swig
-yum -y install zsh
-
 # Get Tcl
 wget --no-verbose https://prdownloads.sourceforge.net/tcl/tcl8.6.11-src.tar.gz
 tar xfz tcl8.6.11-src.tar.gz
