@@ -8,12 +8,7 @@ RUN mkdir -p /data/db /var/log/mongodb /var/run/mongodb
 ENV RADICAL_PILOT_DBURL=mongodb://localhost/am
 
 # RP install
-ENV VIRTUAL_ENV=/ve_rp
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-RUN pip install --upgrade pip setuptools pytest \
- && pip install radical.pilot
+RUN pip install radical.pilot
 
 # also clone the RP to get the test suite
 RUN git clone https://github.com/radical-cybertools/radical.pilot.git

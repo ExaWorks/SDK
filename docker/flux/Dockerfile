@@ -11,7 +11,7 @@ RUN V=$FLUX_CORE_VERSION \
    && wget ${URL}/v${V}/${PKG}.tar.gz \
    && tar xvf ${PKG}.tar.gz \
    && cd ${PKG} \
-   && ./configure --prefix=/usr \
+   && PYTHON_VERSION=3 ./configure --prefix=/usr \
    && make -j 4 \
    && make install \
    && cd .. \
@@ -25,7 +25,7 @@ RUN V=$FLUX_SCHED_VERSION \
    && wget ${URL}/v${V}/${PKG}.tar.gz \
    && tar xvf ${PKG}.tar.gz \
    && cd ${PKG} \
-   && ./configure --prefix=/usr \
+   && PYTHON_VERSION=3 ./configure --prefix=/usr \
    && make -j 4 \
    && make install \
    && cd .. \
