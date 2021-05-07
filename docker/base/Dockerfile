@@ -12,6 +12,14 @@ baseurl  = https://repo.mongodb.org/yum/redhat/7Server/mongodb-org/3.0/x86_64/ \
 gpgcheck = 0 \n\
 enabled  = 1 \n" >> /etc/yum.repos.d/mongodb.repo
 
+# MongoDB install
+RUN echo -e "\
+[mongodb]\n\
+name     = MongoDB Repository \n\
+baseurl  = https://repo.mongodb.org/yum/redhat/7Server/mongodb-org/3.0/x86_64/ \n\
+gpgcheck = 0 \n\
+enabled  = 1 \n" >> /etc/yum.repos.d/mongodb.repo
+
 RUN yum -y update \
  && yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
  && yum -y update \
