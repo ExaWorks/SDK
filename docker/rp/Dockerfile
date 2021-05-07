@@ -4,19 +4,7 @@
 ARG BASE_IMAGE=exaworks/sdk-base
 FROM ${BASE_IMAGE}
 
-# Install dependencies
-RUN yum -y install python3-pip
-
-# MongoDB install
-RUN echo -e "\
-[mongodb]\n\
-name     = MongoDB Repository \n\
-baseurl  = https://repo.mongodb.org/yum/redhat/7Server/mongodb-org/3.0/x86_64/ \n\
-gpgcheck = 0 \n\
-enabled  = 1 \n" >> /etc/yum.repos.d/mongodb.repo
-
-RUN yum update -y && yum -y install mongodb-org \
- && mkdir -p /data/db /var/log/mongodb /var/run/mongodb
+RUN mkdir -p /data/db /var/log/mongodb /var/run/mongodb
 ENV RADICAL_PILOT_DBURL=mongodb://localhost/am
 
 # RP install
