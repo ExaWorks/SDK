@@ -30,7 +30,7 @@ M: Use a limited, unique, and well-defined symbol, macro, library, include, and/
 ## Software design
 M: Provide configurable logging that adheres to standard logging approaches
 
-M: Use MPI in a way that is compatible with other products.  (expand meaning: multiple tools using MPI at the same time vs. leveraging multiple MPI implementations)
+M: Use MPI in a way that is compatible with other products.
 
 M: Provide a runtime API to return the current version of the software and system configuration
 
