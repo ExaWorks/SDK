@@ -20,6 +20,8 @@ R: Code should be version controlled using Git and accessible on GitHub
 
 R: Follow a common style guide for code layout, documentation, naming, etc. (e.g., PEP8)
 
+R: Code should be documented in a format that can be automatically parsed. E.g., Python's Sphinx Style, Google Style of Numpy Style docstring formats.
+
 ## Packaging
 M: Package and provide automated builds using Spack and Conda
 
