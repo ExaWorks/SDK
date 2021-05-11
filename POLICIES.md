@@ -33,17 +33,17 @@ M: Use MPI in a way that is compatible with other products.  (expand meaning: mu
 M: Provide a runtime API to return the current version of the software and system configuration
 
 ## Documentation
-M: Publish documentation in a web-based format.
+M: Include user documentation with the source code
 
-M: Provide a concise description of the project.
+M: Include up-to-date user documentation in the release cycle of the documented source code
 
-M: Version control documentation consistent with and alongside source code.
+M: User documentation should at least provide: (1) concise description of the project; (2) tutorial on how to use the documented code; and (3) details about how to contact the development team.
 
-M: Provide a documented, reliable way to contact the development team.
+M: Include a policy for handling pull requests from external contributors. 
 
-M: Provide and maintain example source code along with documentation.
+R: Write documentation in a format that can be automatically converted into other formats. E.g., markdown or reStructuredText.
 
-M: Provide a documented policy for handling pull requests from external contributors.
+R: Publish documentation in a web-based format, e.g., using readthedocs.
 
 ## Testing and continuous integration
 M: Provide a comprehensive test suite for verifying correctness of build and installation.
