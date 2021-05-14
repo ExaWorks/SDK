@@ -23,9 +23,10 @@ R: Follow a common style guide for code layout, documentation, naming, etc. (e.g
 R: Code should be documented in a format that can be automatically parsed. E.g., Python's Sphinx Style, Google Style of Numpy Style docstring formats.
 
 ## Packaging
-M: Package and provide automated builds using Spack and Conda
 
 M: Use a limited, unique, and well-defined symbol, macro, library, include, and/or module namespace.
+
+R: Package and provide automated builds using Spack and Conda
 
 ## Software design
 M: Provide configurable logging that adheres to standard logging approaches
