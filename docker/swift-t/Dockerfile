@@ -3,8 +3,8 @@
 # Follows instructions at:
 # http://swift-lang.github.io/swift-t/guide.html#install_source
 
-# The ExaWorks SDK Base
-FROM exaworks/sdk-base
+ARG BASE_IMAGE=exaworks/sdk-base
+FROM ${BASE_IMAGE}
 
 # Customize the Swift/T root directory here:
 ENV SWIFT_ROOT=/opt/swift-t
@@ -20,6 +20,7 @@ RUN ./install-deps.sh
 ENV PATH=$SWIFT_ROOT/stc/bin:$PATH
 
 RUN ./install-swift-t.sh
+WORKDIR /
 
 # Simple sanity tests
 COPY test-sanity.sh ${SWIFT_ROOT}/stc/bin

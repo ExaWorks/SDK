@@ -1,8 +1,8 @@
 # Parsl addition to ExaWorks SDK 
 # See https://parsl.readthedocs.io/en/stable/quickstart.html
 
-# The ExaWorks SDK Base
-FROM exaworks/sdk-base
+ARG BASE_IMAGE=exaworks/sdk-base
+FROM ${BASE_IMAGE}
 
 # Base has Python 3.6 installed
 
@@ -14,6 +14,6 @@ FROM exaworks/sdk-base
 # the rust build, so we'll use that until a more sensible solution
 # is found.
 
-run python3 -m pip install "cryptography==3.3.2" parsl
+run python3 -m pip install parsl
 
 CMD echo "Success!"

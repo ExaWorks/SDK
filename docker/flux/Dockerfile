@@ -1,7 +1,8 @@
-FROM exaworks/sdk-base
+ARG BASE_IMAGE=exaworks/sdk-base
+FROM ${BASE_IMAGE}
 
-ARG FLUX_CORE_VERSION=0.24.0
-ARG FLUX_SCHED_VERSION=0.15.0
+ARG FLUX_CORE_VERSION=0.26.0
+ARG FLUX_SCHED_VERSION=0.16.0
 
 # Install Flux-core from release tarball
 RUN V=$FLUX_CORE_VERSION \
@@ -10,7 +11,7 @@ RUN V=$FLUX_CORE_VERSION \
    && wget ${URL}/v${V}/${PKG}.tar.gz \
    && tar xvf ${PKG}.tar.gz \
    && cd ${PKG} \
-   && ./configure --prefix=/usr \
+   && PYTHON_VERSION=3 ./configure --prefix=/usr \
    && make -j 4 \
    && make install \
    && cd .. \
@@ -24,7 +25,7 @@ RUN V=$FLUX_SCHED_VERSION \
    && wget ${URL}/v${V}/${PKG}.tar.gz \
    && tar xvf ${PKG}.tar.gz \
    && cd ${PKG} \
-   && ./configure --prefix=/usr \
+   && PYTHON_VERSION=3 ./configure --prefix=/usr \
    && make -j 4 \
    && make install \
    && cd .. \
