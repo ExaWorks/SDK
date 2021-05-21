@@ -36,7 +36,6 @@ jobs:
         push: true
         tags: |
           exaworks/sdk-base:latest
-          ghcr.io/exaworks/sdk-base:latest
         platforms: linux/amd64
 
     - name: Build and push composite image
