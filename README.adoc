@@ -1,0 +1,79 @@
+
+= ExaWorks: Software Development Kit
+
+An Exascale Computing Project team.
+
+== Overview
+
+The goal of this repo is to develop a Software Development Kit (SDK) for workflows at exascale.  This will integrate the Parsl, Flux, RADICAL-Pilot,  and Swift/T workflow systems, plus other tools, into a consistent set of "ExaWorks SDK Component Packages".  Applications teams will be able to easily draw from these packages as needed, and develop and share workflows built on the various systems.
+
+== The SDK Workflow Systems in Brief
+
+=== https://parsl-project.org[Parsl]
+
+Pure Python library for describing and managing parallel computation on one to many nodes.  It contains abstractions to support various parallel and distributed workloads: from bag-of-tasks to dataflow, short to long duration tasks, single core through to multi-node.
+
+=== http://flux-framework.org[Flux]
+
+Flux is a workload management system (à la Slurm, PBS, LSF), with
+single-user and multi-user (a.k.a. system instance) modes.
+
+=== https://radical-cybertools.github.io[RADICAL-Pilot]
+
+RADICAL-Pilot is an abstractions-based suite of middleware building blocks that are architected for scalable, interoperable and sustainable approaches to support science on a range of high-performance and distributed computing systems.
+
+=== http://swift-lang.org/Swift-T[Swift/T]
+
+Swift/T is an MPI-based workflow language and runtime system.  It runs in a one big job model, with internal automatic task parallelization and data movement, enhanced by workflow-level compiler optimizations.
+
+== Objectives
+
+The objectives of this SDK are to:
+
+* Make it easy to install any or all of the workflow systems on the same underlying system.
+* Develop various levels of interoperabilty among the workflow systems.
+* Support Enterprise and HPC systems.
+
+== SDK Features
+
+=== Dockerfiles
+
+Each workflow system has a Dockerfile in this repo to allow it to be easily deployed.
+
+=== Continuous Integration / Continuous Deployment (CI/CD)
+
+The SDK maintains a CI/CD system for its supported component packages.  The CI/CD tools will be portable to a variety of CI/CD services.  For now, we use GitHub Actions CI workflows.
+
+=== Packaging for HPC
+
+The SDK will support HPC-compatible distributions of its component packages via Spack.
+
+== Implementation
+
+=== Dockerfiles
+
+==== Usage of Base
+
+Each Dockerfile image relies on several packages from the ExaWorks SDK Base (CentOS 7), particularly the C tools and OpenMPI.  Other Base images will be supported, including those based on CentOS 8.
+
+==== Dependencies
+
+Most workflow system dependencies are in the Base Dockerfile, but some customizations may be made by the individual systems.
+
+==== Build
+
+Each workflow system can be built with a simple `docker build` command.
+
+==== Tests
+
+Each workflow system provides a small number of tests to verify that the build was successful.
+
+== Further Information
+
+Other ExaWorks resources including our public Slack channels are available through the https://exaworks.org[ExaWorks Home Page].
+
+== Support
+
+You are welcome to provide feedback via the  https://github.com/ExaWorks/SDK/discussions[ExaWorks SDK GitHub Discussion].
+
+Please report technical issues to the https://github.com/ExaWorks/SDK/issues[ExaWorks SDK GitHub Issue Tracker].
