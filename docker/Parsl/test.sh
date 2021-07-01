@@ -1,6 +1,6 @@
 #!/bin/bash
 
-/test.py | tee /tmp/test-output
+python /test.py | tee /tmp/test-output
 
 cat <<EOF >/tmp/expected-output
 Hello World from Python!
