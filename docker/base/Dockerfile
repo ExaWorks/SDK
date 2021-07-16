@@ -77,7 +77,7 @@ RUN yum -y update \
  && pip install "cryptography==3.3.2"
 
 # Swift/T Dependency on Apache Ant
-RUN wget https://apache.claz.org//ant/binaries/apache-ant-1.9.15-bin.tar.gz \
+RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.gz \
     && tar xvf apache-ant-1.9.15-bin.tar.gz -C /opt \
     && ln -s /opt/apache-ant-1.9.15 /opt/ant \
     && sudo ln -s /opt/ant/bin/ant /usr/bin/ant
