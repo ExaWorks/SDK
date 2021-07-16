@@ -1,8 +1,11 @@
 FROM centos:7
 
 ARG MPI=openmpi-devel
+ARG MPI_PREFIX=/usr/lib64/openmpi/
 ENV VIRTUAL_ENV=/ve_exaworks
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV PATH="$VIRTUAL_ENV/bin:$MPI_PREFIX/bin:$PATH"
+ENV MPI_PREFIX=${MPI_PREFIX}
+ENV MPICC=$MPI_PREFIX/bin/mpicc
 
 # MongoDB install
 RUN echo -e "\
