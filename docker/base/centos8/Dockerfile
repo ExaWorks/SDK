@@ -56,7 +56,7 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     boost-filesystem \
     boost-regex \
     libxml2-devel \
-    readline-devel \
+    libedit-devel \
     yaml-cpp-devel \
     python3-pyyaml \
     # Swift/T Dependencies

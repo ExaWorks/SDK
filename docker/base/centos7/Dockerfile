@@ -56,7 +56,7 @@ RUN yum -y update \
     boost-filesystem \
     boost-regex \
     libxml2-devel \
-    readline-devel \
+    libedit-devel \
     yaml-cpp-devel \
     # Swift/T Deps
     java-1.7.0-openjdk-headless \
