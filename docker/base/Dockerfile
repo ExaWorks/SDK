@@ -48,6 +48,7 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     man-db \
     lz4-devel \
     jq \
+    diffutils \
     # Flux-sched Dependencies
     boost-devel \
     boost-graph \
@@ -82,3 +83,4 @@ RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.
     && tar xvf apache-ant-1.9.15-bin.tar.gz -C /opt \
     && ln -s /opt/apache-ant-1.9.15 /opt/ant \
     && sudo ln -s /opt/ant/bin/ant /usr/bin/ant
+
