@@ -14,11 +14,15 @@ jobs:
 
     - name: Build docker images
       run: |
-        docker build -t exaworks/sdk-base --cache-from exaworks/sdk-base docker/base
+        docker build -t exaworks/sdk-base --cache-from exaworks/sdk-base docker/base/centos8
         docker build -t rp docker/rp
         docker build -t rp_parsl --build-arg BASE_IMAGE=rp docker/Parsl
         docker build -t rp_parsl_swift --build-arg BASE_IMAGE=rp_parsl docker/swift-t
         docker build -t rp_parsl_swift_flux --build-arg BASE_IMAGE=rp_parsl_swift docker/flux
+
+    - name: Build docker base images
+      run: |
+        docker build -t exaworks/sdk-base --cache-from exaworks/sdk-base docker/base/centos7
 
     - name: Run tests
       run: |
