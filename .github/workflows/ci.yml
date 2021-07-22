@@ -21,7 +21,8 @@ jobs:
         docker build \
           -t exaworks/sdk-base:${{ matrix.dockerbase }} \
           --cache-from exaworks/sdk-base:${{ matrix.dockerbase }} \
-          docker/base/${{ matrix.dockerbase }}
+          -f docker/base/${{ matrix.dockerbase }}/Dockerfile \
+          docker/base/
         docker build \
           -t rp:${{ matrix.dockerbase }} \
           --build-arg BASE_IMAGE=exaworks/sdk-base:${{ matrix.dockerbase }} \

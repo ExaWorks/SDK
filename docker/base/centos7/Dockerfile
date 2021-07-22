@@ -1,9 +1,9 @@
 FROM centos:7
 
 ARG MPI=openmpi-devel
-ARG MPI_PREFIX=/usr/lib64/openmpi/
+ARG MPI_PREFIX=/usr/local/
 ENV VIRTUAL_ENV=/ve_exaworks
-ENV PATH="$VIRTUAL_ENV/bin:$MPI_PREFIX/bin:$PATH"
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV MPI_PREFIX=${MPI_PREFIX}
 ENV MPICC=$MPI_PREFIX/bin/mpicc
 
@@ -70,8 +70,6 @@ RUN yum -y update \
     # Radical Pilot Deps
     python3-pip \
     mongodb-org \
-    # MPI Dep
-    ${MPI} \
  && yum clean all \
  && python3 -m venv ${VIRTUAL_ENV} \
  && pip install --upgrade pip setuptools pytest \
@@ -86,3 +84,5 @@ RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.
     && ln -s /opt/apache-ant-1.9.15 /opt/ant \
     && sudo ln -s /opt/ant/bin/ant /usr/bin/ant
 
+COPY ./scripts/install-mpi.sh /install-mpi.sh
+RUN bash install-mpi.sh ${MPI}
