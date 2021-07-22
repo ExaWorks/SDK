@@ -82,7 +82,8 @@ RUN yum -y update \
 RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.gz \
     && tar xvf apache-ant-1.9.15-bin.tar.gz -C /opt \
     && ln -s /opt/apache-ant-1.9.15 /opt/ant \
-    && sudo ln -s /opt/ant/bin/ant /usr/bin/ant
+    && sudo ln -s /opt/ant/bin/ant /usr/bin/ant \
+    && rm apache-ant-1.9.15-bin.tar.gz
 
 COPY ./scripts/install-mpi.sh /install-mpi.sh
 RUN bash install-mpi.sh ${MPI}
