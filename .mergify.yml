@@ -2,7 +2,8 @@ pull_request_rules:
   - name: Automatic merge on approval
     conditions:
       - base=master
-      - status-success="Run test suite"
+      - status-success="Run test suite (centos7)"
+      - status-success="Run test suite (centos8)"
       - status-success="validate commits"
       - label="merge-when-passing"
       - label!="work-in-progress"
