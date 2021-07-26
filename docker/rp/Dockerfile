@@ -11,7 +11,7 @@ ENV RADICAL_PILOT_DBURL=mongodb://localhost/am
 RUN pip install radical.pilot
 
 # also clone the RP to get the test suite
-RUN git clone https://github.com/radical-cybertools/radical.pilot.git
+RUN git clone -b master --single-branch https://github.com/radical-cybertools/radical.pilot.git
 
 # start mongodb and run the tests
 COPY run_rp_test.sh run_rp_test.sh

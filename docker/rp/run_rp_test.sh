@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # run mongodb, let it settle
-echo '--- start MOngoDB'
+echo '--- start MongoDB'
 mongod --fork --logpath /tmp/mongodb.log
 
 cd radical.pilot
