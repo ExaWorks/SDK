@@ -64,3 +64,8 @@ jobs:
           docker/flux
         docker push exaworks/sdk:${{ matrix.dockerbase }}
 
+    - name: Push images with 'latest' tag
+      if: ${{ matrix.dockerbase == 'centos7' }}
+      run: |
+        docker push exaworks/sdk-base:latest
+        docker push exaworks/sdk:latest
