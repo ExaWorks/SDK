@@ -5,8 +5,6 @@ if [[ "$output" != "Success" ]]; then
     exit 1
 fi
 
-set -e
-
 cd /tmp/
 git clone https://github.com/flux-framework/flux-core.git
 cd flux-core
@@ -20,5 +18,11 @@ make -C src/common/libtap check
 cd t
 export MPI_TESTS="t2610-job-shell-mpir.t t3000-mpi-basic.t t3001-mpi-personalities.t t3003-mpi-abort.t"
 FLUXION_QMANAGER_RC_NOOP=t FLUXION_RESOURCE_RC_NOOP=t FLUX_TEST_INSTALLED_PATH=/usr/bin FLUX_TEST_MPI=t make check TESTS="$MPI_TESTS"
+exit_code=$?
 
-echo "All tests ran successfully!"
+if [[ $exit_code -gt 0 ]]; then
+    bash /checks-annotate.sh
+fi
+
+echo "Exiting with $exit_code"
+exit $exit_code

@@ -85,8 +85,8 @@ find . -name *.asan.* | xargs -i bash -c 'catfile_error {}'
 #
 #  Check for any expected tests that were not run:
 #
-ls -1 t/*.t | sort >/tmp/expected
-ls -1 t/*.trs | sed 's/rs$//' | sort >/tmp/actual
+ls -1 ./*.t | sort >/tmp/expected
+ls -1 ./*.trs | sed 's/rs$//' | sort >/tmp/actual
 comm -23 /tmp/expected /tmp/actual > missing
 if test -s missing; then
     error "Detected $(wc -l missing) missing tests:"

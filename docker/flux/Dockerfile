@@ -34,5 +34,5 @@ RUN V=$FLUX_SCHED_VERSION \
    && rm -rf flux-sched-* \
    && ldconfig
 
-COPY test.sh /
+COPY test.sh checks-annotate.sh /
 CMD /test.sh
