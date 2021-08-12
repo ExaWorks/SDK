@@ -34,5 +34,13 @@ RUN V=$FLUX_SCHED_VERSION \
    && rm -rf flux-sched-* \
    && ldconfig
 
+# Use the +/- features of env var expansion to only include ':$PYTHONPATH' if
+# $PYTHONPATH is set, otherwise it all expands to the empty string.
+# Note: we add both the `lib` and `lib64` directories to support centos7 and centos8,
+# respectively.  For each distro, one of the directories is populated and the other
+# does not, but adding non-existent directories to PYTHONPATH has no correctness
+# implications, only (small) performance implications.
+ENV PYTHONPATH="/usr/lib64/flux/python3.6:/usr/lib/flux/python3.6${PYTHONPATH:+:}${PYTHONPATH:-}"
+
 COPY test.sh checks-annotate.sh /
 CMD /test.sh
