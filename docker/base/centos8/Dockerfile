@@ -1,8 +1,11 @@
 FROM centos:8
 
 ARG MPI=openmpi-devel
+ARG MPI_PREFIX=/usr/local/
 ENV VIRTUAL_ENV=/ve_exaworks
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV MPI_PREFIX=${MPI_PREFIX}
+ENV MPICC=$MPI_PREFIX/bin/mpicc
 
 # MongoDB install
 RUN echo -e "\
@@ -56,7 +59,7 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     boost-filesystem \
     boost-regex \
     libxml2-devel \
-    readline-devel \
+    libedit-devel \
     yaml-cpp-devel \
     python3-pyyaml \
     # Swift/T Dependencies
@@ -68,8 +71,6 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     # RADICAL-Pilot Dependencies
     python3-pip \
     mongodb-org \
-    # MPI Dep
-    ${MPI} \
  && dnf clean all \
  && python3 -m venv ${VIRTUAL_ENV} \
  && pip install --upgrade pip setuptools pytest \
@@ -84,3 +85,5 @@ RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.
     && ln -s /opt/apache-ant-1.9.15 /opt/ant \
     && sudo ln -s /opt/ant/bin/ant /usr/bin/ant
 
+COPY ./scripts/install-mpi.sh /install-mpi.sh
+RUN bash install-mpi.sh ${MPI}

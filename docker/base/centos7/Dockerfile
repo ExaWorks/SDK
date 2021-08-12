@@ -1,8 +1,11 @@
 FROM centos:7
 
 ARG MPI=openmpi-devel
+ARG MPI_PREFIX=/usr/local/
 ENV VIRTUAL_ENV=/ve_exaworks
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV MPI_PREFIX=${MPI_PREFIX}
+ENV MPICC=$MPI_PREFIX/bin/mpicc
 
 # MongoDB install
 RUN echo -e "\
@@ -56,7 +59,7 @@ RUN yum -y update \
     boost-filesystem \
     boost-regex \
     libxml2-devel \
-    readline-devel \
+    libedit-devel \
     yaml-cpp-devel \
     # Swift/T Deps
     java-1.7.0-openjdk-headless \
@@ -67,8 +70,6 @@ RUN yum -y update \
     # Radical Pilot Deps
     python3-pip \
     mongodb-org \
-    # MPI Dep
-    ${MPI} \
  && yum clean all \
  && python3 -m venv ${VIRTUAL_ENV} \
  && pip install --upgrade pip setuptools pytest \
@@ -81,5 +82,8 @@ RUN yum -y update \
 RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.gz \
     && tar xvf apache-ant-1.9.15-bin.tar.gz -C /opt \
     && ln -s /opt/apache-ant-1.9.15 /opt/ant \
-    && sudo ln -s /opt/ant/bin/ant /usr/bin/ant
+    && sudo ln -s /opt/ant/bin/ant /usr/bin/ant \
+    && rm apache-ant-1.9.15-bin.tar.gz
 
+COPY ./scripts/install-mpi.sh /install-mpi.sh
+RUN bash install-mpi.sh ${MPI}
