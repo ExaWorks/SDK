@@ -16,7 +16,8 @@ yum_install_only_deps () {
         echo "Package required for installing deps" 1>&2
         exit 1
     fi
-    yum deplist $1 | grep provider | awk '{print $2}' | sort | uniq | grep -v $PACKAGE | sed ':a;N;$!ba;s/\n/ /g' | xargs yum -y install
+    PACKAGE="$1"
+    yum deplist $PACKAGE | grep provider | awk '{print $2}' | sort | uniq | grep -v $PACKAGE | sed ':a;N;$!ba;s/\n/ /g' | xargs yum -y install
 }
 
 if [[ "$1" == "openmpi-devel" ]]; then
@@ -26,7 +27,7 @@ if [[ "$1" == "openmpi-devel" ]]; then
         PATCH=7
         CONFIGURE_ARGS="--with-pmi --with-pmi-libdir=/usr/lib64"
     elif [[ $(centos_major_version) == "8" ]]; then
-        yum_install_only_deps $1
+        yum_install_only_deps "openmpi"
         MAJOR_MINOR=4.0
         PATCH=6
         CONFIGURE_ARGS=""
