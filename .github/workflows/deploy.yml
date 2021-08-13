@@ -67,5 +67,7 @@ jobs:
     - name: Push images with 'latest' tag
       if: ${{ matrix.dockerbase == 'centos7' }}
       run: |
+        docker tag exaworks/sdk-base:${{ matrix.dockerbase }} exaworks/sdk-base:latest
         docker push exaworks/sdk-base:latest
+        docker tag exaworks/sdk:${{ matrix.dockerbase }} exaworks/sdk:latest
         docker push exaworks/sdk:latest
