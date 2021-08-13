@@ -27,7 +27,7 @@ if [[ "$1" == "openmpi-devel" ]]; then
         PATCH=7
         CONFIGURE_ARGS="--with-pmi --with-pmi-libdir=/usr/lib64"
     elif [[ $(centos_major_version) == "8" ]]; then
-        yum_install_only_deps $1
+        yum_install_only_deps "openmpi"
         MAJOR_MINOR=4.0
         PATCH=6
         CONFIGURE_ARGS=""
