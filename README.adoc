@@ -62,7 +62,16 @@ Most workflow system dependencies are in the Base Dockerfile, but some customiza
 
 ==== Build
 
-Each workflow system can be built with a simple `docker build` command.
+Each workflow system can be built with a simple `docker build` command, using the directory `base/` as the build context.
+
+First, build the base image (centos7|centos8) with:
+
+----
+$ cd docker/base/
+$ docker build --tag <TAG> --file centos7/Dockerfile .
+----
+
+Then, build the desired workflow system FROM that TAG.
 
 ==== Tests
 
