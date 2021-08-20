@@ -37,7 +37,7 @@ if [[ "$1" == "openmpi-devel" ]]; then
     fi
 
     OPENMPI=openmpi-${MAJOR_MINOR}.${PATCH}
-    
+
     wget https://download.open-mpi.org/release/open-mpi/v${MAJOR_MINOR}/${OPENMPI}.tar.gz
     tar -xf ./${OPENMPI}.tar.gz
     rm ./${OPENMPI}.tar.gz
