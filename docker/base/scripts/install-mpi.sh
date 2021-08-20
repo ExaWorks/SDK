@@ -55,6 +55,6 @@ if [[ "$1" == "openmpi-devel" ]]; then
         yum clean all
     fi
 else
-    echo "Unknown/unsupported MPI. Existing without installing."
+    printf "Unknown/unsupported MPI '%s'. Exiting without installing.\n" "$1"
     exit 1
 fi
