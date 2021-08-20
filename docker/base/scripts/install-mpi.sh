@@ -54,6 +54,8 @@ if [[ "$1" == "openmpi-devel" ]]; then
         yum autoremove -y
         yum clean all
     fi
+elif [[ "$1" == "mpich-devel" ]]; then
+    yum install -y mpich-devel
 else
     printf "Unknown/unsupported MPI '%s'. Exiting without installing.\n" "$1"
     exit 1
