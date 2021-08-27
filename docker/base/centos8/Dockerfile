@@ -65,7 +65,7 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     # Swift/T Dependencies
     java-1.8.0-openjdk-headless \
     java-1.8.0-openjdk-devel \
-    tcl \
+    tcl-devel \
     swig \
     zsh \
     # RADICAL-Pilot Dependencies

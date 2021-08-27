@@ -37,7 +37,7 @@ if [[ "$1" == "openmpi-devel" ]]; then
     fi
 
     OPENMPI=openmpi-${MAJOR_MINOR}.${PATCH}
-    
+
     wget https://download.open-mpi.org/release/open-mpi/v${MAJOR_MINOR}/${OPENMPI}.tar.gz
     tar -xf ./${OPENMPI}.tar.gz
     rm ./${OPENMPI}.tar.gz
@@ -54,7 +54,9 @@ if [[ "$1" == "openmpi-devel" ]]; then
         yum autoremove -y
         yum clean all
     fi
+elif [[ "$1" == "mpich-devel" ]]; then
+    yum install -y mpich-devel
 else
-    echo "Unknown/unsupported MPI. Existing without installing."
+    printf "Unknown/unsupported MPI '%s'. Exiting without installing.\n" "$1"
     exit 1
 fi

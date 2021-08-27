@@ -4,7 +4,8 @@ set -eux
 # INSTALL SWIFT/T
 
 # Setup
-# PATH=/usr/lib64/mpich/bin:$PATH
+# Swift/T will prefer the MPI found first- MPICH in this case
+PATH=/usr/lib64/mpich/bin:$PATH
 PATH=/usr/lib64/openmpi/bin:$PATH
 PATH=/opt/tcl-8.6.11/bin:$PATH
 
