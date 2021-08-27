@@ -14,7 +14,7 @@ FROM ${BASE_IMAGE}
 # the rust build, so we'll use that until a more sensible solution
 # is found.
 
-RUN python3 -m pip install parsl
+RUN python3 -m pip install git+https://github.com/Parsl/parsl.git@master
 
 COPY test.py /
 COPY test.sh /
