@@ -3,6 +3,7 @@ FROM ${BASE_IMAGE}
 
 ARG MPI=openmpi-devel
 ARG MPI_PREFIX=/usr/local/
+ARG PACKAGE_MANAGER=pip
 ENV VIRTUAL_ENV=/ve_exaworks
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV MPI_PREFIX=${MPI_PREFIX}
@@ -71,13 +72,36 @@ RUN yum -y update \
     # Radical Pilot Deps
     python3-pip \
     mongodb-org \
- && yum clean all \
- && python3 -m venv ${VIRTUAL_ENV} \
- && pip install --upgrade pip setuptools pytest \
- # Flux python deps
- && pip install cffi six pyyaml jsonschema \
- # Parsl python deps
- && pip install "cryptography==3.3.2"
+    # To download conda
+    curl \
+    bzip2 \
+ && yum clean all
+
+
+RUN if [ $PACKAGE_MANAGER == "conda" ]; then \
+    # Use conda
+      curl -sSL https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh \
+      && bash /tmp/miniconda.sh -bfp /usr/local/ \
+      && rm -rf /tmp/miniconda.sh \
+      && rpm -e --nodeps curl bzip2 \
+      && conda create -y -p ${VIRTUAL_ENV} python \
+      && conda update conda \
+      && conda clean --all --yes \
+      && conda install -y -p $VIRTUAL_ENV pip setuptools pytest \
+      # Flux python deps
+      && conda install -y -p $VIRTUAL_ENV cffi six pyyaml jsonschema \
+      # Parsl python deps
+      && conda install -y -p $VIRTUAL_ENV "cryptography==3.3.2";\
+
+    # Use python pip
+    else \
+      python3 -m venv ${VIRTUAL_ENV} \
+      && pip install --upgrade pip setuptools pytest \
+      # Flux python deps
+      && pip install cffi six pyyaml jsonschema \
+      # Parsl python deps
+      && pip install "cryptography==3.3.2";\
+    fi
 
 # Swift/T Dependency on Apache Ant
 RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.gz \
