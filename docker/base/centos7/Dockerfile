@@ -77,31 +77,8 @@ RUN yum -y update \
     bzip2 \
  && yum clean all
 
-
-RUN if [ $PACKAGE_MANAGER == "conda" ]; then \
-    # Use conda
-      curl -sSL https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh \
-      && bash /tmp/miniconda.sh -bfp /usr/local/ \
-      && rm -rf /tmp/miniconda.sh \
-      && rpm -e --nodeps curl bzip2 \
-      && conda create -y -p ${VIRTUAL_ENV} python \
-      && conda update conda \
-      && conda clean --all --yes \
-      && conda install -y -p $VIRTUAL_ENV pip setuptools pytest \
-      # Flux python deps
-      && conda install -y -p $VIRTUAL_ENV cffi six pyyaml jsonschema \
-      # Parsl python deps
-      && conda install -y -p $VIRTUAL_ENV "cryptography==3.3.2";\
-
-    # Use python pip
-    else \
-      python3 -m venv ${VIRTUAL_ENV} \
-      && pip install --upgrade pip setuptools pytest \
-      # Flux python deps
-      && pip install cffi six pyyaml jsonschema \
-      # Parsl python deps
-      && pip install "cryptography==3.3.2";\
-    fi
+COPY ./scripts/install-python-env.sh /scripts/install-python-env.sh
+RUN bash /scripts/install-python-env.sh ${PACKAGE_MANAGER}
 
 # Swift/T Dependency on Apache Ant
 RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.gz \
@@ -110,5 +87,5 @@ RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.
     && sudo ln -s /opt/ant/bin/ant /usr/bin/ant \
     && rm apache-ant-1.9.15-bin.tar.gz
 
-COPY ./scripts/install-mpi.sh /install-mpi.sh
-RUN bash install-mpi.sh ${MPI}
+COPY ./scripts/install-mpi.sh /scripts/install-mpi.sh
+RUN bash /scripts/install-mpi.sh ${MPI}
