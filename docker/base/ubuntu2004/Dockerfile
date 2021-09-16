@@ -3,6 +3,7 @@ FROM ${BASE_IMAGE}
 
 ARG MPI=openmpi-devel
 ARG MPI_PREFIX=/usr/local/
+ARG PACKAGE_MANAGER=pip
 ENV VIRTUAL_ENV=/ve_exaworks
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV MPI_PREFIX=${MPI_PREFIX}
@@ -77,14 +78,10 @@ RUN apt-get update -y \
     tcl-dev \
     swig \
     zsh \
- && apt-get clean \
-    # VE setup with pip packages
- && python3 -m venv ${VIRTUAL_ENV} \
- && pip install --upgrade pip setuptools pytest \
-    # Flux python deps
- && pip install cffi six pyyaml jsonschema \
-    # Parsl python deps
- && pip install "cryptography==3.3.2"
+ && apt-get clean
+
+COPY ./scripts/install-python-env.sh /scripts/install-python-env.sh
+RUN bash /scripts/install-python-env.sh ${PACKAGE_MANAGER}
 
 # Swift/T Dependency on Apache Ant
 RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.gz \
@@ -92,5 +89,5 @@ RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.
  && ln -s /opt/apache-ant-1.9.15 /opt/ant \
  && sudo ln -s /opt/ant/bin/ant /usr/bin/ant
 
-COPY ./scripts/install-mpi.sh /install-mpi.sh
-RUN bash install-mpi.sh ${MPI}
+COPY ./scripts/install-mpi.sh /scripts/install-mpi.sh
+RUN bash /scripts/install-mpi.sh ${MPI}

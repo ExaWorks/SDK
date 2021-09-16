@@ -10,8 +10,11 @@ jobs:
 
     strategy:
       matrix:
-        dockerbase: ["centos7", "centos8"]
+        dockerbase: ["centos7", "centos8", "ubuntu2004"]
         packagemanager: ["pip", "conda"]
+        exclude:
+        - dockerbase: "centos8"
+          packagemanager: "conda"
       fail-fast: false
     env:
       DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}"
@@ -45,8 +48,8 @@ jobs:
           --build-arg BASE_IMAGE=rp_parsl_swift:${{ env.DOCKER_TAG }} \
           docker/flux
         docker build \
-          -t exaworks_sdk_integration:${{ matrix.dockerbase }} \
-          --build-arg BASE_IMAGE=rp_parsl_swift_flux:${{ matrix.dockerbase }} \
+          -t exaworks_sdk_integration:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rp_parsl_swift_flux:${{ env.DOCKER_TAG }} \
           docker/integration
 
     - name: Run tests (base - ${{ env.DOCKER_TAG }})
@@ -63,7 +66,7 @@ jobs:
         docker run rp_parsl_swift_flux:${{ env.DOCKER_TAG }}
         ret_flux=$?
         echo "flux : $ret_flux"
-        docker run exaworks_sdk_integration:${{ matrix.dockerbase }}
+        docker run exaworks_sdk_integration:${{ env.DOCKER_TAG }}
         ret_integration=$?
         echo "integration: $ret_integration"
         echo "exit : $(expr $ret_rp + $ret_parsl + $ret_swift + $ret_flux + $ret_integration)"
