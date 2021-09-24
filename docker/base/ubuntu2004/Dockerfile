@@ -2,58 +2,35 @@ FROM ubuntu:20.04
 
 ARG MPI=openmpi-devel
 ARG MPI_PREFIX=/usr/local/
-ARG PYTHON_VERSION=3.6
 ENV VIRTUAL_ENV=/ve_exaworks
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ENV MPI_PREFIX=${MPI_PREFIX}
 ENV MPICC=$MPI_PREFIX/bin/mpicc
 
-# MongoDB installation (RADICAL-Pilot Dependency)
+# General Dependencies
 RUN apt-get update -y \
- && apt install -y curl gnupg \
- && curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - \
+ && apt install -y \
+    cppcheck \
+    curl \
+    file \
+    gcc \
+    git \
+    gnupg \
+    man-db \
+    munge \
+    libmunge-dev \
+    libsodium-dev \
+    sudo \
+    wget
+
+# MongoDB installation (RADICAL-Pilot Dependency)
+RUN curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - \
  && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | \
     tee /etc/apt/sources.list.d/mongodb-org-4.4.list \
  && apt-get update -y \
  && ln -T /bin/true /usr/bin/systemctl \
  && DEBIAN_FRONTEND=noninteractive apt install -y mongodb-org \
  && rm /usr/bin/systemctl
-
-# Pre-python setup
-RUN apt-get update -y \
- && apt install -y \
-    # General & Python dependency \
-#    cppcheck \
-    file \
-    gcc \
-    git \
-    man-db \
-    munge \
-    libmunge-dev \
-    libsodium-dev \
-    sudo \
-    wget \
-    # Python Dependencies
-    build-essential \
-    gdb \
-    lcov \
-    libbz2-dev \
-    libffi-dev \
-    libgdbm-dev \
-    liblzma-dev \
-    libncurses5-dev \
-    libreadline6-dev \
-    libsqlite3-dev \
-    libssl-dev \
-    lzma \
-    lzma-dev  \
-    tk-dev  \
-    uuid-dev \
-    zlib1g-dev
-
-# Python installation
-COPY ./scripts/install-python.sh /install-python.sh
-RUN bash install-python.sh ${PYTHON_VERSION}
 
 RUN apt-get update -y \
  && apt install -y \
@@ -73,13 +50,13 @@ RUN apt-get update -y \
     lua5.1 \
     liblua5.1-dev \
     lua-posix \
-#    python3-dev \
-#    python3-cffi \
-#    python3-yaml \
-#    python3-jsonschema \
-#    python3-sphinx \
-#    python3-pip \
-#    python3-venv \
+    python3-dev \
+    python3-cffi \
+    python3-yaml \
+    python3-jsonschema \
+    python3-sphinx \
+    python3-pip \
+    python3-venv \
     aspell \
     aspell-en \
     valgrind \
@@ -101,7 +78,7 @@ RUN apt-get update -y \
     zsh \
  && apt-get clean \
     # VE setup with pip packages
- && python${PYTHON_VERSION} -m venv ${VIRTUAL_ENV} \
+ && python3 -m venv ${VIRTUAL_ENV} \
  && pip install --upgrade pip setuptools pytest \
     # Flux python deps
  && pip install cffi six pyyaml jsonschema \
