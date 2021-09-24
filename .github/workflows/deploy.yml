@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dockerbase: ["centos7", "centos8"]
+        dockerbase: ["centos7", "centos8", "ubuntu2004"]
 
     steps:
     - name: Checkout repo
