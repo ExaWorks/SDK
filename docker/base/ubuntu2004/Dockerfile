@@ -91,5 +91,5 @@ RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.
  && ln -s /opt/apache-ant-1.9.15 /opt/ant \
  && sudo ln -s /opt/ant/bin/ant /usr/bin/ant
 
-# COPY ./scripts/install-mpi.sh /install-mpi.sh
-# RUN bash install-mpi.sh ${MPI}
+COPY ./scripts/install-mpi.sh /install-mpi.sh
+RUN bash install-mpi.sh ${MPI}
