@@ -12,14 +12,15 @@ RUN echo -e "\
 [mongodb]\n\
 name     = MongoDB Repository \n\
 baseurl  = https://repo.mongodb.org/yum/redhat/7Server/mongodb-org/3.0/x86_64/ \n\
-gpgcheck = 0 \n\
-enabled  = 1 \n" >> /etc/yum.repos.d/mongodb.repo
+gpgcheck = 1 \n\
+enabled  = 1 \n\
+gpgkey=https://www.mongodb.org/static/pgp/server-3.0.asc" >> /etc/yum.repos.d/mongodb.repo
 
 RUN yum -y update \
  && yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
  && yum -y update \
  && yum install -y curl \
- && curl https://www-csp.llnl.gov/content/assets/csoc/cspca.crt > /etc/pki/ca-trust/source/anchors/cspca.crt && update-ca-trust \ 
+ && curl https://www-csp.llnl.gov/content/assets/csoc/cspca.crt > /etc/pki/ca-trust/source/anchors/cspca.crt && update-ca-trust \
  && yum -y install \
     # General & Flux-core Dependencies
     which \
