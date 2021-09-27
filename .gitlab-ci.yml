@@ -6,7 +6,6 @@ bulid_image:
   stage: build
   before_script:
     - whoami
-    - podman image ls
     - ls
   tags:
     - quartz
@@ -29,6 +28,6 @@ run_test:
     - quartz
     - batch
   script:
-    - docker run flux
+    - singularity run flux
     - ret_flux=$?
     - echo $ret_flux
