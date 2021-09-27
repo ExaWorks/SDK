@@ -16,11 +16,11 @@ gpgcheck = 1 \n\
 enabled  = 1 \n\
 gpgkey=https://www.mongodb.org/static/pgp/server-3.0.asc" >> /etc/yum.repos.d/mongodb.repo
 
+RUN curl https://www-csp.llnl.gov/content/assets/csoc/cspca.crt > /etc/pki/ca-trust/source/anchors/cspca.crt && update-ca-trust
+
 RUN yum -y update \
  && yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
  && yum -y update \
- && yum install -y curl \
- && curl https://www-csp.llnl.gov/content/assets/csoc/cspca.crt > /etc/pki/ca-trust/source/anchors/cspca.crt && update-ca-trust \
  && yum -y install \
     # General & Flux-core Dependencies
     which \
