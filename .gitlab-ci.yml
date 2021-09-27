@@ -3,29 +3,17 @@ variables:
 
 
 stages:
-  - build
-  - test
+  - flux
 
 bulid_image:
-  stage: build
+  stage: flux
   before_script:
     - whoami
-    - ls
   tags:
     - quartz
     - batch
   script:
     - podman build -t exaworks/sdk-base -f docker/base/centos7/Dockerfile docker/base/
     - podman build -t flux --build-arg BASE_IMAGE=exaworks/sdk-base docker/flux
-
-run_test:
-  stage: test
-  before_script:
-    - whoami
-  tags:
-    - quartz
-    - batch
-  script:
     - podman run flux
     - ret_flux=$?
-    - echo $ret_flux
