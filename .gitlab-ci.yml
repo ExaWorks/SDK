@@ -11,14 +11,8 @@ bulid_image:
     - quartz
     - batch
   script:
-    - podman build \
-        -t exaworks/sdk-base \
-        -f docker/base/centos7/Dockerfile \
-        docker/base/
-    - podman build \
-      -t flux \
-      --build-arg BASE_IMAGE=exaworks/sdk-base \
-      docker/flux
+    - singularity build -t exaworks/sdk-base -f docker/base/centos7/Dockerfile docker/base/
+    - singularity build -t flux --build-arg BASE_IMAGE=exaworks/sdk-base docker/flux
 
 run_test:
   stage: test
