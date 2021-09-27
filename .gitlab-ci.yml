@@ -1,3 +1,7 @@
+variables:
+  LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -p pdebug --userns"
+
+
 stages:
   - build
   - test
