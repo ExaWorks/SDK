@@ -31,4 +31,4 @@ run_test:
   script:
     - docker run flux
     - ret_flux=$?
-    - echo "flux : $ret_flux"
+    - echo $ret_flux
