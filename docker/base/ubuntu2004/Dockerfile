@@ -81,6 +81,8 @@ RUN apt-get update -y \
  && apt-get clean
 
 COPY ./scripts/install-python-env.sh /scripts/install-python-env.sh
+COPY ./scripts/environment.yml /scripts/environment.yml
+
 RUN bash /scripts/install-python-env.sh ${PACKAGE_MANAGER}
 
 # Swift/T Dependency on Apache Ant
