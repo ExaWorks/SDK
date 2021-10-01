@@ -76,9 +76,11 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     # To download conda
     curl \
     bzip2 \
- && dnf clean all \
+ && dnf clean all
 
 COPY ./scripts/install-python-env.sh /scripts/install-python-env.sh
+COPY ./scripts/environment.yml /scripts/environment.yml
+
 RUN bash /scripts/install-python-env.sh ${PACKAGE_MANAGER}
 
 # Swift/T Dependency on Apache Ant

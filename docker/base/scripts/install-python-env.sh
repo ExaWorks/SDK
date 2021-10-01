@@ -50,22 +50,26 @@ else
 fi
 
 if [[ "$1" == "conda" ]]; then
-    if [[ ${DISTRO_ID} == "centos" ]] && [[ ${DISTRO_MAJOR_VERSION} == "8" ]]; then
-        echo "Unsupported: Centos8 + Conda" 1>&2
-        exit 1
-    fi
+    # if [[ ${DISTRO_ID} == "centos" ]] && [[ ${DISTRO_MAJOR_VERSION} == "8" ]]; then
+    #     echo "Unsupported: Centos8 + Conda" 1>&2
+    #     exit 1
+    # fi
 
     curl -sSL https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh
     bash /tmp/miniconda.sh -bfp /usr/local/
     rm -rf /tmp/miniconda.sh
-    conda create -y -p ${VIRTUAL_ENV} python=3.6
+    conda env create --prefix ${VIRTUAL_ENV} --file /scripts/environment.yml
+    conda init bash
+    echo "conda activate ${VIRTUAL_ENV}" >> ~/.bashrc
+    source ~/.bashrc
     conda update conda
     conda clean --all --yes
-    conda install -y -p $VIRTUAL_ENV pip setuptools pytest
+    conda install -y pip setuptools pytest
     # Flux python deps
-    conda install -y -p $VIRTUAL_ENV cffi six pyyaml jsonschema
+    conda install -c asmeurer aspell
+    conda install -y cffi six pyyaml jsonschema
     # Parsl python deps
-    conda install -y -p $VIRTUAL_ENV "cryptography==3.3.2"
+    conda install -y "cryptography==3.3.2"
 
 
 elif [[ "$1" == "pip" ]]; then
