@@ -1,19 +1,41 @@
 variables:
-  LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -p pdebug --userns"
+  LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=2 -p pdebug --userns"
+  QUAY_HOST: "quay.apps.czapps.llnl.gov/"
+  QUAY_ORG: "exaworks/sdk-"
 
 
 stages:
-  - flux
+  - build
+  - test
 
 bulid_image:
-  stage: flux
-  before_script:
-    - whoami
-  tags:
-    - quartz
-    - batch
-  script:
-    - podman build -t exaworks/sdk-base -f docker/base/centos7/Dockerfile docker/base/
-    - podman build -t flux --build-arg BASE_IMAGE=exaworks/sdk-base docker/flux
-    - podman run flux
-    - ret_flux=$?
+  stage: build
+  parallel:
+    matrix:
+      - dockerbase: ["centos7", "centos8"]
+
+    before_script:
+      - whoami
+      - podman login -u '$app' -p $QUAY_TOKEN quay.apps.czapps.llnl.gov
+    tags:
+      - quartz
+      - batch
+    script:
+      - podman build -t ${QUAY_HOST}${QUAY_ORG}base-${dockerbase} -f docker/base/${dockerbase}/Dockerfile docker/base/
+      - podman build -t ${QUAY_HOST}${QUAY_ORG}rp-${dockerbase} --build-arg BASE_IMAGE=${QUAY_HOST}${QUAY_ORG}base-${dockerbase} docker/rp
+      - podman push ${QUAY_HOST}${QUAY_ORG}base-${dockerbase}
+      - podman push ${QUAY_HOST}${QUAY_ORG}rp-${dockerbase}
+
+test_image:
+  stage: build
+  parallel:
+    matrix:
+      - dockerbase: ["centos7", "centos8"]
+    before_script:
+      - whoami
+      - podman login -u '$app' -p $QUAY_TOKEN quay.apps.czapps.llnl.gov
+    tags:
+      - quartz
+      - batch
+    script:
+      - podman run ${QUAY_HOST}${QUAY_ORG}rp-${dockerbase}
