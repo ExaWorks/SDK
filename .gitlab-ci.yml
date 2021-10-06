@@ -1,41 +1,74 @@
 variables:
-  LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=2 -p pdebug --userns"
-  QUAY_HOST: "quay.apps.czapps.llnl.gov/"
-  QUAY_ORG: "exaworks/sdk-"
+  LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -p pdebug --userns"
+  QUAY_HOST: "quay.apps.czapps.llnl.gov"
+  QUAY_ORG: "/exaworks/sdk-"
+  QUAY_LATEST: "latest"
 
 
 stages:
-  - build
+  # - build_base
+  - build_core
   - test
 
-bulid_image:
-  stage: build
+bulid_base_image:
+  stage: build_base
   parallel:
     matrix:
-      - dockerbase: ["centos7", "centos8"]
+      - BASE: ["centos7", "centos8"]
 
-    before_script:
-      - whoami
-      - podman login -u '$app' -p $QUAY_TOKEN quay.apps.czapps.llnl.gov
-    tags:
-      - quartz
-      - batch
-    script:
-      - podman build -t ${QUAY_HOST}${QUAY_ORG}base-${dockerbase} -f docker/base/${dockerbase}/Dockerfile docker/base/
-      - podman build -t ${QUAY_HOST}${QUAY_ORG}rp-${dockerbase} --build-arg BASE_IMAGE=${QUAY_HOST}${QUAY_ORG}base-${dockerbase} docker/rp
-      - podman push ${QUAY_HOST}${QUAY_ORG}base-${dockerbase}
-      - podman push ${QUAY_HOST}${QUAY_ORG}rp-${dockerbase}
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  script:
+    - export tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}:$QUAY_LATEST
+    - podman build -t ${tag} -f docker/base/${BASE}/Dockerfile docker/base/
+    # - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
+    - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
+    - echo "Image Tag = ${tag}"
+    - podman push ${tag}
+    - podman logout $QUAY_HOST
+
+bulid_core_image:
+  stage: build_core
+  parallel:
+    matrix:
+      - BASE: ["centos7", "centos8"]
+        CORE: ["rp"]
+
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  script:
+    - export base_tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}:$QUAY_LATEST
+    - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}:${QUAY_LATEST}
+    # - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
+    - echo "Base Tag = ${base_tag}"
+    - echo "Image Tag = ${tag}"
+    - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
+    - podman build -t $tag --build-arg BASE_IMAGE=${base_tag} docker/${CORE}
+    - podman push ${tag}
+    - podman logout $QUAY_HOST
+
 
 test_image:
-  stage: build
+  stage: test
   parallel:
     matrix:
-      - dockerbase: ["centos7", "centos8"]
-    before_script:
-      - whoami
-      - podman login -u '$app' -p $QUAY_TOKEN quay.apps.czapps.llnl.gov
-    tags:
-      - quartz
-      - batch
-    script:
-      - podman run ${QUAY_HOST}${QUAY_ORG}rp-${dockerbase}
+      - BASE: ["centos7", "centos8"]
+        CORE: ["rp"]
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  script:
+    - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}:${QUAY_LATEST}
+    # - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
+    - echo "Image Tag = ${tag}"
+    - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
+    - podman run $tag
+    - podman logout $QUAY_HOST
