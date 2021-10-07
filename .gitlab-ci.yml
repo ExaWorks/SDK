@@ -10,25 +10,25 @@ stages:
   - build_core
   - test
 
-bulid_base_image:
-  stage: build_base
-  parallel:
-    matrix:
-      - BASE: ["centos7", "centos8"]
-
-  before_script:
-    - whoami
-  tags:
-    - quartz
-    - batch
-  script:
-    - export tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}:$QUAY_LATEST
-    - podman build -t ${tag} -f docker/base/${BASE}/Dockerfile docker/base/
-    # - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
-    - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
-    - echo "Image Tag = ${tag}"
-    - podman push ${tag}
-    - podman logout $QUAY_HOST
+# bulid_base_image:
+#   stage: build_base
+#   parallel:
+#     matrix:
+#       - BASE: ["centos7", "centos8"]
+#
+#   before_script:
+#     - whoami
+#   tags:
+#     - quartz
+#     - batch
+#   script:
+#     - export tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}:$QUAY_LATEST
+#     - podman build -t ${tag} -f docker/base/${BASE}/Dockerfile docker/base/
+#     # - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
+#     - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
+#     - echo "Image Tag = ${tag}"
+#     - podman push ${tag}
+#     - podman logout $QUAY_HOST
 
 bulid_core_image:
   stage: build_core
