@@ -45,10 +45,10 @@ bulid_core_image:
   script:
     - export base_tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}:$QUAY_LATEST
     - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}:${QUAY_LATEST}
-    # - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
+    - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
     - echo "Base Tag = ${base_tag}"
     - echo "Image Tag = ${tag}"
-    - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
+    # - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
     - podman build -t $tag --build-arg BASE_IMAGE=${base_tag} docker/${CORE}
     - podman push ${tag}
     - podman logout $QUAY_HOST
@@ -67,8 +67,8 @@ test_image:
     - batch
   script:
     - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}:${QUAY_LATEST}
-    # - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
+    - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
     - echo "Image Tag = ${tag}"
-    - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
+    # - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
     - podman run $tag
     - podman logout $QUAY_HOST
