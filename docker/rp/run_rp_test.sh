@@ -2,7 +2,7 @@
 
 # run mongodb, let it settle
 echo '--- start MongoDB'
-mongod --fork --logpath /tmp/mongodb.log
+mongod --fork --logpath /tmp/mongodb.log --config /etc/mongod.conf
 
 cd radical.pilot
 echo '--- smoke test'
