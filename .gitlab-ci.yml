@@ -37,7 +37,7 @@ bulid_core_image:
   parallel:
     matrix:
       - BASE: ["centos7", "centos8", "ubuntu"]
-        CORE: ["rp", "Parsl", "flux", "swift-t"]
+        CORE: ["rp", "parsl", "flux", "swift-t"]
 
   before_script:
     - whoami
@@ -61,7 +61,7 @@ test_image:
   parallel:
     matrix:
       - BASE: ["centos7", "centos8", "ubuntu"]
-        CORE: ["rp", "Parsl", "flux", "swift-t"]
+        CORE: ["rp", "parsl", "flux", "swift-t"]
 
   before_script:
     - whoami
