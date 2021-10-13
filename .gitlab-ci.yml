@@ -6,36 +6,15 @@ variables:
 
 
 stages:
-  # - build_base
+  - build_base
   - build_core
   - test
 
-# bulid_base_image:
-#   stage: build_base
-#   parallel:
-#     matrix:
-#       - BASE: ["centos7", "centos8"]
-#
-#   before_script:
-#     - whoami
-#   tags:
-#     - quartz
-#     - batch
-#   script:
-#     - export tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}:$QUAY_LATEST
-#     - podman build -t ${tag} -f docker/base/${BASE}/Dockerfile docker/base/
-#     # - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
-#     - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
-#     - echo "Image Tag = ${tag}"
-#     - podman push ${tag}
-#     - podman logout $QUAY_HOST
-
-bulid_core_image:
-  stage: build_core
+bulid_base_image:
+  stage: build_base
   parallel:
     matrix:
-      - BASE: ["centos7", "centos8"]
-        CORE: ["rp"]
+      - BASE: ["centos7", "centos8", "ubuntu"]
 
   before_script:
     - whoami
@@ -43,14 +22,37 @@ bulid_core_image:
     - quartz
     - batch
   script:
+    - sleep $(($RANDOM % 30))
+    - for i in $(seq 1 5); do echo $BOT_TOKEN | podman login -u $BOT_NAME --password-stdin $QUAY_HOST && s=0 && break || s=$? && sleep 15; done; (exit $s)
+    - export tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}:$QUAY_LATEST
+    - export lcbase=${QUAY_HOST}/lcweg/lc-${BASE}
+    - for i in $(seq 1 5); do podman pull ${tag} && s=0 && break || s=$? && sleep 15; done; (exit $s)
+    - podman build -t ${tag} -f docker/base/${BASE}*/Dockerfile --build-arg BASE_IMAGE=${lcbase} --cache-from ${tag} docker/base/
+    - echo "Image Tag = ${tag}"
+    - for i in $(seq 1 5); do podman push ${tag} && s=0 && break || s=$? && sleep 15; done; (exit $s)
+    - podman logout $QUAY_HOST
+
+bulid_core_image:
+  stage: build_core
+  parallel:
+    matrix:
+      - BASE: ["centos7", "centos8", "ubuntu"]
+        CORE: ["rp", "Parsl", "flux", "swift-t"]
+
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  script:
+    - sleep $(($RANDOM % 30))
     - export base_tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}:$QUAY_LATEST
     - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}:${QUAY_LATEST}
-    - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
+    - for i in $(seq 1 12); do echo $BOT_TOKEN | podman login -u $BOT_NAME --password-stdin $QUAY_HOST && s=0 && break || s=$? && sleep 15; done; (exit $s)
     - echo "Base Tag = ${base_tag}"
     - echo "Image Tag = ${tag}"
-    # - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
-    - podman build -t $tag --build-arg BASE_IMAGE=${base_tag} docker/${CORE}
-    - podman push ${tag}
+    - for i in $(seq 1 12); do podman build -t $tag --build-arg BASE_IMAGE=${base_tag} --cache-from ${tag} docker/${CORE} && s=0 && break || s=$? && sleep 15; done; (exit $s)
+    - for i in $(seq 1 12); do podman push ${tag} && s=0 && break || s=$? && sleep 15; done; (exit $s)
     - podman logout $QUAY_HOST
 
 
@@ -58,17 +60,19 @@ test_image:
   stage: test
   parallel:
     matrix:
-      - BASE: ["centos7", "centos8"]
-        CORE: ["rp"]
+      - BASE: ["centos7", "centos8", "ubuntu"]
+        CORE: ["rp", "Parsl", "flux", "swift-t"]
+
   before_script:
     - whoami
   tags:
     - quartz
     - batch
   script:
+    - sleep $(($RANDOM % 30))
     - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}:${QUAY_LATEST}
-    - podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST
+    - for i in $(seq 1 12); do echo $BOT_TOKEN | podman login -u $BOT_NAME --password-stdin $QUAY_HOST && s=0 && break || s=$? && sleep 15; done; (exit $s)
     - echo "Image Tag = ${tag}"
-    # - sh /usr/workspace/lcweg/.lciaas/exaworks-sdk/quay+bot.sh
+    - for i in $(seq 1 12); do podman pull $tag && s=0 && break || s=$? && sleep 15; done; (exit $s)
     - podman run $tag
     - podman logout $QUAY_HOST

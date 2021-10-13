@@ -32,7 +32,7 @@ fi
 make -j 2
 make -C src/common/libtap check
 cd t
-export MPI_TESTS="t2610-job-shell-mpir.t t3000-mpi-basic.t t3001-mpi-personalities.t t3003-mpi-abort.t"
+export MPI_TESTS="t3000-mpi-basic.t t3001-mpi-personalities.t t3003-mpi-abort.t"
 FLUXION_QMANAGER_RC_NOOP=t FLUXION_RESOURCE_RC_NOOP=t FLUX_TEST_INSTALLED_PATH=/usr/bin FLUX_TEST_MPI=t make check TESTS="$MPI_TESTS"
 exit_code=$?
 
