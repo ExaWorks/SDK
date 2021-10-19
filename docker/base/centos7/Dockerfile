@@ -1,4 +1,5 @@
-FROM centos:7
+ARG BASE_IMAGE=centos:7
+FROM ${BASE_IMAGE}
 
 ARG MPI=openmpi-devel
 ARG MPI_PREFIX=/usr/local/
