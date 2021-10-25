@@ -9,7 +9,7 @@ stages:
   - build_core
   - test
 
-bulid_base_image:
+build_base_image:
   stage: build_base
   parallel:
     matrix:
@@ -41,7 +41,7 @@ bulid_base_image:
         s=$? && sleep 5; done; (exit $s)
     - podman logout $QUAY_HOST
 
-bulid_core_image:
+build_core_image:
   stage: build_core
   parallel:
     matrix:
