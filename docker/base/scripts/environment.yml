@@ -1,63 +1,47 @@
 channels:
-  - intel
   - conda-forge
-  - asmeurer
-  - defaults
 dependencies:
-  # - aspell
   - autoconf
   - automake
+  - boost
   - boost-cpp
-  - bzip2
-  - ca-certificates
-  - certifi
-  - czmq
-  - icu
-  - intelpython
-  - jansson
+  - "cffi>=1.1"
+  - cryptography=3.3.2
+  - "czmq>=3.0.1"
+  - jansson=2.11
+  - jsonschema=2
   - jq
-  - libboost
-  - libcxx
   - libedit
-  - libffi
-  - libgfortran
-  - libgfortran5
-  - libhwloc
-  - libiconv
-  - libsodium
+  - libhwloc=1.11
   - libtool
   - libuuid
   - libxml2
-  - llvm-openmp
-  - lua=5.1
+  - lua=5.4
+  - lua-luaposix
   - lz4
-  - lz4-c
-  - m4
   - make
+  - mongodb
   - mpi
-  - mpich
-  - ncurses
-  - oniguruma
-  - openjdk
-  - openssl
-  - pcre
-  - perl
+  - munge
+  - openjdk=8
   - pip
-  - pkg-config
+  - pkgconfig
+  - pytest
   - python=3.6
   - python_abi
-  - readline
+  - "pyyaml>=3.10.0"
   - setuptools
-  - sqlite
+  - six
+  - "sqlite>=3.0.0"
   - swig
-  - sphinx
-  - tcl
-  - tk
+  - tk=8.6
   - valgrind
-  - wheel
-  - xz
   - yaml-cpp
-  - zeromq
+  - yaml-cpp-static
+  - "zeromq>=4.0.4"
   - zlib
   - zsh
   - zstd
+
+#  - mpich
+#  - openmpi=4.0
