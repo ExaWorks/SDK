@@ -12,9 +12,6 @@ jobs:
       matrix:
         dockerbase: ["centos7", "centos8", "ubuntu2004"]
         packagemanager: ["pip", "conda"]
-        exclude:
-        - dockerbase: "centos8"
-          packagemanager: "conda"
       fail-fast: false
     env:
       DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}"
