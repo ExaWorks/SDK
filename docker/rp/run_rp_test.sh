@@ -2,7 +2,10 @@
 
 # run mongodb, let it settle
 echo '--- start MongoDB'
-mongod --fork --logpath /tmp/mongodb.log --config /etc/mongod.conf
+if [[ -f "/etc/mongod.conf" ]]; then
+    CONFIG_OPT="--config /etc/mongod.conf"
+fi
+mongod --fork --logpath /tmp/mongodb.log $CONFIG_OPT
 
 cd radical.pilot
 echo '--- smoke test'
