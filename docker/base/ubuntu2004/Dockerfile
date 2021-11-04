@@ -100,4 +100,4 @@ RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.
  && rm apache-ant-1.9.15-bin.tar.gz
 
 COPY ./scripts/install-mpi.sh /scripts/install-mpi.sh
-RUN bash /scripts/install-mpi.sh ${MPI}
+RUN DEBIAN_FRONTEND=noninteractive bash /scripts/install-mpi.sh ${MPI}
