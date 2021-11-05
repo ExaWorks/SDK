@@ -31,7 +31,7 @@ jobs:
         docker build \
           -t rp_parsl:${{ matrix.dockerbase }} \
           --build-arg BASE_IMAGE=rp:${{ matrix.dockerbase }} \
-          docker/Parsl
+          docker/parsl
         docker build \
           -t rp_parsl_swift:${{ matrix.dockerbase }} \
           --build-arg BASE_IMAGE=rp_parsl:${{ matrix.dockerbase }} \

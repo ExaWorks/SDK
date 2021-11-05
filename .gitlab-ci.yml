@@ -1,0 +1,106 @@
+variables:
+  LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -p pdebug --userns"
+  QUAY_HOST: "quay.apps.czapps.llnl.gov"
+  QUAY_ORG: "/exaworks/sdk-"
+  QUAY_LATEST: "latest"
+
+stages:
+  - build_base
+  - build_core
+  - test
+
+build_base_image:
+  stage: build_base
+  parallel:
+    matrix:
+      - BASE: ["centos7", "centos8", "ubuntu"]
+        MPI: ["openmpi", "mpich"]
+
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  script:
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST && s=0 && break ||
+        s=$? && sleep 5; done; (exit $s)
+
+    - export tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}-${MPI}:$QUAY_LATEST
+    - export lcbase=${QUAY_HOST}/lcweg/lc-${BASE}
+    - >
+        podman build -t ${tag} -f docker/base/${BASE}*/Dockerfile
+        --build-arg BASE_IMAGE=${lcbase} --build-arg MPI=${MPI}-devel
+        docker/base/
+
+    - echo "Image Tag = ${tag}"
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman push ${tag} && s=0 && break ||
+        s=$? && sleep 5; done; (exit $s)
+    - podman logout $QUAY_HOST
+
+build_core_image:
+  stage: build_core
+  parallel:
+    matrix:
+      - BASE: ["centos7", "centos8", "ubuntu"]
+        MPI: ["openmpi", "mpich"]
+        CORE: ["rp", "parsl", "flux", "swift-t"]
+
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  script:
+    - export base_tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}-${MPI}:$QUAY_LATEST
+    - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}-${MPI}:${QUAY_LATEST}
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST && s=0 && break ||
+        s=$? && sleep 15; done; (exit $s)
+
+    - echo "Base Tag = ${base_tag}"
+    - echo "Image Tag = ${tag}"
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman build -t $tag --build-arg BASE_IMAGE=${base_tag} docker/${CORE}
+        && s=0 && break || s=$? && sleep 15; done; (exit $s)
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman push ${tag} && s=0 && break ||
+        s=$? && sleep 15; done; (exit $s)
+
+    - podman logout $QUAY_HOST
+
+
+test_image:
+  stage: test
+  parallel:
+    matrix:
+      - BASE: ["centos7", "centos8", "ubuntu"]
+        MPI: ["openmpi", "mpich"]
+        CORE: ["rp", "parsl", "flux", "swift-t"]
+
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  script:
+    - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}-${MPI}:${QUAY_LATEST}
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST && s=0 && break ||
+        s=$? && sleep 15; done; (exit $s)
+
+    - echo "Image Tag = ${tag}"
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman pull $tag && s=0 && break ||
+        s=$? && sleep 15; done; (exit $s)
+
+    - podman run $tag
+    - podman logout $QUAY_HOST
