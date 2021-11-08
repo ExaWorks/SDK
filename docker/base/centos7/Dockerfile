@@ -35,6 +35,8 @@ baseurl  = https://repo.mongodb.org/yum/redhat/7Server/mongodb-org/3.0/x86_64/ \
 gpgcheck = 0 \n\
 enabled  = 1 \n" >> /etc/yum.repos.d/mongodb.repo
 
+# The case of CentOS7 with `conda` package manager is excluded from CI workflow,
+# due to unresolved issues between GCC and OpenMPI installations
 RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         yum -y install \
         autoconf \
