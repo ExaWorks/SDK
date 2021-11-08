@@ -9,13 +9,13 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         dockerbase: ["centos7", "centos8", "ubuntu2004"]
         packagemanager: ["pip", "conda"]
         exclude:
           - dockerbase: "centos7"
             packagemanager: "conda"
-      fail-fast: false
     env:
       DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}"
 
@@ -23,7 +23,7 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v2
 
-    - name: Build docker images (base - ${{ env.DOCKER_TAG }})
+    - name: Build docker images (${{ env.DOCKER_TAG }})
       run: |
         docker build \
           -t exaworks/sdk-base:${{ env.DOCKER_TAG }} \
@@ -52,7 +52,7 @@ jobs:
           --build-arg BASE_IMAGE=rp_parsl_swift_flux:${{ env.DOCKER_TAG }} \
           docker/integration
 
-    - name: Run tests (base - ${{ env.DOCKER_TAG }})
+    - name: Run tests (${{ env.DOCKER_TAG }})
       run: |
         docker run rp:${{ env.DOCKER_TAG }}
         ret_rp=$?
