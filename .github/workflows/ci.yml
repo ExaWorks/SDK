@@ -38,7 +38,7 @@ jobs:
         docker build \
           -t rp_parsl:${{ env.DOCKER_TAG }} \
           --build-arg BASE_IMAGE=rp:${{ env.DOCKER_TAG }} \
-          docker/Parsl
+          docker/parsl
         docker build \
           -t rp_parsl_swift:${{ env.DOCKER_TAG }} \
           --build-arg BASE_IMAGE=rp_parsl:${{ env.DOCKER_TAG }} \
