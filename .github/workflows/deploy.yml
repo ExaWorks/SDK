@@ -11,6 +11,12 @@ jobs:
       fail-fast: false
       matrix:
         dockerbase: ["centos7", "centos8", "ubuntu2004"]
+        packagemanager: [ "pip", "conda" ]
+        exclude:
+          - dockerbase: "centos7"
+            packagemanager: "conda"
+    env:
+      DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}"
 
     steps:
     - name: Checkout repo
@@ -33,41 +39,43 @@ jobs:
       id: buildx
       uses: docker/setup-buildx-action@v1
 
-    - name: Build and push base image (${{ matrix.dockerbase }})
+    - name: Build and push base image (${{ env.DOCKER_TAG }})
       id: docker_build
       uses: docker/build-push-action@v2
       with:
         context: ./docker/base/
         file: ./docker/base/${{ matrix.dockerbase }}/Dockerfile
         push: true
+        build-args: |
+          PACKAGE_MANAGER=${{ matrix.packagemanager }}
         tags: |
-          exaworks/sdk-base:${{ matrix.dockerbase }}
+          exaworks/sdk-base:${{ env.DOCKER_TAG }}
         platforms: linux/amd64
 
-    - name: Build and push composite image (${{ matrix.dockerbase }})
+    - name: Build and push composite image (${{ env.DOCKER_TAG }})
       run: |
         docker build \
-          -t rp:${{ matrix.dockerbase }} \
-          --build-arg BASE_IMAGE=exaworks/sdk-base:${{ matrix.dockerbase }} \
+          -t rp:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=exaworks/sdk-base:${{ env.DOCKER_TAG }} \
           docker/rp
         docker build \
-          -t rp_parsl:${{ matrix.dockerbase }} \
-          --build-arg BASE_IMAGE=rp:${{ matrix.dockerbase }} \
+          -t rp_parsl:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rp:${{ env.DOCKER_TAG }} \
           docker/parsl
         docker build \
-          -t rp_parsl_swift:${{ matrix.dockerbase }} \
-          --build-arg BASE_IMAGE=rp_parsl:${{ matrix.dockerbase }} \
+          -t rp_parsl_swift:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rp_parsl:${{ env.DOCKER_TAG }} \
           docker/swift-t
         docker build \
-          -t exaworks/sdk:${{ matrix.dockerbase }} \
-          --build-arg BASE_IMAGE=rp_parsl_swift:${{ matrix.dockerbase }} \
+          -t exaworks/sdk:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rp_parsl_swift:${{ env.DOCKER_TAG }} \
           docker/flux
-        docker push exaworks/sdk:${{ matrix.dockerbase }}
+        docker push exaworks/sdk:${{ env.DOCKER_TAG }}
 
     - name: Push images with 'latest' tag
-      if: ${{ matrix.dockerbase == 'centos7' }}
+      if: ${{ matrix.dockerbase == 'centos7' && matrix.packagemanager == 'pip' }}
       run: |
-        docker tag exaworks/sdk-base:${{ matrix.dockerbase }} exaworks/sdk-base:latest
+        docker tag exaworks/sdk-base:${{ env.DOCKER_TAG }} exaworks/sdk-base:latest
         docker push exaworks/sdk-base:latest
-        docker tag exaworks/sdk:${{ matrix.dockerbase }} exaworks/sdk:latest
+        docker tag exaworks/sdk:${{ env.DOCKER_TAG }} exaworks/sdk:latest
         docker push exaworks/sdk:latest
