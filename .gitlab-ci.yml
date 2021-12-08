@@ -5,12 +5,12 @@ variables:
   QUAY_LATEST: "latest"
 
 stages:
-  - build_base
-  - build_core
+  - build
   - test
+  - clean
 
-build_base_image:
-  stage: build_base
+Build Base Image:
+  stage: build
   parallel:
     matrix:
       - BASE: ["centos7", "centos8", "ubuntu"]
@@ -21,6 +21,7 @@ build_base_image:
   tags:
     - quartz
     - batch
+  needs: []
   script:
     - >
         for i in $(seq 1 $CI_NODE_TOTAL); do
@@ -41,8 +42,8 @@ build_base_image:
         s=$? && sleep 5; done; (exit $s)
     - podman logout $QUAY_HOST
 
-build_core_image:
-  stage: build_core
+Build Core Image:
+  stage: build
   parallel:
     matrix:
       - BASE: ["centos7", "centos8", "ubuntu"]
@@ -54,6 +55,7 @@ build_core_image:
   tags:
     - quartz
     - batch
+  needs: [Build Base Image]
   script:
     - export base_tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}-${MPI}:$QUAY_LATEST
     - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}-${MPI}:${QUAY_LATEST}
@@ -76,7 +78,7 @@ build_core_image:
     - podman logout $QUAY_HOST
 
 
-test_image:
+Container Test:
   stage: test
   parallel:
     matrix:
@@ -89,6 +91,7 @@ test_image:
   tags:
     - quartz
     - batch
+  needs: [Build Core Image]
   script:
     - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}-${MPI}:${QUAY_LATEST}
     - >
@@ -104,3 +107,49 @@ test_image:
 
     - podman run $tag
     - podman logout $QUAY_HOST
+
+Spack Build:
+  stage: build
+  before_script:
+    - whoami
+    - mkdir /usr/workspace/morton30/spack/
+  tags:
+    - quartz
+    - shell
+  needs: []
+  script:
+    - cd /usr/workspace/morton30/spack/
+    - git clone -c feature.manyFiles=true https://github.com/spack/spack.git
+    - . /usr/workspace/morton30/spack/spack/share/spack/setup-env.sh
+    - spack install exaworks
+    - spack install py-pytest
+
+Spack Test:
+  stage: test
+  parallel:
+      matrix:
+        - TEST : ["rp", "swift-t", "parsl", "flux"]
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  needs: [Spack Build]
+  script:
+    - . /usr/workspace/morton30/spack/spack/share/spack/setup-env.sh
+    - spack load exaworks py-pytest
+    - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+    - bash ci/tests/${TEST}/test.sh
+  after_script:
+    - whoami
+
+Spack Clean:
+  stage: clean
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - shell
+  needs: [Spack Test]
+  script:
+    - rm -rf /usr/workspace/morton30/spack/
