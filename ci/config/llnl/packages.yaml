@@ -1,0 +1,60 @@
+packages:
+  bzip2:
+    externals:
+    - spec: bzip2@1.0.6
+      prefix: /usr
+  gcc:
+    externals:
+    - spec: gcc@4.8.5 languages=c,c++,fortran
+      prefix: /usr
+      extra_attributes:
+        compilers:
+          c: /usr/bin/x86_64-redhat-linux-gcc
+          cxx: /usr/bin/g++
+          fortran: /usr/bin/gfortran
+    - spec: gcc@4.9.3 languages=c,c++,fortran
+      prefix: /usr/tce
+      extra_attributes:
+        compilers:
+          c: /usr/tce/bin/gcc
+          cxx: /usr/tce/bin/g++
+          fortran: /usr/tce/bin/gfortran
+  git:
+    externals:
+    - spec: git@1.8.3.1+tcltk
+      prefix: /usr
+    - spec: git@2.29.1+tcltk
+      prefix: /usr/tce
+  git-lfs:
+    externals:
+    - spec: git-lfs@2.12.0
+      prefix: /usr/tce
+  libtool:
+    externals:
+    - spec: libtool@2.4.2
+      prefix: /usr
+  m4:
+    externals:
+    - spec: m4@1.4.16
+      prefix: /usr
+  mvapich2:
+    externals:
+    - spec: mvapich2@2.3.1%intel@19.0.4.227~cuda~debug~regcache~wrapperrpath ch3_rank_bits=32
+        fabrics=mrail file_systems=lustre,nfs,ufs process_managers=slurm
+      prefix: /usr/tce/packages/mvapich2/mvapich2-2.3-intel-19.0.4
+  openssh:
+    externals:
+    - spec: openssh@7.4p1
+      prefix: /usr
+  pkg-config:
+    externals:
+    - spec: pkg-config@0.27.1
+      prefix: /usr
+  tar:
+    externals:
+    - spec: tar@1.26
+      prefix: /usr
+  xz:
+    externals:
+    - spec: xz@5.2.2
+      prefix: /usr
