@@ -110,17 +110,14 @@ Container Test:
 
 Spack Build:
   stage: build
-  before_script:
-    - whoami
-    - mkdir /usr/workspace/morton30/spack/
   tags:
     - quartz
     - shell
   needs: []
   script:
-    - cd /usr/workspace/morton30/spack/
+    - cd $SPACK_WORK_DIR/
     - git clone -c feature.manyFiles=true https://github.com/spack/spack.git
-    - . /usr/workspace/morton30/spack/spack/share/spack/setup-env.sh
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack install exaworks
     - spack install py-pytest
 
@@ -136,7 +133,7 @@ Spack Test:
     - batch
   needs: [Spack Build]
   script:
-    - . /usr/workspace/morton30/spack/spack/share/spack/setup-env.sh
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack load exaworks py-pytest
     - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
     - bash ci/tests/${TEST}/test.sh
@@ -152,4 +149,4 @@ Spack Clean:
     - shell
   needs: [Spack Test]
   script:
-    - rm -rf /usr/workspace/morton30/spack/
+    - rm -rf $SPACK_WORK_DIR/spack/
