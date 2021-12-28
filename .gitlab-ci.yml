@@ -125,7 +125,7 @@ Spack Test:
   stage: test
   parallel:
       matrix:
-        - TEST : ["rp", "swift-t", "parsl", "flux"]
+        - TEST : ["rp", "swift-t", "parsl", "flux", "rp-flux", "parsl-flux"]
   before_script:
     - whoami
   tags:
