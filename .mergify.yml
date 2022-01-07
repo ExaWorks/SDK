@@ -2,8 +2,11 @@ pull_request_rules:
   - name: Automatic merge on approval
     conditions:
       - base=master
-      - status-success="Run test suite (centos7)"
-      - status-success="Run test suite (centos8)"
+      - status-success="Run test suite (centos7, pip)"
+      - status-success="Run test suite (centos8, pip)"
+      - status-success="Run test suite (centos8, conda)"
+      - status-success="Run test suite (ubuntu2004, pip)"
+      - status-success="Run test suite (ubuntu2004, conda)"
       - status-success="validate commits"
       - label="merge-when-passing"
       - label!="work-in-progress"
@@ -15,4 +18,3 @@ pull_request_rules:
         method: rebase
         rebase_fallback: merge
         strict: smart+fasttrack
-
