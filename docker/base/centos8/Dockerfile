@@ -5,6 +5,7 @@ ARG MPI=openmpi-devel
 ARG MPI_PREFIX=/usr/local
 ARG PACKAGE_MANAGER=pip
 ENV VIRTUAL_ENV=/ve_exaworks
+ENV MPI=${MPI}
 ENV MPI_PREFIX=${MPI_PREFIX}
 ENV MPICC=$MPI_PREFIX/bin/mpicc
 
