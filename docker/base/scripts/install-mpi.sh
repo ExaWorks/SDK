@@ -78,7 +78,7 @@ elif [[ "$1" == "mpich-devel" ]]; then
     if [[ ${DISTRO_ID} == "centos" ]]; then
         yum install -y mpich-devel
     elif [[ ${DISTRO_ID} == "ubuntu" ]]; then
-        apt-get update -y && apt install -y mpich
+        apt-get update -y && apt install -y mpich dpkg-dev
     fi
 else
     printf "Unknown/unsupported MPI '%s'. Exiting without installing.\n" "$1"
