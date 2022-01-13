@@ -1,11 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 set -eux
 
 # SWIFT/T TEST SANITY
 # Simply sanity tests for fresh Docker build
 
 # For OpenMPI
-export TURBINE_LAUNCH_OPTIONS=--allow-run-as-root
+if [[ $MPI == "openmpi-devel" ]]; then
+  export TURBINE_LAUNCH_OPTIONS=--allow-run-as-root
+fi
 
 swift-t -v
 swift-t -E 'trace(42);'
