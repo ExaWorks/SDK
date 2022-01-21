@@ -2,11 +2,16 @@ queue_rules:
   - name: default
     conditions: &ci_checks
       # Conditions to get out of the queue (= merged)
-      - status-success="Run test suite (centos7, pip)"
-      - status-success="Run test suite (centos8, pip)"
-      - status-success="Run test suite (centos8, conda)"
-      - status-success="Run test suite (ubuntu2004, pip)"
-      - status-success="Run test suite (ubuntu2004, conda)"
+      - status-success="Run test suite (centos7, pip, openmpi)"
+      - status-success="Run test suite (centos7, pip, mpich)"
+      - status-success="Run test suite (centos8, pip, openmpi)"
+      - status-success="Run test suite (centos8, pip, mpich)"
+      - status-success="Run test suite (centos8, conda, openmpi)"
+      - status-success="Run test suite (centos8, conda, mpich)"
+      - status-success="Run test suite (ubuntu2004, pip, openmpi)"
+      - status-success="Run test suite (ubuntu2004, pip, mpich)"
+      - status-success="Run test suite (ubuntu2004, conda, openmpi)"
+      - status-success="Run test suite (ubuntu2004, conda, mpich)"
       - status-success="validate commits"
 
 pull_request_rules:
