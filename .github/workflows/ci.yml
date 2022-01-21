@@ -13,11 +13,12 @@ jobs:
       matrix:
         dockerbase: ["centos7", "centos8", "ubuntu2004"]
         packagemanager: ["pip", "conda"]
+        mpi: ["openmpi", "mpich"]
         exclude:
           - dockerbase: "centos7"
             packagemanager: "conda"
     env:
-      DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}"
+      DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}_${{ matrix.mpi }}"
 
     steps:
     - name: Checkout repo
@@ -30,6 +31,7 @@ jobs:
           --cache-from exaworks/sdk-base:${{ env.DOCKER_TAG }} \
           -f docker/base/${{ matrix.dockerbase }}/Dockerfile \
           --build-arg PACKAGE_MANAGER=${{ matrix.packagemanager }} \
+          --build-arg MPI=${{ matrix.mpi }} \
           docker/base/
         docker build \
           -t rp:${{ env.DOCKER_TAG }} \
