@@ -12,11 +12,12 @@ jobs:
       matrix:
         dockerbase: ["centos7", "centos8", "ubuntu2004"]
         packagemanager: [ "pip", "conda" ]
+        mpi: ["openmpi", "mpich"]
         exclude:
           - dockerbase: "centos7"
             packagemanager: "conda"
     env:
-      DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}"
+      DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}_${{ matrix.mpi }}"
 
     steps:
     - name: Checkout repo
@@ -48,6 +49,7 @@ jobs:
         push: true
         build-args: |
           PACKAGE_MANAGER=${{ matrix.packagemanager }}
+          MPI=${{ matrix.mpi }}
         tags: |
           exaworks/sdk-base:${{ env.DOCKER_TAG }}
         platforms: linux/amd64
@@ -73,7 +75,9 @@ jobs:
         docker push exaworks/sdk:${{ env.DOCKER_TAG }}
 
     - name: Push images with 'latest' tag
-      if: ${{ matrix.dockerbase == 'centos7' && matrix.packagemanager == 'pip' }}
+      if: ${{ matrix.dockerbase == 'centos7' \
+              && matrix.packagemanager == 'pip' \
+              && matrix.mpi == 'openmpi' }}
       run: |
         docker tag exaworks/sdk-base:${{ env.DOCKER_TAG }} exaworks/sdk-base:latest
         docker push exaworks/sdk-base:latest
