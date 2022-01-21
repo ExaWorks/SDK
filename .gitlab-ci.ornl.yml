@@ -1,0 +1,51 @@
+
+stages:
+  - build
+  - test
+  - clean
+
+Spack Build:
+  stage: build
+  tags:
+    - summit
+    - shell
+  needs: []
+  script:
+    - cd $SPACK_WORK_DIR/
+    - git clone -c feature.manyFiles=true https://github.com/spack/spack.git
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - spack install exaworks
+    - spack install py-pytest
+
+
+Spack Test:
+  stage: test
+  parallel:
+      matrix:
+        - TEST : ["rp", "swift-t", "parsl", "flux", "rp-flux", "parsl-flux"]
+  before_script:
+    - whoami
+  tags:
+    - summit
+    - batch
+  needs: [Spack Build]
+  script:
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - spack load exaworks py-pytest
+    - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+    - bash ci/tests/${TEST}/test.sh
+  after_script:
+    - whoami
+
+
+Spack Clean:
+  stage: clean
+  before_script:
+    - whoami
+  tags:
+    - summit
+    - shell
+  needs: [Spack Test]
+  script:
+    - rm -rf $SPACK_WORK_DIR/spack/
+
