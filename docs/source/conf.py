@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'ExaWorks Software Development Kit'
+project = 'ExaWorks SDK'
 copyright = '2022, ExaWork Devel Team'
 author = 'ExaWork Devel Team'
 
