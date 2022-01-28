@@ -7,15 +7,20 @@ ExaWorks: Software Development Kit
 
    This project is under active development.
 
+
 .. toctree::
+   :numbered:
    :maxdepth: 2
-   :caption: Contents:
+
+   introduction.rst
    components.rst
    usage.rst
    tutorial.rst
+   policies.rst
+
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
