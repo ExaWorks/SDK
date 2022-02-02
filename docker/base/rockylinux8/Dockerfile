@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=centos:8
+ARG BASE_IMAGE=rockylinux:8
 FROM ${BASE_IMAGE}
 
 ARG MPI=openmpi
@@ -20,6 +20,7 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     curl \
     diffutils \
     file \
+    findutils \
     gcc \
     gcc-c++ \
     git \

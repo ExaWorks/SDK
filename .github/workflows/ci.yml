@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dockerbase: ["centos7", "centos8", "ubuntu2004"]
+        dockerbase: ["centos7", "rockylinux8", "ubuntu2004"]
         packagemanager: ["pip", "conda"]
         mpi: ["openmpi", "mpich"]
         exclude:

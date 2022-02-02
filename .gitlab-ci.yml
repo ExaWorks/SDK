@@ -46,7 +46,7 @@ Build Core Image:
   stage: build
   parallel:
     matrix:
-      - BASE: ["centos7", "centos8", "ubuntu"]
+      - BASE: ["centos7", "rockylinux8", "ubuntu"]
         MPI: ["openmpi", "mpich"]
         CORE: ["rp", "parsl", "flux", "swift-t"]
 
