@@ -7,7 +7,6 @@ stages:
 Spack Build:
   stage: build
   tags:
-    - ascent
     - nobatch
   needs: []
   script:
@@ -26,7 +25,6 @@ Spack Test:
   before_script:
     - whoami
   tags:
-    - ascent
     - batch
   needs: [Spack Build]
   script:
@@ -43,7 +41,6 @@ Spack Clean:
   before_script:
     - whoami
   tags:
-    - ascent
     - nobatch
   needs: [Spack Test]
   script:
