@@ -7,8 +7,8 @@ stages:
 Spack Build:
   stage: build
   tags:
-    - summit
-    - shell
+    - ascent
+    - nobatch
   needs: []
   script:
     - cd $SPACK_WORK_DIR/
@@ -26,7 +26,7 @@ Spack Test:
   before_script:
     - whoami
   tags:
-    - summit
+    - ascent
     - batch
   needs: [Spack Build]
   script:
@@ -43,8 +43,8 @@ Spack Clean:
   before_script:
     - whoami
   tags:
-    - summit
-    - shell
+    - ascent
+    - nobatch
   needs: [Spack Test]
   script:
     - rm -rf $SPACK_WORK_DIR/spack/
