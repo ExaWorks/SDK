@@ -3,6 +3,7 @@ FROM ${BASE_IMAGE}
 
 ARG MPI=openmpi
 ARG MPI_PREFIX=/usr/local
+ARG PYTHON_VERSION=3.7
 ARG PACKAGE_MANAGER=pip
 ENV VIRTUAL_ENV=/ve_exaworks
 ENV MPI_FLAVOR=${MPI}
@@ -26,7 +27,10 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
     sudo \
     vim \
     wget \
-    which
+    which \
+    yum-utils \
+ && sed -i 's/http:\/\/vault.centos.org/https:\/\/vault.centos.org/g' /etc/yum.repos.d/* \
+ && yum upgrade ca-certificates
 
 # MongoDB Repository (RADICAL-Pilot Dependency)
 RUN echo -e "\
@@ -35,6 +39,10 @@ name     = MongoDB Repository \n\
 baseurl  = https://repo.mongodb.org/yum/redhat/7Server/mongodb-org/3.0/x86_64/ \n\
 gpgcheck = 0 \n\
 enabled  = 1 \n" >> /etc/yum.repos.d/mongodb.repo
+
+# copy over the python installation script in case we need it for pip
+# conda will install its own python version
+COPY ./scripts/install-python.sh /scripts/
 
 # The case of CentOS7 with `conda` package manager is excluded from CI workflow,
 # due to unresolved issues between GCC and OpenMPI installations
@@ -62,7 +70,8 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
      && rm -rf ${PKG}* \
      && ldconfig ; \
     else \
-        yum -y install \
+        yum-builddep -y python3 \
+     && yum -y install \
         # Flux-core Dependencies
         autoconf \
         automake \
@@ -83,7 +92,6 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         lua-devel \
         lua-posix \
         pkgconfig \
-        python36-devel \
         python3-pip \
         sqlite \
         lz4-devel \
@@ -105,11 +113,12 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         zsh \
         # RADICAL-Pilot Dependency
         mongodb-org \
+     && ./scripts/install-python.sh $PYTHON_VERSION \
      && yum clean all ; \
     fi
 
 COPY ./scripts/install-python-env.sh ./scripts/environment.yml /scripts/
-RUN bash /scripts/install-python-env.sh ${PACKAGE_MANAGER}
+RUN bash /scripts/install-python-env.sh ${PACKAGE_MANAGER} ${PYTHON_VERSION}
 
 # Swift/T Dependency on Apache Ant
 RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.gz \

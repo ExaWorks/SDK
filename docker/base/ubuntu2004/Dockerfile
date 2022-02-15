@@ -4,6 +4,7 @@ FROM ${BASE_IMAGE}
 ARG MPI=openmpi
 ARG MPI_PREFIX=/usr/local
 ARG PACKAGE_MANAGER=pip
+ARG PYTHON_VERSION=3.7
 ENV VIRTUAL_ENV=/ve_exaworks
 ENV MPI_FLAVOR=${MPI}
 ENV MPI_PREFIX=${MPI_PREFIX}
@@ -26,6 +27,11 @@ RUN apt-get update -y \
     vim \
     wget
 
+
+# copy over the python installation script in case we need it for pip
+# conda will install its own python version
+COPY ./scripts/install-python.sh /scripts/
+
 RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         apt-get update -y \
      && apt install -y \
@@ -33,8 +39,10 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         aspell-en \
      && apt-get clean ; \
     else \
+        # install python
+        ./scripts/install-python.sh $PYTHON_VERSION \
         # MongoDB installation (RADICAL-Pilot Dependency)
-        curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - \
+     && curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - \
      && echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | \
         tee /etc/apt/sources.list.d/mongodb-org-4.4.list \
      && apt-get update -y \
@@ -61,7 +69,6 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         lua5.1 \
         liblua5.1-dev \
         lua-posix \
-        python3-dev \
         python3-cffi \
         python3-yaml \
         python3-jsonschema \
@@ -91,7 +98,7 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
     fi
 
 COPY ./scripts/install-python-env.sh ./scripts/environment.yml /scripts/
-RUN bash /scripts/install-python-env.sh ${PACKAGE_MANAGER}
+RUN bash /scripts/install-python-env.sh ${PACKAGE_MANAGER} ${PYTHON_VERSION}
 
 # Swift/T Dependency on Apache Ant
 RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.gz \

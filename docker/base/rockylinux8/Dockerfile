@@ -4,6 +4,7 @@ FROM ${BASE_IMAGE}
 ARG MPI=openmpi
 ARG MPI_PREFIX=/usr/local
 ARG PACKAGE_MANAGER=pip
+ARG PYTHON_VERSION=3.7
 ENV VIRTUAL_ENV=/ve_exaworks
 ENV MPI_FLAVOR=${MPI}
 ENV MPI_PREFIX=${MPI_PREFIX}
@@ -19,6 +20,7 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     bzip2 \
     curl \
     diffutils \
+    dnf-plugins-core \
     file \
     findutils \
     gcc \
@@ -38,10 +40,15 @@ baseurl  = https://repo.mongodb.org/yum/redhat/8Server/mongodb-org/3.6/x86_64/ \
 gpgcheck = 0 \n\
 enabled  = 1 \n" >> /etc/yum.repos.d/mongodb.repo
 
+# copy over the python installation script in case we need it for pip
+# conda will install its own python version
+COPY ./scripts/install-python.sh /scripts/
+
 RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         dnf clean all ; \
     else \
-        dnf install -y \
+        dnf builddep -y python3 \
+     && dnf install -y \
         # Flux-core Dependencies
         autoconf \
         automake \
@@ -62,7 +69,6 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         lua-devel \
         lua-posix \
         pkgconfig \
-        python36-devel \
         python3-pip \
         sqlite \
         lz4-devel \
@@ -85,11 +91,12 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         zsh \
         # RADICAL-Pilot Dependency
         mongodb-org \
+     && ./scripts/install-python.sh $PYTHON_VERSION \
      && dnf clean all ; \
     fi
 
 COPY ./scripts/install-python-env.sh ./scripts/environment.yml /scripts/
-RUN bash /scripts/install-python-env.sh ${PACKAGE_MANAGER}
+RUN bash /scripts/install-python-env.sh ${PACKAGE_MANAGER} ${PYTHON_VERSION}
 
 # Swift/T Dependency on Apache Ant
 RUN wget https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.15-bin.tar.gz \
