@@ -14,11 +14,18 @@ jobs:
         dockerbase: ["centos7", "rockylinux8", "ubuntu2004"]
         packagemanager: ["pip", "conda"]
         mpi: ["openmpi", "mpich"]
+        pyversion: ["3.7", "3.8", "3.9"]
         exclude:
           - dockerbase: "centos7"
             packagemanager: "conda"
+          - dockerbase: "ubuntu2004"
+            packagemanager: "conda"
+          - pyversion: "3.8"
+            packagemanager: "conda"
+          - pyversion: "3.9"
+            packagemanager: "conda"
     env:
-      DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}_${{ matrix.mpi }}"
+      DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}_${{ matrix.mpi }}_${{ matrix.pyversion }}"
 
     steps:
     - name: Checkout repo
@@ -31,6 +38,7 @@ jobs:
           --cache-from exaworks/sdk-base:${{ env.DOCKER_TAG }} \
           -f docker/base/${{ matrix.dockerbase }}/Dockerfile \
           --build-arg PACKAGE_MANAGER=${{ matrix.packagemanager }} \
+          --build-arg PYTHON_VERSION=${{ matrix.pyversion }} \
           --build-arg MPI=${{ matrix.mpi }} \
           docker/base/
         docker build \
