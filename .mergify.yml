@@ -2,16 +2,27 @@ queue_rules:
   - name: default
     conditions: &ci_checks
       # Conditions to get out of the queue (= merged)
-      - status-success="Run test suite (centos7, pip, openmpi)"
-      - status-success="Run test suite (centos7, pip, mpich)"
-      - status-success="Run test suite (rockylinux8, pip, openmpi)"
-      - status-success="Run test suite (rockylinux8, pip, mpich)"
-      - status-success="Run test suite (rockylinux8, conda, openmpi)"
-      - status-success="Run test suite (rockylinux8, conda, mpich)"
-      - status-success="Run test suite (ubuntu2004, pip, openmpi)"
-      - status-success="Run test suite (ubuntu2004, pip, mpich)"
-      - status-success="Run test suite (ubuntu2004, conda, openmpi)"
-      - status-success="Run test suite (ubuntu2004, conda, mpich)"
+      - status-success="Run test suite (centos7, pip, openmpi, 3.7)"
+      - status-success="Run test suite (centos7, pip, openmpi, 3.8)"
+      - status-success="Run test suite (centos7, pip, openmpi, 3.9)"
+      - status-success="Run test suite (centos7, pip, mpich, 3.7)"
+      - status-success="Run test suite (centos7, pip, mpich, 3.8)"
+      - status-success="Run test suite (centos7, pip, mpich, 3.9)"
+      - status-success="Run test suite (rockylinux8, pip, openmpi, 3.7)"
+      - status-success="Run test suite (rockylinux8, pip, openmpi, 3.8)"
+      - status-success="Run test suite (rockylinux8, pip, openmpi, 3.9)"
+      - status-success="Run test suite (rockylinux8, pip, mpich, 3.7)"
+      - status-success="Run test suite (rockylinux8, pip, mpich, 3.8)"
+      - status-success="Run test suite (rockylinux8, pip, mpich, 3.9)"
+      - status-success="Run test suite (rockylinux8, conda, openmpi, 3.7)"
+      - status-success="Run test suite (rockylinux8, conda, mpich, 3.7)"
+      - status-success="Run test suite (ubuntu2004, pip, openmpi, 3.7)"
+      - status-success="Run test suite (ubuntu2004, pip, openmpi, 3.8)"
+      - status-success="Run test suite (ubuntu2004, pip, openmpi, 3.9)"
+      - status-success="Run test suite (ubuntu2004, pip, mpich, 3.7)"
+      - status-success="Run test suite (ubuntu2004, pip, mpich, 3.8)"
+      - status-success="Run test suite (ubuntu2004, pip, mpich, 3.9)"
+
       - status-success="validate commits"
 
 pull_request_rules:
