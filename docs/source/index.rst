@@ -19,7 +19,7 @@ ExaWorks: Software Development Kit
    introduction.rst
    components.rst
    usage.rst
-   tutorial.rst
+   tutorials.rst
    policies.rst
 
 
