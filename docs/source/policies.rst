@@ -1,3 +1,6 @@
+.. _chapter_policies:
+
+========
 Policies
 ========
 
