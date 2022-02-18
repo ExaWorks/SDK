@@ -66,7 +66,7 @@ three stages called Seed, Simulate and Analyze. The Seed and Analyze stages
 contain one task while the Simulate pipeline consists of multiple tasks (see
 Figure 1).
 
-.. image:: tutotials/images/entk_example1_app.png
+.. image:: tutorials/images//entk_example1_app.png
    :alt: Example 1 ensemble application with 2 pipelines
 
 The two pipelines execute concurrently and, as per EnTK API definitions, each
@@ -122,7 +122,7 @@ As showed by Figure 2, the application adapts based on the partial results of
 the simulation stages. Thus, the number of stages per application is not
 predefined but determined at runtime, depending on the simulation results.
 
-.. image:: tutotials/images/entk_example2_app.png
+.. image:: /tutorials/images/entk_example2_app.png
    :alt: Example 2 adaptive ensemble application with 2 dynamic pipelines
 
 TODO: Depending on how we want to provide the tutorial code, add example
