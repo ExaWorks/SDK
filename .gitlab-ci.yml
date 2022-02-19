@@ -9,19 +9,117 @@ stages:
   - test
   - clean
 
+Build Base Image:
+  stage: build
+  parallel:
+    matrix:
+      - BASE: ["centos7", "centos8", "ubuntu"]
+        MPI: ["openmpi", "mpich"]
+
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  needs: []
+  script:
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST && s=0 && break ||
+        s=$? && sleep 5; done; (exit $s)
+
+    - export tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}-${MPI}:$QUAY_LATEST
+    - export lcbase=${QUAY_HOST}/lcweg/lc-${BASE}
+    - >
+        podman build -t ${tag} -f docker/base/${BASE}*/Dockerfile
+        --build-arg BASE_IMAGE=${lcbase} --build-arg MPI=${MPI}-devel
+        docker/base/
+
+    - echo "Image Tag = ${tag}"
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman push ${tag} && s=0 && break ||
+        s=$? && sleep 5; done; (exit $s)
+    - podman logout $QUAY_HOST
+
+Build Core Image:
+  stage: build
+  parallel:
+    matrix:
+      - BASE: ["centos7", "centos8", "ubuntu"]
+        MPI: ["openmpi", "mpich"]
+        CORE: ["rp", "parsl", "flux", "swift-t"]
+
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  needs: [Build Base Image]
+  script:
+    - export base_tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}-${MPI}:$QUAY_LATEST
+    - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}-${MPI}:${QUAY_LATEST}
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST && s=0 && break ||
+        s=$? && sleep 15; done; (exit $s)
+
+    - echo "Base Tag = ${base_tag}"
+    - echo "Image Tag = ${tag}"
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman build -t $tag --build-arg BASE_IMAGE=${base_tag} docker/${CORE}
+        && s=0 && break || s=$? && sleep 15; done; (exit $s)
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman push ${tag} && s=0 && break ||
+        s=$? && sleep 15; done; (exit $s)
+
+    - podman logout $QUAY_HOST
+
+
+Container Test:
+  stage: test
+  parallel:
+    matrix:
+      - BASE: ["centos7", "centos8", "ubuntu"]
+        MPI: ["openmpi", "mpich"]
+        CORE: ["rp", "parsl", "flux", "swift-t"]
+
+  before_script:
+    - whoami
+  tags:
+    - quartz
+    - batch
+  needs: [Build Core Image]
+  script:
+    - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}-${MPI}:${QUAY_LATEST}
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST && s=0 && break ||
+        s=$? && sleep 15; done; (exit $s)
+
+    - echo "Image Tag = ${tag}"
+    - >
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman pull $tag && s=0 && break ||
+        s=$? && sleep 15; done; (exit $s)
+
+    - podman run $tag
+    - podman logout $QUAY_HOST
+
 Spack Build:
   stage: build
   tags:
-    - nobatch
+    - quartz
+    - shell
   needs: []
   script:
-    - cd $HOME/
-    - test -s $HOME/spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git
-    - cd $HOME/spack && git pull && cd $HOME
-    - . $HOME/spack/share/spack/setup-env.sh
+    - cd $SPACK_WORK_DIR/
+    - git clone -c feature.manyFiles=true https://github.com/spack/spack.git
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack install exaworks
     - spack install py-pytest
-
 
 Spack Test:
   stage: test
@@ -31,26 +129,24 @@ Spack Test:
   before_script:
     - whoami
   tags:
+    - quartz
     - batch
   needs: [Spack Build]
-  variables:
-    SCHEDULER_PARAMETERS: "-P CSC449 -nnodes 1 -W 30"
   script:
-    - . $HOME/spack/share/spack/setup-env.sh
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack load exaworks py-pytest
-    - export RADICAL_PILOT_DBURL="mongodb://am:W6gvSzpGBqAeuR4Z@95.217.193.116:27017/am"
+    - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
     - bash ci/tests/${TEST}/test.sh
   after_script:
     - whoami
-
 
 Spack Clean:
   stage: clean
   before_script:
     - whoami
   tags:
-    - nobatch
+    - quartz
+    - shell
   needs: [Spack Test]
   script:
-    - rm -rf $HOME/spack/
-
+    - rm -rf $SPACK_WORK_DIR/spack/
