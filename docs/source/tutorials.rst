@@ -6,12 +6,8 @@ Tutorials
 
 In the following, we offer a brief tutorial for each Exaworks SDK core component.
 
-.. toctree::
-   :numbered:
-   :maxdepth: 1
-
-   tutorials/flux.ipynb
-   tutorials/parsl.ipynb
-   tutorials/psij.ipynb
-   tutorials/rct.ipynb
-   tutorials/swift.ipynb
+* `Flux <tutorials/flux.ipynb>`_
+* `Parsl <tutorials/parsl.ipynb>`_
+* `PSI/J <tutorials/psij.ipynb>`_
+* `RADICAL-Cybertolls <tutorials/rct.ipynb>`_
+* `swift/T <tutorials/swift.ipynb>`_
