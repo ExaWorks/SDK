@@ -10,9 +10,11 @@ Spack Build:
     - nobatch
   needs: []
   script:
-    - cd $SPACK_WORK_DIR/
-    - git clone -c feature.manyFiles=true https://github.com/spack/spack.git
-    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - cd $HOME/
+    - rm -rf $HOME/spack
+    - test -d $HOME/spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git $HOME/spack
+    cd $HOME/spack && git pull && cd $HOME
+    - . $HOME/spack/share/spack/setup-env.sh
     - spack install exaworks
     - spack install py-pytest
 
@@ -28,9 +30,8 @@ Spack Test:
     - batch
   needs: [Spack Build]
   script:
-    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - . $HOME/spack/share/spack/setup-env.sh
     - spack load exaworks py-pytest
-    - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
     - bash ci/tests/${TEST}/test.sh
   after_script:
     - whoami
@@ -44,5 +45,5 @@ Spack Clean:
     - nobatch
   needs: [Spack Test]
   script:
-    - rm -rf $SPACK_WORK_DIR/spack/
+    - rm -rf $HOME/spack/
 
