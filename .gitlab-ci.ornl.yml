@@ -13,7 +13,7 @@ Spack Build:
     - cd $HOME/
     - rm -rf $HOME/spack $HOME/.spack
     - test -d $HOME/spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git $HOME/spack
-    cd $HOME/spack && git pull && cd $HOME
+    - cd $HOME/spack && git pull && cd $HOME
     - . $HOME/spack/share/spack/setup-env.sh
     - spack install exaworks
     - spack install py-pytest
