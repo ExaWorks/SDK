@@ -17,6 +17,13 @@ print(hello().result())
 def echo_hello(stdout='/tmp/echo-hello.stdout', stderr='/tmp/echo-hello.stderr'):
     return 'echo "Hello World!"'
 
+# avoid accumulation of results in persistent test environments
+try:
+    os.unlink('/tmp/echo-hello.stdout')
+    os.unlink('/tmp/echo-hello.stderr')
+except:
+    pass
+
 echo_hello().result()
 
 with open('/tmp/echo-hello.stdout', 'r') as f:
