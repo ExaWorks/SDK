@@ -36,8 +36,8 @@ Spack Test:
     http_proxy: "http://proxy.ccs.ornl.gov:3128/"
     https_proxy: "https://proxy.ccs.ornl.gov:3128/"
     no_proxy: "'localhost,127.0.0.0/8,*.ccs.ornl.gov,*.ncrc.gov',*.olcf.ornl.gov"
-    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/stf007/ci/${CI_JOB_ID}"
-    WORK: "/gpfs/wolf/proj-shared/stf007/ci/${CI_JOB_ID}"
+    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
   script:
     - . $WORK/spack/share/spack/setup-env.sh
     - spack load exaworks py-pytest
