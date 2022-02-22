@@ -9,12 +9,12 @@ Spack Build:
   tags:
     - nobatch
   needs: []
+  variables:
+    WORK: "/gpfs/wolf/proj-shared/stf007/ci/${CI_JOB_ID}"
   script:
-    - cd $HOME/
-    - rm -rf $HOME/spack $HOME/.spack
-    - test -d $HOME/spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git $HOME/spack
-    - cd $HOME/spack && git pull && cd $HOME
-    - . $HOME/spack/share/spack/setup-env.sh
+    - cd $WORK/
+    - git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
+    - . $WORK/spack/share/spack/setup-env.sh
     - spack install exaworks
     - spack install py-pytest
 
@@ -37,9 +37,9 @@ Spack Test:
     https_proxy: "https://proxy.ccs.ornl.gov:3128/"
     no_proxy: "'localhost,127.0.0.0/8,*.ccs.ornl.gov,*.ncrc.gov',*.olcf.ornl.gov"
     CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/stf007/ci/${CI_JOB_ID}"
-
+    WORK: "/gpfs/wolf/proj-shared/stf007/ci/${CI_JOB_ID}"
   script:
-    - . $HOME/spack/share/spack/setup-env.sh
+    - . $WORK/spack/share/spack/setup-env.sh
     - spack load exaworks py-pytest
     - bash ci/tests/${TEST}/test.sh
   after_script:
@@ -53,6 +53,8 @@ Spack Clean:
   tags:
     - nobatch
   needs: [Spack Test]
+  variables:
+    WORK: "/gpfs/wolf/proj-shared/stf007/ci/${CI_JOB_ID}"
   script:
-    - rm -rf $HOME/spack/
+    - rm -rf $WORK/spack/
 
