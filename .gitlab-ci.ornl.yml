@@ -39,6 +39,8 @@ Spack Test:
     CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
   script:
+    - pwd
+    - cd $WORK
     - . $WORK/spack/share/spack/setup-env.sh
     - spack load exaworks py-pytest
     - bash ci/tests/${TEST}/test.sh
