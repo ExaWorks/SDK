@@ -10,7 +10,8 @@ Spack Build:
     - nobatch
   needs: []
   variables:
-    WORK: "/gpfs/wolf/proj-shared/stf007/ci/${CI_JOB_ID}"
+    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
   script:
     - cd $WORK/
     - git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
@@ -56,7 +57,8 @@ Spack Clean:
     - nobatch
   needs: [Spack Test]
   variables:
-    WORK: "/gpfs/wolf/proj-shared/stf007/ci/${CI_JOB_ID}"
+    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
   script:
     - rm -rf $WORK/spack/
 
