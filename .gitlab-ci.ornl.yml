@@ -31,6 +31,13 @@ Spack Test:
   needs: [Spack Build]
   variables:
     SCHEDULER_PARAMETERS: "-P CSC449 -nnodes 1 -W 30"
+    all_proxy: "socks://proxy.ccs.ornl.gov:3128/"
+    ftp_proxy: "ftp://proxy.ccs.ornl.gov:3128/"
+    http_proxy: "http://proxy.ccs.ornl.gov:3128/"
+    https_proxy: "https://proxy.ccs.ornl.gov:3128/"
+    no_proxy: "'localhost,127.0.0.0/8,*.ccs.ornl.gov,*.ncrc.gov',*.olcf.ornl.gov"
+    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/stf007/ci/${CI_JOB_ID}"
+
   script:
     - . $HOME/spack/share/spack/setup-env.sh
     - spack load exaworks py-pytest
