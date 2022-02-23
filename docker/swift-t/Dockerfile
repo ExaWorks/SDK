@@ -23,5 +23,5 @@ RUN ./install-swift-t.sh
 WORKDIR /
 
 # Simple sanity tests
-COPY test-sanity.sh ${SWIFT_ROOT}/stc/bin
-CMD test-sanity.sh
+COPY test-sanity.sh /tests/swift/test.sh
+CMD /tests/swift/test.sh

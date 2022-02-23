@@ -37,7 +37,7 @@ FLUXION_QMANAGER_RC_NOOP=t FLUXION_RESOURCE_RC_NOOP=t FLUX_TEST_INSTALLED_PATH=/
 exit_code=$?
 
 if [[ $exit_code -gt 0 ]]; then
-    bash /checks-annotate.sh
+    bash /tests/flux/checks-annotate.sh
 fi
 
 rm $SHELL_PLUGIN_PATH

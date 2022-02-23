@@ -43,5 +43,5 @@ RUN BOOST_OPT=$([ -z "${BOOST_LIBDIR}" ] || echo "--with-boost-libdir=${BOOST_LI
 # implications, only (small) performance implications.
 ENV PYTHONPATH="/usr/lib64/flux/python3.6:/usr/lib/flux/python3.6${PYTHONPATH:+:}${PYTHONPATH:-}"
 
-COPY test.sh checks-annotate.sh /
-CMD /test.sh
+COPY test.sh checks-annotate.sh /tests/flux/
+CMD /tests/flux/test.sh
