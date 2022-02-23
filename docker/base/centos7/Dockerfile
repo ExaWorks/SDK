@@ -28,10 +28,11 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
     vim \
     wget \
     which \
-    yum-utils \
- && sed -i 's/http:\/\/vault.centos.org/https:\/\/vault.centos.org/g' /etc/yum.repos.d/* \
- && yum upgrade ca-certificates
+    yum-utils
 
+RUN sed -i 's/http:\/\/vault.centos.org/https:\/\/vault.centos.org/g' /etc/yum.repos.d/* \
+ && yum upgrade ca-certificates
+ 
 # MongoDB Repository (RADICAL-Pilot Dependency)
 RUN echo -e "\
 [mongodb]\n\
