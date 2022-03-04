@@ -65,14 +65,20 @@ jobs:
     - name: Run tests (${{ env.DOCKER_TAG }})
       run: |
         total=0
+        export tag=${{ env.DOCKER_TAG }}
+        export run_id=$RANDOM
+        export branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+        python3 .github/test.py -s
         for core in flux parsl rp swift flux-parsl
         do
-          docker run exaworks_sdk:${{ env.DOCKER_TAG }} \
-            bash --login -c "/tests/$core/test.sh"
+          python3 .github/test.py -n $core -c \
+          "docker run exaworks_sdk:${{ env.DOCKER_TAG }} \
+            bash --login -c /tests/$core/test.sh"
           ret=$?
           echo "$core   : $ret"
           total=$(($total + $ret))
         done
+        python3 .github/test.py -e
         exit $total
 
   check-pr:
