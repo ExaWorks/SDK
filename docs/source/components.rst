@@ -25,4 +25,22 @@ TODO: Add here instructions for installing and using the containerized core comp
 Spack packages
 ++++++++++++++
 
+ExaWorks SDK packages are packed together into Spack ``exaworks`` package. The
+following code shows its installation within a corresponding Spack environment
+
+::
+
+    spack env create exaworkssdk
+    spack env activate exaworkssdk
+    spack install exaworks
+
+If Spack is not in the system, then it could be installed manually
+
+::
+
+    git clone https://github.com/spack/spack.git
+    . spack/share/spack/setup-env.sh
+
+For additional information please refer to `the Spack documentation <https://spack.readthedocs.io/en/latest/>`_.
+
 TODO: Add here instructions for installing and using the spack package of each core component.
