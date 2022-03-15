@@ -20,7 +20,25 @@ Each core component can be indipendently installed by following the instructions
 Containers
 ++++++++++
 
-TODO: Add here instructions for installing and using the containerized core components.
+ExaWorks SDK packages are available via container from docker hub. The
+following code shows how to access the SDK container image locally without
+installation.
+
+::
+
+    docker pull exaworks/sdk
+    docker run -it exaworks/sdk bash
+
+The following code shows how to use the container images to run the notebook
+tutorials. Note that the specific notebook you want to run may have some
+additional prerequisites.
+
+::
+
+    docker run -p 8888:8888 -v path/to/notebooks:/notebooks -it exaworks/sdk bash
+    pip install jupyter
+    cd /notebooks
+    jupyter notebook --allow-root --ip 0.0.0.0 --no-browser
 
 Spack packages
 ++++++++++++++
