@@ -21,6 +21,7 @@ ExaWorks: Software Development Kit
    usage.rst
    tutorials.rst
    policies.rst
+   development.rst
 
 
 Indices and tables
