@@ -59,6 +59,7 @@ If Spack is not in the system, then it could be installed manually
     git clone https://github.com/spack/spack.git
     . spack/share/spack/setup-env.sh
 
+Steps for package creation are provided in `Packaging section <packaging.rst>`_.
 For additional information please refer to `the Spack documentation <https://spack.readthedocs.io/en/latest/>`_.
 
 TODO: Add here instructions for installing and using the spack package of each core component.
