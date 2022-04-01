@@ -4,9 +4,9 @@ RADICAL-Pilot tests (smoke and integration testings) are included into SDK CI.
 
 # RADICAL-EnTK
 
-**NOTE: this is not part of SDK CI**
+RADICAL-EnTK (Ensemble Toolkit) smoke test is included into SDK CI.
 
-RADICAL-EnTK (Ensemble Toolkit) uses RADICAL-Pilot and relies on such services 
+RADICAL-EnTK uses RADICAL-Pilot and relies on such services 
 as MongoDB and RabbitMQ to manage and control workload execution within defined 
 workflows. RabbitMQ was not included into SDK container, thus we provide a 
 recipe of how to run an EnTK application using SDK docker container (examples 

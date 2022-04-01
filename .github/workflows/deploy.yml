@@ -64,24 +64,24 @@ jobs:
     - name: Build and push composite image (${{ env.DOCKER_TAG }})
       run: |
         docker build \
-          -t rp:${{ env.DOCKER_TAG }} \
+          -t rct:${{ env.DOCKER_TAG }} \
           --build-arg BASE_IMAGE=exaworks/sdk-base:${{ env.DOCKER_TAG }} \
-          docker/rp
+          docker/rct
         docker build \
-          -t rp_parsl:${{ env.DOCKER_TAG }} \
-          --build-arg BASE_IMAGE=rp:${{ env.DOCKER_TAG }} \
+          -t rct_parsl:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rct:${{ env.DOCKER_TAG }} \
           docker/parsl
         docker build \
-          -t rp_parsl_swift:${{ env.DOCKER_TAG }} \
-          --build-arg BASE_IMAGE=rp_parsl:${{ env.DOCKER_TAG }} \
+          -t rct_parsl_swift:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rct_parsl:${{ env.DOCKER_TAG }} \
           docker/swift-t
         docker build \
-          -t rp_parsl_swift_flux:${{ env.DOCKER_TAG }} \
-          --build-arg BASE_IMAGE=rp_parsl_swift:${{ env.DOCKER_TAG }} \
+          -t rct_parsl_swift_flux:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rct_parsl_swift:${{ env.DOCKER_TAG }} \
           docker/flux
         docker build \
           -t exaworks/sdk:${{ env.DOCKER_TAG }} \
-          --build-arg BASE_IMAGE=rp_parsl_swift_flux:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rct_parsl_swift_flux:${{ env.DOCKER_TAG }} \
           docker/integration
         docker push exaworks/sdk:${{ env.DOCKER_TAG }}
 

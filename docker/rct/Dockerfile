@@ -1,5 +1,5 @@
 
-# RP/RCT DOCKERFILE
+# RCT DOCKERFILE
 
 ARG BASE_IMAGE=exaworks/sdk-base
 FROM ${BASE_IMAGE}
@@ -14,6 +14,8 @@ RUN pip install radical.pilot radical.entk
 RUN git clone -b master --single-branch https://github.com/radical-cybertools/radical.pilot.git \
  && git clone -b master --single-branch https://github.com/radical-cybertools/radical.entk.git
 
-# start mongodb and run RP tests
 COPY run_rp_test.sh /tests/rp/test.sh
+COPY run_re_test.sh /tests/re/test.sh
+
+# start mongodb and run RP tests
 CMD  /bin/sh /tests/rp/test.sh
