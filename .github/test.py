@@ -65,7 +65,7 @@ def get_result(command, name):
                   "module" : "Sanity Checks",
                   "stdout" : out
             })
-    return data, ret
+    return data
 
 def get_end():
     results = {}
@@ -101,18 +101,13 @@ def main():
     elif args.end:
         data = get_end()
     elif args.command:
-        data, ret = get_result(args.command, args.name)
+        data = get_result(args.command, args.name)
     else:
         print("No viable option called, Exiting")
         exit(1)
 
     msg = {"id" : "Github Actions", "key" : "42", "data" : data}
     requests.post(url, json=msg)
-
-    if ret:
-        exit(0)
-    else:
-        exit(1)
 
 if __name__ == '__main__':
     main()
