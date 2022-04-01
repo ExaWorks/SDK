@@ -43,8 +43,6 @@ jobs:
         do
           python3 .github/test.py -n $core -c \
           "docker run exaworks/sdk:${{ env.DOCKER_TAG }} \
-            bash --login -c /tests/$core/test.sh"
-          ret=$?
-          echo "$core   : $ret"
+           bash --login -c /tests/$core/test.sh"
         done
         python3 .github/test.py -e
