@@ -40,6 +40,7 @@ Spack Test:
     no_proxy: "localhost,127.0.0.0/8,*.ccs.ornl.gov,*.ncrc.gov,*.olcf.ornl.gov"
     CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+    GIT_SSL_NO_VERIFY: "true"
   script:
     - pwd
     - cd $WORK
@@ -60,6 +61,7 @@ Spack Clean:
   variables:
     CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+    GIT_SSL_NO_VERIFY: "true"
   script:
     - rm -rf $WORK/spack/
 
