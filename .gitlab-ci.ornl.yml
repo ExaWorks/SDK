@@ -1,8 +1,8 @@
 
 stages:
   - build
-  - test
-  - clean
+#  - test
+#  - clean
 
 Spack Build:
   stage: build
@@ -15,53 +15,53 @@ Spack Build:
     GIT_SSL_NO_VERIFY: "true"
   script:
     - cd $WORK/
-    - git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
-    - . $WORK/spack/share/spack/setup-env.sh
-    - spack install exaworks
-    - spack install py-pytest
+#    - git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
+#    - . $WORK/spack/share/spack/setup-env.sh
+#    - spack install exaworks
+#    - spack install py-pytest
 
 
-Spack Test:
-  stage: test
-  parallel:
-      matrix:
-        - TEST : ["rp", "swift-t", "parsl", "flux", "rp-flux", "parsl-flux"]
-  before_script:
-    - whoami
-  tags:
-    - batch
-  needs: [Spack Build]
-  variables:
-    SCHEDULER_PARAMETERS: "-P CSC449 -nnodes 1 -W 30"
-    all_proxy: "socks://proxy.ccs.ornl.gov:3128/"
-    ftp_proxy: "ftp://proxy.ccs.ornl.gov:3128/"
-    http_proxy: "http://proxy.ccs.ornl.gov:3128/"
-    https_proxy: "https://proxy.ccs.ornl.gov:3128/"
-    no_proxy: "localhost,127.0.0.0/8,*.ccs.ornl.gov,*.ncrc.gov,*.olcf.ornl.gov"
-    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
-    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
-    GIT_SSL_NO_VERIFY: "true"
-  script:
-    - pwd
-    - cd $WORK
-    - . $WORK/spack/share/spack/setup-env.sh
-    - spack load exaworks py-pytest
-    - bash ci/tests/${TEST}/test.sh
-  after_script:
-    - whoami
+#Spack Test:
+#  stage: test
+#  parallel:
+#      matrix:
+#        - TEST : ["rp", "swift-t", "parsl", "flux", "rp-flux", "parsl-flux"]
+#  before_script:
+#    - whoami
+#  tags:
+#    - batch
+#  needs: [Spack Build]
+#  variables:
+#    SCHEDULER_PARAMETERS: "-P CSC449 -nnodes 1 -W 30"
+#    all_proxy: "socks://proxy.ccs.ornl.gov:3128/"
+#    ftp_proxy: "ftp://proxy.ccs.ornl.gov:3128/"
+#    http_proxy: "http://proxy.ccs.ornl.gov:3128/"
+#    https_proxy: "https://proxy.ccs.ornl.gov:3128/"
+#    no_proxy: "localhost,127.0.0.0/8,*.ccs.ornl.gov,*.ncrc.gov,*.olcf.ornl.gov"
+#    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+#    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+#    GIT_SSL_NO_VERIFY: "true"
+#  script:
+#    - pwd
+#    - cd $WORK
+#    - . $WORK/spack/share/spack/setup-env.sh
+#    - spack load exaworks py-pytest
+#    - bash ci/tests/${TEST}/test.sh
+#  after_script:
+#    - whoami
 
 
-Spack Clean:
-  stage: clean
-  before_script:
-    - whoami
-  tags:
-    - nobatch
-  needs: [Spack Test]
-  variables:
-    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
-    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
-    GIT_SSL_NO_VERIFY: "true"
-  script:
-    - rm -rf $WORK/spack/
+#Spack Clean:
+#  stage: clean
+#  before_script:
+#    - whoami
+#  tags:
+#    - nobatch
+#  needs: [Spack Test]
+#  variables:
+#    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+#    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+#    GIT_SSL_NO_VERIFY: "true"
+#  script:
+#    - rm -rf $WORK/spack/
 
