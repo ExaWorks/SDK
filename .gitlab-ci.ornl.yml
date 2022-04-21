@@ -12,7 +12,8 @@ Spack Build:
   variables:
     CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
-    GIT_SSL_NO_VERIFY: "true"
+    GIT_TRACE: 1
+    GIT_CURL_VERBOSE: 1
   script:
     - cd $WORK/
 #    - git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
