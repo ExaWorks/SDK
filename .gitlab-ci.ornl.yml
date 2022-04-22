@@ -1,7 +1,7 @@
 
 stages:
   - build
-#  - test
+  - test
   - clean
 
 Spack Build:
@@ -18,8 +18,8 @@ Spack Build:
     - cd $WORK/
     - git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
     - . $WORK/spack/share/spack/setup-env.sh
-    - spack install exaworks
-    - spack install py-pytest
+#    - spack install exaworks
+#    - spack install py-pytest
 
 
 Spack Test:
