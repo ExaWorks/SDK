@@ -15,8 +15,14 @@ Spack Build:
     GIT_TRACE: 1
     GIT_CURL_VERBOSE: 1
   script:
-    - cd $WORK/
+    - pwd
+    - cd $WORK
+    - pwd
+    - echo $WORK
     - git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
+    - ls -la $WORK
+    - ls -la $WORK/spack/share/spack/setup-env.sh
+    - . $WORK/spack/share/spack/setup-env.sh
     - . $WORK/spack/share/spack/setup-env.sh
 #    - spack install exaworks
 #    - spack install py-pytest
@@ -44,6 +50,7 @@ Spack Test:
   script:
     - pwd
     - cd $WORK
+    - pwd
     - echo $WORK
     - ls -la $WORK
     - ls -la $WORK/spack/share/spack/setup-env.sh
