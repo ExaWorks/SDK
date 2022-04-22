@@ -11,7 +11,7 @@ Spack Build:
   needs: []
   variables:
 #    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
-    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_PIPELINE_ID}"
   script:
     - pwd
     - mkdir -p $WORK
@@ -45,7 +45,7 @@ Spack Test:
 #    https_proxy: "https://proxy.ccs.ornl.gov:3128/"
 #    no_proxy: "localhost,127.0.0.0/8,*.ccs.ornl.gov,*.ncrc.gov,*.olcf.ornl.gov"
 #    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
-    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_PIPELINE_ID}"
   script:
     - pwd
     - env | grep CI_ | sort
@@ -70,7 +70,7 @@ Spack Clean:
   needs: [Spack Test]
   variables:
 #    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
-    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
+    WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_PIPELINE_ID}"
   script:
     - rm -rf $WORK/spack/
 
