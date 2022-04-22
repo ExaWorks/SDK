@@ -15,7 +15,7 @@ Spack Build:
   script:
     - mkdir -p $WORK
     - cd $WORK
-    - git clone -c feature.manyFiles=true https://github.com/spack/spack.git spack
+    - test -d spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git spack
     - . $WORK/spack/share/spack/setup-env.sh
     - spack install exaworks
     - spack install py-pytest
