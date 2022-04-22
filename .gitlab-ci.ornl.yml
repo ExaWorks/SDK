@@ -44,6 +44,9 @@ Spack Test:
   script:
     - pwd
     - cd $WORK
+    - echo $WORK
+    - ls -la $WORK
+    - ls -la $WORK/spack/share/spack/setup-env.sh
     - . $WORK/spack/share/spack/setup-env.sh
     - spack load exaworks py-pytest
     - bash ci/tests/${TEST}/test.sh
