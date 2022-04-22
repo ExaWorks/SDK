@@ -47,6 +47,7 @@ Spack Test:
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/${CI_JOB_ID}"
   script:
     - pwd
+    - mkdir -p $WORK
     - cd $WORK
     - pwd
     - echo $WORK
