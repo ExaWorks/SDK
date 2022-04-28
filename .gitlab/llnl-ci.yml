@@ -1,0 +1,50 @@
+stages:
+  - build
+  - test
+
+Spack Build:
+  stage: build
+  tags:
+    - quartz
+    - shell
+  needs: []
+  script:
+    - cd $SPACK_WORK_DIR/spack/
+    - git pull
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - spack uninstall -y exaworks py-pytest || true
+    - spack install --fresh exaworks py-pytest
+
+Spack Test:
+  variables:
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 15"
+  stage: test
+  before_script:
+    - whoami
+  parallel:
+    matrix:
+      - HOST : ["quartz", "oslic", "ruby"]
+  tags:
+    - batch
+    - $HOST
+  needs: [Spack Build]
+  script:
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - spack load exaworks py-pytest
+    - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+    - export run_id=$RANDOM
+    - export branch=$CI_COMMIT_BRANCH
+    - export url=$TESTING_HOST
+    - export test="Spack"
+    - export location="llnl-$HOST"
+    - export contact="morton30@llnl.gov"
+    - export imnumber="LLNL-MI-834241"
+    - python3 ci/tests/test.py -s
+    - >
+        for TEST in flux parsl rp swift-t parsl-flux; do
+        python3 ci/tests/test.py -n $TEST -c
+        "bash ci/tests/${TEST}/test.sh";
+        done;
+    - python3 ci/tests/test.py -e
+  after_script:
+    - whoami
