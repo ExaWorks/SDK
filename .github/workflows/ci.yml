@@ -70,7 +70,7 @@ jobs:
 
     - name: Run tests (${{ env.DOCKER_TAG }})
       env:
-        RMQ_HOSTNAME: "127.0.0.1"
+        RMQ_HOSTNAME: "rabbitmq"
         RMQ_PORT: ${{ job.services.rabbitmq.ports[5672] }}
         RMQ_USERNAME: "guest"
         RMQ_PASSWORD: "guest"
