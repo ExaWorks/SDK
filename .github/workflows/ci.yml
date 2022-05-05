@@ -70,10 +70,10 @@ jobs:
 
     - name: Run tests (${{ env.DOCKER_TAG }})
       env:
-        RMQ_HOSTNAME: localhost
+        RMQ_HOSTNAME: "127.0.0.1"
         RMQ_PORT: ${{ job.services.rabbitmq.ports[5672] }}
-        RMQ_USERNAME: guest
-        RMQ_PASSWORD: guest
+        RMQ_USERNAME: "guest"
+        RMQ_PASSWORD: "guest"
       run: |
         total=0
         export tag=${{ env.DOCKER_TAG }}
