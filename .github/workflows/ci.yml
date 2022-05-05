@@ -69,11 +69,6 @@ jobs:
           docker/integration
 
     - name: Run tests (${{ env.DOCKER_TAG }})
-      env:
-        RMQ_HOSTNAME: "rabbitmq"
-        RMQ_PORT: ${{ job.services.rabbitmq.ports[5672] }}
-        RMQ_USERNAME: "guest"
-        RMQ_PASSWORD: "guest"
       run: |
         total=0
         export tag=${{ env.DOCKER_TAG }}

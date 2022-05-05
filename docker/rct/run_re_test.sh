@@ -1,5 +1,10 @@
 #!/bin/bash
 
+export RMQ_HOSTNAME="rabbitmq"
+export RMQ_PORT=5672
+export RMQ_USERNAME="guest"
+export RMQ_PASSWORD="guest"
+
 # run mongodb, let it settle
 echo '--- start MongoDB'
 if [[ -f "/etc/mongod.conf" ]]; then
