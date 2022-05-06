@@ -74,8 +74,10 @@ jobs:
         export tag=${{ env.DOCKER_TAG }}
         for core in flux parsl rp re swift flux-parsl
         do
-          docker run exaworks_sdk:${{ env.DOCKER_TAG }} \
-          bash --login -c /tests/$core/test.sh
+          docker run \
+            --network ${{ job.services.rabbitmq.network }} \
+            exaworks_sdk:${{ env.DOCKER_TAG }} \
+            bash --login -c /tests/$core/test.sh
           ret=$?
           echo "$core   : $ret"
           total=$(($total + $ret))
