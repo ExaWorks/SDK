@@ -57,5 +57,13 @@ Spack Clean:
     - pwd
     - env | sort
     - python3 ci/tests/test.py -e
+    - export run_id=$CI_BUILD_ID
+    - export branch=$CI_COMMIT_BRANCH
+    - export url="https://sdk.testing.exaworks.org/"
+    - export test="Spack"
+    - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
+    - export contact="andre@merzky.net"
+#    - export imnumber="LLNL-MI-834241"
+    - python3 ci/tests/test.py -s
 #    - rm -rf $WORK/spack/
 
