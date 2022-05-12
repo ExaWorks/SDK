@@ -16,7 +16,7 @@ location = os.getenv("location")
 maintainer_email = os.getenv("contact")
 imnumber = os.getenv("imnumber")
 
-config = { "maintainer_email" : "morton30@llnl.gov"}
+config = { "maintainer_email" : maintainer_email}
 
 extras = { "config" : config,
            "Test": test,
