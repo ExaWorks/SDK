@@ -15,8 +15,8 @@ Spack Build:
   script:
     - test -d $WORK/spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
     - . $WORK/spack/share/spack/setup-env.sh
-    - spack install exaworks
-    - spack install py-pytest
+#    - spack install exaworks
+#    - spack install py-pytest
 
 
 Spack Test:
@@ -35,11 +35,11 @@ Spack Test:
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/"
   script:
     - . $WORK/spack/share/spack/setup-env.sh
-    - spack load exaworks py-pytest
+#    - spack load exaworks py-pytest
     - pwd
     - ls -la 
     - du -a ci
-    - bash ci/tests/${TEST}/test.sh
+#    - bash ci/tests/${TEST}/test.sh
   after_script:
     - whoami
 
@@ -55,5 +55,7 @@ Spack Clean:
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/"
   script:
     - pwd
+    - env | sort
+    - python3 ci/tests/test.py -e
 #    - rm -rf $WORK/spack/
 
