@@ -64,7 +64,7 @@ def get_result(command, name, stdout):
                   "results" : results,
                   "test_start_time": start,
                   "test_end_time" : end,
-                  "extras": {},
+                  "extras": {"output": out},
                   "function" : name,
                   "module" : "Sanity Checks",
             })
