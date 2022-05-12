@@ -22,9 +22,6 @@ fi
 PY_BASE_VER="$1"
 
 case "$PY_BASE_VER" in
-    "3.6")
-        PY_VER="3.6.15"
-        ;;
     "3.7")
         PY_VER="3.7.12"
         ;;
@@ -47,7 +44,9 @@ cd /tmp
 wget -q --no-check-certificate "https://www.python.org/ftp/python/$PY_VER/$PY_TARBALL"
 tar xzf "$PY_TARBALL"
 cd "/tmp/$PY_NAME"
-./configure --enable-shared --prefix="$PY_PREFIX" && make && make install
+./configure --enable-shared && make && make install
+ldconfig /usr/local/lib
+echo "ldconfig /usr/local/lib" >> ~/.bashrc
 
 if [[ ! "$PY_PREFIX" == "/usr" ]]; then
     ln -sf "$PY_PREFIX/bin/python$PY_BASE_VER" "/usr/bin/python3"

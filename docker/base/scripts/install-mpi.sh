@@ -28,7 +28,7 @@ yum_install_only_deps () {
     yum deplist $PACKAGE | grep provider | awk '{print $2}' | sort | uniq | grep -v $PACKAGE | sed ':a;N;$!ba;s/\n/ /g' | xargs yum -y install
 }
 
-if [[ "$1" == "openmpi-devel" ]]; then
+if [[ "$1" == "openmpi" ]]; then
     if [[ ${DISTRO_ID} == "centos" ]]; then
         if [[ ${DISTRO_MAJOR_VERSION} == "7" ]]; then
             yum install -y slurm-pmi-devel
@@ -74,11 +74,11 @@ if [[ "$1" == "openmpi-devel" ]]; then
         yum autoremove -y
         yum clean all
     fi
-elif [[ "$1" == "mpich-devel" ]]; then
+elif [[ "$1" == "mpich" ]]; then
     if [[ ${DISTRO_ID} == "centos" ]]; then
         yum install -y mpich-devel
     elif [[ ${DISTRO_ID} == "ubuntu" ]]; then
-        apt-get update -y && apt install -y mpich
+        apt-get update -y && apt install -y mpich dpkg-dev
     fi
 else
     printf "Unknown/unsupported MPI '%s'. Exiting without installing.\n" "$1"

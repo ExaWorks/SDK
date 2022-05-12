@@ -1,0 +1,48 @@
+name: Scheduled CI Test
+on:
+  schedule:
+    - cron: '0 20 * * *'
+
+jobs:
+  test:
+    name: Run test suite
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dockerbase: ["centos7", "rockylinux8", "ubuntu2004"]
+        packagemanager: ["pip", "conda"]
+        mpi: ["openmpi", "mpich"]
+        pyversion: ["3.7", "3.8", "3.9"]
+        exclude:
+          - dockerbase: "centos7"
+            packagemanager: "conda"
+          - dockerbase: "ubuntu2004"
+            packagemanager: "conda"
+          - pyversion: "3.8"
+            packagemanager: "conda"
+          - pyversion: "3.9"
+            packagemanager: "conda"
+    env:
+      DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}_${{ matrix.mpi }}_${{ matrix.pyversion }}"
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+
+    - name: Run tests (${{ env.DOCKER_TAG }})
+      run: |
+        export tag=${{ env.DOCKER_TAG }}
+        export run_id=$RANDOM
+        export branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+        docker pull exaworks/sdk:${{ env.DOCKER_TAG }}
+        python3 .github/test.py -s
+        for core in flux parsl rp swift flux-parsl
+        do
+          python3 .github/test.py -n $core -c \
+          "docker run exaworks/sdk:${{ env.DOCKER_TAG }} \
+           bash --login -c /tests/$core/test.sh"
+        done
+        python3 .github/test.py -e

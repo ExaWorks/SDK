@@ -10,13 +10,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        dockerbase: ["centos7", "centos8", "ubuntu2004"]
+        dockerbase: ["centos7", "rockylinux8", "ubuntu2004"]
         packagemanager: [ "pip", "conda" ]
+        mpi: ["openmpi", "mpich"]
+        pyversion: ["3.7", "3.8", "3.9"]
         exclude:
           - dockerbase: "centos7"
             packagemanager: "conda"
+          - dockerbase: "ubuntu2004"
+            packagemanager: "conda"
+          - pyversion: "3.8"
+            packagemanager: "conda"
+          - pyversion: "3.9"
+            packagemanager: "conda"
     env:
-      DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}"
+      DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}_${{ matrix.mpi }}_${{ matrix.pyversion }}"
 
     steps:
     - name: Checkout repo
@@ -48,6 +56,7 @@ jobs:
         push: true
         build-args: |
           PACKAGE_MANAGER=${{ matrix.packagemanager }}
+          MPI=${{ matrix.mpi }}
         tags: |
           exaworks/sdk-base:${{ env.DOCKER_TAG }}
         platforms: linux/amd64
@@ -67,13 +76,17 @@ jobs:
           --build-arg BASE_IMAGE=rp_parsl:${{ env.DOCKER_TAG }} \
           docker/swift-t
         docker build \
-          -t exaworks/sdk:${{ env.DOCKER_TAG }} \
+          -t rp_parsl_swift_flux:${{ env.DOCKER_TAG }} \
           --build-arg BASE_IMAGE=rp_parsl_swift:${{ env.DOCKER_TAG }} \
           docker/flux
+        docker build \
+          -t exaworks/sdk:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rp_parsl_swift_flux:${{ env.DOCKER_TAG }} \
+          docker/integration
         docker push exaworks/sdk:${{ env.DOCKER_TAG }}
 
     - name: Push images with 'latest' tag
-      if: ${{ matrix.dockerbase == 'centos7' && matrix.packagemanager == 'pip' }}
+      if: ${{ matrix.dockerbase == 'centos7' && matrix.packagemanager == 'pip' && matrix.mpi == 'openmpi' && matrix.pyversion == '3.8'}}
       run: |
         docker tag exaworks/sdk-base:${{ env.DOCKER_TAG }} exaworks/sdk-base:latest
         docker push exaworks/sdk-base:latest

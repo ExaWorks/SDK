@@ -14,5 +14,5 @@ RUN pip install radical.pilot
 RUN git clone -b master --single-branch https://github.com/radical-cybertools/radical.pilot.git
 
 # start mongodb and run the tests
-COPY run_rp_test.sh run_rp_test.sh
-CMD  /bin/sh ./run_rp_test.sh
+COPY run_rp_test.sh /tests/rp/test.sh
+CMD  /bin/sh /tests/rp/test.sh
