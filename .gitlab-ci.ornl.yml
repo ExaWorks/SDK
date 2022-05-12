@@ -13,10 +13,18 @@ Spack Build:
 #    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_PIPELINE_ID}"
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/"
   script:
+    - export run_id=$CI_BUILD_ID
+    - export branch=$CI_COMMIT_BRANCH
+    - export url="https://sdk.testing.exaworks.org/"
+    - export test="Spack"
+    - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
+    - export contact="andre@merzky.net"
+#    - export imnumber="LLNL-MI-834241"
+    - python3 ci/tests/test.py -s
     - test -d $WORK/spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
     - . $WORK/spack/share/spack/setup-env.sh
-#    - spack install exaworks
-#    - spack install py-pytest
+    - spack install py-pytest
+    - python3 ci/tests/test.py -n 'spack build' -c "echo spack install exaworks"
 
 
 Spack Test:
@@ -35,11 +43,15 @@ Spack Test:
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/"
   script:
     - . $WORK/spack/share/spack/setup-env.sh
-#    - spack load exaworks py-pytest
-    - pwd
-    - ls -la 
-    - du -a ci
-#    - bash ci/tests/${TEST}/test.sh
+    - spack load exaworks py-pytest
+    - export run_id=$CI_BUILD_ID
+    - export branch=$CI_COMMIT_BRANCH
+    - export url="https://sdk.testing.exaworks.org/"
+    - export test="Spack"
+    - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
+    - export contact="andre@merzky.net"
+#    - export imnumber="LLNL-MI-834241"
+    - python3 ci/tests/test.py -n 'spack build' -c "echo bash ci/tests/${TEST}/test.sh"
   after_script:
     - whoami
 
@@ -54,7 +66,6 @@ Spack Clean:
   variables:
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/"
   script:
-    - pwd
     - export run_id=$CI_BUILD_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url="https://sdk.testing.exaworks.org/"
@@ -62,8 +73,6 @@ Spack Clean:
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
 #    - export imnumber="LLNL-MI-834241"
-    - env | sort
-    - python3 ci/tests/test.py -s
     - python3 ci/tests/test.py -e
 #    - rm -rf $WORK/spack/
 
