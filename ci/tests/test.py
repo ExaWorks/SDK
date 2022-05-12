@@ -60,7 +60,7 @@ def get_result(command, name, stdout):
     results = { name:
                        {"passed" : not bool(ret)},
               }
-    extras['output'] = out
+    extras['output'] = out.split('\n')
     extras['returncode'] = ret
     data.update({ "test_name" : name,
                   "results" : results,
