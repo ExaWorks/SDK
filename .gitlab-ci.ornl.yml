@@ -17,7 +17,7 @@ Spack Build:
     - env | grep CI_
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
-    - export url="https://sdk.testing.exaworks.org/"
+    - export url="https://sdk.testing.exaworks.org/result"
     - export test="Spack"
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
@@ -26,7 +26,7 @@ Spack Build:
     - test -d $WORK/spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
     - . $WORK/spack/share/spack/setup-env.sh
     - spack install py-pytest
-    - python3 ci/tests/test.py -n 'spack build' -c "echo spack install exaworks"
+    - python3 ci/tests/test.py -n 'spack build' -c "spack install exaworks"
 
 
 Spack Test:
@@ -48,12 +48,12 @@ Spack Test:
     - spack load exaworks py-pytest
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
-    - export url="https://sdk.testing.exaworks.org/"
+    - export url="https://sdk.testing.exaworks.org/result"
     - export test="$TEST"
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
 #    - export imnumber="LLNL-MI-834241"
-    - python3 ci/tests/test.py -n 'spack build' -c "echo bash ci/tests/${TEST}/test.sh"
+    - python3 ci/tests/test.py -n "$TEST" -c "bash ci/tests/${TEST}/test.sh"
   after_script:
     - whoami
 
@@ -70,7 +70,7 @@ Spack Clean:
   script:
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
-    - export url="https://sdk.testing.exaworks.org/"
+    - export url="https://sdk.testing.exaworks.org/result"
     - export test="upload"
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
