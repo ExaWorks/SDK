@@ -7,14 +7,15 @@ variables:
 stages:
   - build
   - test
-  - clean
 
-Build Base Image:
+Container Build:
   stage: build
   parallel:
     matrix:
-      - BASE: ["centos7", "centos8", "ubuntu"]
+      - BASE: ["centos7", "rockylinux8", "ubuntu"]
+        PACKAGE_MANAGER: ["pip", "conda"]
         MPI: ["openmpi", "mpich"]
+
 
   before_script:
     - whoami
@@ -28,52 +29,31 @@ Build Base Image:
         podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST && s=0 && break ||
         s=$? && sleep 5; done; (exit $s)
 
-    - export tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}-${MPI}:$QUAY_LATEST
+    - export tag=${QUAY_HOST}${QUAY_ORG}${BASE}-${PACKAGE_MANAGER}-${MPI}:$QUAY_LATEST
     - export lcbase=${QUAY_HOST}/lcweg/lc-${BASE}
+    - echo "Base Image is $lcbase"
     - >
-        podman build -t ${tag} -f docker/base/${BASE}*/Dockerfile
-        --build-arg BASE_IMAGE=${lcbase} --build-arg MPI=${MPI}-devel
-        docker/base/
+        for i in $(seq 1 $CI_NODE_TOTAL); do
+        podman pull $lcbase && s=0 && break ||
+        s=$? && sleep 5; done; (exit $s)
 
-    - echo "Image Tag = ${tag}"
+    - >
+        podman build -t base -f docker/base/${BASE}*/Dockerfile
+        --build-arg BASE_IMAGE=${lcbase} --build-arg MPI=${MPI}
+        --build-arg PACKAGE_MANAGER=${PACKAGE_MANAGER}
+        --format docker docker/base/
+
+
+    - podman build --format docker -t flux --build-arg BASE_IMAGE=base docker/flux
+    - podman build --format docker -t parsl --build-arg BASE_IMAGE=flux docker/parsl
+    - podman build --format docker -t rp --build-arg BASE_IMAGE=parsl docker/rp
+    - podman build --format docker -t swift-t --build-arg BASE_IMAGE=rp docker/swift-t
+    - podman build --format docker -t $tag --build-arg BASE_IMAGE=swift-t docker/integration
+
     - >
         for i in $(seq 1 $CI_NODE_TOTAL); do
         podman push ${tag} && s=0 && break ||
         s=$? && sleep 5; done; (exit $s)
-    - podman logout $QUAY_HOST
-
-Build Core Image:
-  stage: build
-  parallel:
-    matrix:
-      - BASE: ["centos7", "centos8", "ubuntu"]
-        MPI: ["openmpi", "mpich"]
-        CORE: ["rp", "parsl", "flux", "swift-t"]
-
-  before_script:
-    - whoami
-  tags:
-    - quartz
-    - batch
-  needs: [Build Base Image]
-  script:
-    - export base_tag=${QUAY_HOST}${QUAY_ORG}base-${BASE}-${MPI}:$QUAY_LATEST
-    - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}-${MPI}:${QUAY_LATEST}
-    - >
-        for i in $(seq 1 $CI_NODE_TOTAL); do
-        podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST && s=0 && break ||
-        s=$? && sleep 15; done; (exit $s)
-
-    - echo "Base Tag = ${base_tag}"
-    - echo "Image Tag = ${tag}"
-    - >
-        for i in $(seq 1 $CI_NODE_TOTAL); do
-        podman build -t $tag --build-arg BASE_IMAGE=${base_tag} docker/${CORE}
-        && s=0 && break || s=$? && sleep 15; done; (exit $s)
-    - >
-        for i in $(seq 1 $CI_NODE_TOTAL); do
-        podman push ${tag} && s=0 && break ||
-        s=$? && sleep 15; done; (exit $s)
 
     - podman logout $QUAY_HOST
 
@@ -82,18 +62,18 @@ Container Test:
   stage: test
   parallel:
     matrix:
-      - BASE: ["centos7", "centos8", "ubuntu"]
+      - BASE: ["centos7", "rockylinux8", "ubuntu"]
+        PACKAGE_MANAGER: ["pip", "conda"]
         MPI: ["openmpi", "mpich"]
-        CORE: ["rp", "parsl", "flux", "swift-t"]
 
   before_script:
     - whoami
   tags:
     - quartz
     - batch
-  needs: [Build Core Image]
+  needs: [Container Build]
   script:
-    - export tag=${QUAY_HOST}${QUAY_ORG}${CORE}-${BASE}-${MPI}:${QUAY_LATEST}
+    - export tag=${QUAY_HOST}${QUAY_ORG}${BASE}-${PACKAGE_MANAGER}-${MPI}:$QUAY_LATEST
     - >
         for i in $(seq 1 $CI_NODE_TOTAL); do
         podman login -u $BOT_NAME -p $BOT_TOKEN $QUAY_HOST && s=0 && break ||
@@ -105,7 +85,11 @@ Container Test:
         podman pull $tag && s=0 && break ||
         s=$? && sleep 15; done; (exit $s)
 
-    - podman run $tag
+    - >
+        for CORE in flux parsl rp swift-t flux-parsl; do
+        podman run -it $tag bash --login -c "/tests/$CORE/test.sh";
+        done;
+
     - podman logout $QUAY_HOST
 
 Spack Build:
@@ -114,6 +98,8 @@ Spack Build:
     - quartz
     - shell
   needs: []
+  before_script:
+    - rm -rf $SPACK_WORK_DIR/spack/
   script:
     - cd $SPACK_WORK_DIR/
     - git clone -c feature.manyFiles=true https://github.com/spack/spack.git
@@ -139,14 +125,3 @@ Spack Test:
     - bash ci/tests/${TEST}/test.sh
   after_script:
     - whoami
-
-Spack Clean:
-  stage: clean
-  before_script:
-    - whoami
-  tags:
-    - quartz
-    - shell
-  needs: [Spack Test]
-  script:
-    - rm -rf $SPACK_WORK_DIR/spack/

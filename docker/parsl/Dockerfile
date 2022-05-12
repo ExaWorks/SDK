@@ -1,4 +1,4 @@
-# Parsl addition to ExaWorks SDK 
+# Parsl addition to ExaWorks SDK
 # See https://parsl.readthedocs.io/en/stable/quickstart.html
 
 ARG BASE_IMAGE=exaworks/sdk-base
@@ -16,7 +16,5 @@ FROM ${BASE_IMAGE}
 
 RUN python3 -m pip install git+https://github.com/Parsl/parsl.git@master
 
-COPY test.py /
-COPY test.sh /
-CMD /test.sh
-
+COPY test.py test.sh /tests/parsl/
+CMD /tests/parsl/test.sh

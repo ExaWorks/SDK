@@ -7,12 +7,34 @@ if [[ -z $1 ]]; then
     exit 1
 fi
 
+if [[ -z $2 ]]; then
+    PY_BASE_VER=3.7
+else
+    PY_BASE_VER=$2
+fi
+
+case "$PY_BASE_VER" in
+    "3.7")
+        PY_VER="3.7.12"
+        ;;
+    "3.8")
+        PY_VER="3.8.12"
+        ;;
+    "3.9")
+        PY_VER="3.9.7"
+        ;;
+    *)
+        echo "Provided version is not supported" 1>&2
+        exit 1
+esac
+
 if [[ "$1" == "conda" ]]; then
     curl -sSL https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh
     bash /tmp/miniconda.sh -bfp /usr/local && rm -rf /tmp/miniconda.sh
     source /usr/local/etc/profile.d/conda.sh
     conda update -y -n base conda
-    conda env create -p ${VIRTUAL_ENV} -f /scripts/environment.yml
+    sed -i "s/PY_VERSION/$PY_VER/" /scripts/environment.yml
+    conda env create -p ${VIRTUAL_ENV} --file /scripts/environment.yml
     conda activate ${VIRTUAL_ENV}
     conda env config vars set BOOST_LIBDIR="$VIRTUAL_ENV/lib" \
                               LUA_INCLUDE="-I$VIRTUAL_ENV/include" \

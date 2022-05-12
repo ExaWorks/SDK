@@ -1,20 +1,43 @@
+queue_rules:
+  - name: default
+    conditions: &ci_checks
+      # Conditions to get out of the queue (= merged)
+      - status-success="Run test suite (centos7, pip, openmpi, 3.7)"
+      - status-success="Run test suite (centos7, pip, openmpi, 3.8)"
+      - status-success="Run test suite (centos7, pip, openmpi, 3.9)"
+      - status-success="Run test suite (centos7, pip, mpich, 3.7)"
+      - status-success="Run test suite (centos7, pip, mpich, 3.8)"
+      - status-success="Run test suite (centos7, pip, mpich, 3.9)"
+      - status-success="Run test suite (rockylinux8, pip, openmpi, 3.7)"
+      - status-success="Run test suite (rockylinux8, pip, openmpi, 3.8)"
+      - status-success="Run test suite (rockylinux8, pip, openmpi, 3.9)"
+      - status-success="Run test suite (rockylinux8, pip, mpich, 3.7)"
+      - status-success="Run test suite (rockylinux8, pip, mpich, 3.8)"
+      - status-success="Run test suite (rockylinux8, pip, mpich, 3.9)"
+      - status-success="Run test suite (rockylinux8, conda, openmpi, 3.7)"
+      - status-success="Run test suite (rockylinux8, conda, mpich, 3.7)"
+      - status-success="Run test suite (ubuntu2004, pip, openmpi, 3.7)"
+      - status-success="Run test suite (ubuntu2004, pip, openmpi, 3.8)"
+      - status-success="Run test suite (ubuntu2004, pip, openmpi, 3.9)"
+      - status-success="Run test suite (ubuntu2004, pip, mpich, 3.7)"
+      - status-success="Run test suite (ubuntu2004, pip, mpich, 3.8)"
+      - status-success="Run test suite (ubuntu2004, pip, mpich, 3.9)"
+
+      - status-success="validate commits"
+
 pull_request_rules:
   - name: Automatic merge on approval
     conditions:
+    # Conditions to get into the queue (= queued for merge)
+      - and: *ci_checks
       - base=master
-      - status-success="Run test suite (centos7, pip)"
-      - status-success="Run test suite (centos8, pip)"
-      - status-success="Run test suite (centos8, conda)"
-      - status-success="Run test suite (ubuntu2004, pip)"
-      - status-success="Run test suite (ubuntu2004, conda)"
-      - status-success="validate commits"
       - label="merge-when-passing"
       - label!="work-in-progress"
       - "#approved-reviews-by>=1"
       - "#changes-requested-reviews-by=0"
       - -title~=^\[*[Ww][Ii][Pp]
     actions:
-      merge:
+      queue:
         method: rebase
         rebase_fallback: merge
-        strict: smart+fasttrack
+        name: default
