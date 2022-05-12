@@ -50,21 +50,23 @@ def get_result(command, name, stdout):
 
     try:
         out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode("utf-8")
-        ret = True
+        ret = 0
     except subprocess.CalledProcessError as exc:
         out = exc.output.decode("utf-8")
-        ret = False
+        ret = exc.returncode
         print(f"Test: {name} failed.\n{out}")
 
     end = str(datetime.now())
     results = { name:
-                       {"passed" : ret},
+                       {"passed" : not bool(ret)},
               }
+    extras['output'] = out
+    extras['returncode'] = ret
     data.update({ "test_name" : name,
                   "results" : results,
                   "test_start_time": start,
                   "test_end_time" : end,
-                  "extras": {"output": out},
+                  "extras": extras,
                   "function" : name,
                   "module" : "Sanity Checks",
             })
