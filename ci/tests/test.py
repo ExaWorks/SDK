@@ -50,7 +50,7 @@ def get_result(command, name, stdout):
 
     try:
         out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode("utf-8")
-        results = {name: {"passed": True
+        results = {name: {"passed": True,
                           "status": "passed",
                           "exception": None,
                           "report": ""}}
