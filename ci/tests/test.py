@@ -115,8 +115,7 @@ def main():
 
     msg = {"id" : location, "key" : "42", "data" : data}
     import pprint
-    pprint.pprint(msg)
-    print('url: %s' % url)
+    pprint.pprint([url, msg])
     requests.post(url, json=msg, verify=False)
 
 if __name__ == '__main__':
