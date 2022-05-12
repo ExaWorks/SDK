@@ -50,33 +50,31 @@ def get_result(command, name, stdout):
 
     try:
         out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode("utf-8")
-        ret = 0
+        results = {name: {"passed": False,
+                          "status": "failed",
+                          "exception": None,
+                          "report": ""}}
+        extras['returncode'] = 0
     except subprocess.CalledProcessError as exc:
         out = exc.output.decode("utf-8")
-        ret = exc.returncode
+        results = {name: {"passed": True,
+                          "status": "passed",
+                          "exception": exc,
+                          "report": ""}}
+        extras['returncode'] = exc.returncode
         print(f"Test: {name} failed.\n{out}")
 
     end = str(datetime.now())
-    if ret:
-        results = {name: {"passed": False,
-                          "status": "failed"}}
-    else:
-        results = {name: {"passed": True,
-                          "status": "passed"}}
-    extras['output'] = out.split('\n')
-    extras['returncode'] = ret
-    data.update({ "test_name" : name,
-                  "results" : results,
-                  "test_start_time": start,
-                  "test_end_time" : end,
-                  "extras": extras,
-                  "function" : name,
-                  "module" : "Sanity Checks",
+    data.update({"test_name": name,
+                 "results": results,
+                 "test_start_time": start,
+                 "test_end_time" : end,
+                 "extras": extras,
+                 "function": name,
+                 "module": "Sanity Checks",
+                 "stdout": out,
             })
-    if stdout:
-        data["stdout"] = out
-
-    return data, ret
+    return data
 
 def get_end():
     results = {}
@@ -113,7 +111,7 @@ def main():
     elif args.end:
         data = get_end()
     elif args.command:
-        data, ret = get_result(args.command, args.name, args.stdout)
+        data = get_result(args.command, args.name, args.stdout)
     else:
         print("No viable option called, Exiting")
         exit(1)
