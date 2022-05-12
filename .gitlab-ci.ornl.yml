@@ -55,8 +55,6 @@ Spack Clean:
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/"
   script:
     - pwd
-    - env | sort
-    - python3 ci/tests/test.py -e
     - export run_id=$CI_BUILD_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url="https://sdk.testing.exaworks.org/"
@@ -64,6 +62,8 @@ Spack Clean:
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
 #    - export imnumber="LLNL-MI-834241"
+    - env | sort
     - python3 ci/tests/test.py -s
+    - python3 ci/tests/test.py -e
 #    - rm -rf $WORK/spack/
 
