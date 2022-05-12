@@ -26,7 +26,7 @@ Spack Build:
     - test -d $WORK/spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
     - . $WORK/spack/share/spack/setup-env.sh
     - spack install py-pytest
-    - python3 ci/tests/test.py -n 'spack build 1' -c "echo spack install exaworks"
+    - python3 ci/tests/test.py -n 'spack build' -c "spack install exaworks"
 
 
 Spack Test:
