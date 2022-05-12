@@ -13,7 +13,9 @@ Spack Build:
 #    CUSTOM_CI_BUILDS_DIR: "/gpfs/wolf/proj-shared/csc449/ci/${CI_PIPELINE_ID}"
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/"
   script:
-    - export run_id=$CI_BUILD_ID
+    - pwd
+    - env | grep CI_
+    - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url="https://sdk.testing.exaworks.org/"
     - export test="Spack"
@@ -44,10 +46,10 @@ Spack Test:
   script:
     - . $WORK/spack/share/spack/setup-env.sh
     - spack load exaworks py-pytest
-    - export run_id=$CI_BUILD_ID
+    - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url="https://sdk.testing.exaworks.org/"
-    - export test="Spack"
+    - export test="$TEST"
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
 #    - export imnumber="LLNL-MI-834241"
@@ -66,10 +68,10 @@ Spack Clean:
   variables:
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/"
   script:
-    - export run_id=$CI_BUILD_ID
+    - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url="https://sdk.testing.exaworks.org/"
-    - export test="Spack"
+    - export test="upload"
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
 #    - export imnumber="LLNL-MI-834241"
