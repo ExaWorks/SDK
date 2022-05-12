@@ -57,9 +57,12 @@ def get_result(command, name, stdout):
         print(f"Test: {name} failed.\n{out}")
 
     end = str(datetime.now())
-    results = { name:
-                       {"passed" : not bool(ret)},
-              }
+    if ret:
+        results = {name: {"passed": False,
+                          "status": "failed"}}
+    else:
+        results = {name: {"passed": True,
+                          "status": "passed"}}
     extras['output'] = out.split('\n')
     extras['returncode'] = ret
     data.update({ "test_name" : name,
