@@ -16,7 +16,7 @@ location = os.getenv("location")
 maintainer_email = os.getenv("contact")
 imnumber = os.getenv("imnumber")
 
-config = { "maintainer_email" : "morton30@llnl.gov"}
+config = { "maintainer_email" : maintainer_email}
 
 extras = { "config" : config,
            "Test": test,
@@ -64,7 +64,7 @@ def get_result(command, name, stdout):
                   "results" : results,
                   "test_start_time": start,
                   "test_end_time" : end,
-                  "extras": {},
+                  "extras": extras,
                   "function" : name,
                   "module" : "Sanity Checks",
             })
@@ -87,17 +87,18 @@ def get_end():
 
 def get_args():
     parser = argparse.ArgumentParser(description='Runs SDK Tests by passing in shell commands')
-    parser.add_argument('-c', '--command', action='store', type=str, default=None,
+    test_group = parser.add_mutually_exclusive_group(required=True)
+    test_group.add_argument('-c', '--command', action='store', type=str, default=None,
                         help='The command in which you want to test.')
     parser.add_argument('-n', '--name', action='store', type=str, default=None,
                         help='The name of the test.')
-    parser.add_argument('-s', '--start', action="store_true",  default=False,
+    test_group.add_argument('-s', '--start', action="store_true",  default=False,
                         help='Start a series of test runs with the same id')
-    parser.add_argument('-e', '--end', action="store_true",  default=False,
+    test_group.add_argument('-e', '--end', action="store_true",  default=False,
                         help='End a series of test runs with the same id')
     parser.add_argument('--stdout', action="store_true",  default=False,
                         help='Add std out of test to result')
-    args = parser.parse_args(sys.argv[1:])
+    args = parser.parse_args()
     return args
 
 def main():
