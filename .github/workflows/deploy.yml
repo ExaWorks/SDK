@@ -11,18 +11,9 @@ jobs:
       fail-fast: false
       matrix:
         dockerbase: ["centos7", "rockylinux8", "ubuntu2004"]
-        packagemanager: [ "pip", "conda" ]
+        packagemanager: ["pip"]
         mpi: ["openmpi", "mpich"]
         pyversion: ["3.7", "3.8", "3.9"]
-        exclude:
-          - dockerbase: "centos7"
-            packagemanager: "conda"
-          - dockerbase: "ubuntu2004"
-            packagemanager: "conda"
-          - pyversion: "3.8"
-            packagemanager: "conda"
-          - pyversion: "3.9"
-            packagemanager: "conda"
     env:
       DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}_${{ matrix.mpi }}_${{ matrix.pyversion }}"
 

@@ -14,8 +14,6 @@ queue_rules:
       - status-success="Run test suite (rockylinux8, pip, mpich, 3.7)"
       - status-success="Run test suite (rockylinux8, pip, mpich, 3.8)"
       - status-success="Run test suite (rockylinux8, pip, mpich, 3.9)"
-      - status-success="Run test suite (rockylinux8, conda, openmpi, 3.7)"
-      - status-success="Run test suite (rockylinux8, conda, mpich, 3.7)"
       - status-success="Run test suite (ubuntu2004, pip, openmpi, 3.7)"
       - status-success="Run test suite (ubuntu2004, pip, openmpi, 3.8)"
       - status-success="Run test suite (ubuntu2004, pip, openmpi, 3.9)"
