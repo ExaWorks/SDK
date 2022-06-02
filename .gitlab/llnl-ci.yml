@@ -1,19 +1,41 @@
 stages:
+  - update
   - build
   - test
 
-Spack Build:
-  stage: build
+Spack Update:
+  stage: update
   tags:
     - quartz
     - shell
   needs: []
   script:
     - cd $SPACK_WORK_DIR/spack/
-    - git pull
+    - git pull --ff
+
+
+Spack Build:
+  stage: build
+  parallel:
+    matrix:
+      - HOST : ["quartz"]
+        SPACK_ENV_NAME : ["rhel7-broadwell"]
+        COMPILER : ["gcc@8.1.0"]
+      - HOST : ["lassen"]
+        SPACK_ENV_NAME : ["rhel7-ppc64le"]
+        COMPILER : ["gcc@9.4.0"]
+      - HOST : ["ruby"]
+        SPACK_ENV_NAME : ["rhel7-cascadelake"]
+        COMPILER : ["gcc@8.2.0"]
+  tags:
+    - $HOST
+    - shell
+  needs: [Spack Update]
+  script:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
-    - spack uninstall -y exaworks py-pytest || true
-    - spack install --fresh exaworks py-pytest
+    - spack env activate $SPACK_ENV_NAME
+    - spack uninstall -y exaworks%$COMPILER py-pytest || true
+    - spack install --fresh exaworks%$COMPILER py-pytest
 
 Spack Test:
   variables:
@@ -23,14 +45,23 @@ Spack Test:
     - whoami
   parallel:
     matrix:
-      - HOST : ["quartz", "oslic", "ruby"]
+      - HOST : ["quartz"]
+        SPACK_ENV_NAME : ["rhel7-broadwell"]
+        COMPILER : ["gcc@8.1.0"]
+      - HOST : ["lassen"]
+        SPACK_ENV_NAME : ["rhel7-ppc64le"]
+        COMPILER : ["gcc@9.4.0"]
+      - HOST : ["ruby"]
+        SPACK_ENV_NAME : ["rhel7-cascadelake"]
+        COMPILER : ["gcc@8.2.0"]
   tags:
     - batch
     - $HOST
   needs: [Spack Build]
   script:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
-    - spack load exaworks py-pytest
+    - spack env activate $SPACK_ENV_NAME
+    - spack load exaworks%$COMPILER py-pytest
     - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
     - export run_id=$RANDOM
     - export branch=$CI_COMMIT_BRANCH
