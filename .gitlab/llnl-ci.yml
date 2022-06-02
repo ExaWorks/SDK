@@ -1,6 +1,8 @@
 stages:
   - update
-  - build
+  - build rhel7-broadwell
+  - build rhel7-ppc64le
+  - build rhel7-cascadelake
   - test
 
 Spack Update:
@@ -8,34 +10,46 @@ Spack Update:
   tags:
     - quartz
     - shell
-  needs: []
   script:
     - cd $SPACK_WORK_DIR/spack/
     - git pull --ff
 
-
-Spack Build:
-  stage: build
-  parallel:
-    matrix:
-      - HOST : ["quartz"]
-        SPACK_ENV_NAME : ["rhel7-broadwell"]
-        COMPILER : ["gcc@8.1.0"]
-      - HOST : ["lassen"]
-        SPACK_ENV_NAME : ["rhel7-ppc64le"]
-        COMPILER : ["gcc@9.4.0"]
-      - HOST : ["ruby"]
-        SPACK_ENV_NAME : ["rhel7-cascadelake"]
-        COMPILER : ["gcc@8.2.0"]
+Spack Build rhel7-broadwell:
+  stage: build rhel7-broadwell
+  variables:
+    HOST : "quartz"
+    SPACK_ENV_NAME : "rhel7-broadwell"
+    COMPILER : "gcc@8.1.0"
   tags:
     - $HOST
     - shell
-  needs: [Spack Update]
-  script:
+  script: &build_script
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack env activate $SPACK_ENV_NAME
-    - spack uninstall -y exaworks%$COMPILER py-pytest || true
-    - spack install --fresh exaworks%$COMPILER py-pytest
+    - spack uninstall -y exaworks%$COMPILER py-pytest%$COMPILER || true
+    - spack install --fresh exaworks%$COMPILER py-pytest%$COMPILER
+
+Spack Build rhel7-ppc64le:
+  stage: build rhel7-ppc64le
+  variables:
+    HOST : "lassen"
+    SPACK_ENV_NAME : "rhel7-ppc64le"
+    COMPILER : "gcc@9.4.0"
+  tags:
+    - $HOST
+    - shell
+  script: *build_script
+
+Spack Build rhel7-cascadelake:
+  stage: build rhel7-cascadelake
+  variables:
+    HOST : "ruby"
+    SPACK_ENV_NAME : "rhel7-cascadelake"
+    COMPILER : "gcc@8.2.0"
+  tags:
+    - $HOST
+    - shell
+  script: *build_script
 
 Spack Test:
   variables:
@@ -47,21 +61,17 @@ Spack Test:
     matrix:
       - HOST : ["quartz"]
         SPACK_ENV_NAME : ["rhel7-broadwell"]
-        COMPILER : ["gcc@8.1.0"]
       - HOST : ["lassen"]
         SPACK_ENV_NAME : ["rhel7-ppc64le"]
-        COMPILER : ["gcc@9.4.0"]
       - HOST : ["ruby"]
         SPACK_ENV_NAME : ["rhel7-cascadelake"]
-        COMPILER : ["gcc@8.2.0"]
   tags:
     - batch
     - $HOST
-  needs: [Spack Build]
   script:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack env activate $SPACK_ENV_NAME
-    - spack load exaworks%$COMPILER py-pytest
+    - spack load exaworks py-pytest
     - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
     - export run_id=$RANDOM
     - export branch=$CI_COMMIT_BRANCH
