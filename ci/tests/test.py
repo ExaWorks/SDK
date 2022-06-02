@@ -49,12 +49,16 @@ def get_result(command, name, stdout):
     start = str(datetime.now())
 
     try:
-        out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode("utf-8")
+        out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, timeout=1200).decode("utf-8")
         ret = True
     except subprocess.CalledProcessError as exc:
         out = exc.output.decode("utf-8")
         ret = False
         print(f"Test: {name} failed.\n{out}")
+    except subprocess.TimeoutExpired as exc:
+        out = exc.output.decode("utf-8")
+        ret = False
+        print(f"Test: {name} failed due to time out.\n{out}")
 
     end = str(datetime.now())
     results = { name:
@@ -70,6 +74,8 @@ def get_result(command, name, stdout):
             })
     if stdout:
         data["stdout"] = out
+    else:
+        print(out)
 
     return data, ret
 
