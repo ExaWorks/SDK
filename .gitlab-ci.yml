@@ -46,8 +46,8 @@ Container Build:
 
     - podman build --format docker -t flux --build-arg BASE_IMAGE=base docker/flux
     - podman build --format docker -t parsl --build-arg BASE_IMAGE=flux docker/parsl
-    - podman build --format docker -t rp --build-arg BASE_IMAGE=parsl docker/rp
-    - podman build --format docker -t swift-t --build-arg BASE_IMAGE=rp docker/swift-t
+    - podman build --format docker -t rct --build-arg BASE_IMAGE=parsl docker/rct
+    - podman build --format docker -t swift-t --build-arg BASE_IMAGE=rct docker/swift-t
     - podman build --format docker -t $tag --build-arg BASE_IMAGE=swift-t docker/integration
 
     - >

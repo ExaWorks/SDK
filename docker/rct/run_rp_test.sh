@@ -1,11 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 
 # run mongodb, let it settle
 echo '--- start MongoDB'
 if [[ -f "/etc/mongod.conf" ]]; then
     CONFIG_OPT="--config /etc/mongod.conf"
 fi
+
 mongod --fork --logpath /tmp/mongodb.log $CONFIG_OPT
+
+radical-stack
 
 cd radical.pilot
 echo '--- smoke test'
@@ -22,6 +25,8 @@ echo '--- component test'
 pytest -vvv tests/component_tests
 test "$ret" = 0 && ret=$?
 echo "--- component test $ret"
+
+mongod $CONFIG_OPT --shutdown
 
 exit $ret
 
