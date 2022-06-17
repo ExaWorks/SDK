@@ -53,7 +53,7 @@ Spack Test:
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
 #    - export imnumber="LLNL-MI-834241"
-    - python3 ci/tests/test.py -n "$TEST" -c "bash ci/tests/${TEST}/test.sh"
+    - python3 ci/tests/test.py --stdout -n "$TEST" -c "bash ci/tests/${TEST}/test.sh"
   after_script:
     - whoami
 
