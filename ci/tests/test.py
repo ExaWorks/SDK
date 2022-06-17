@@ -49,7 +49,7 @@ def get_result(command, name, stdout):
     start = str(datetime.now())
 
     try:
-        out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).decode("utf-8")
+        out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, timeout=1200).decode("utf-8")
         results = {name: {"passed": True,
                           "status": "passed",
                           "exception": None,
@@ -63,17 +63,29 @@ def get_result(command, name, stdout):
                           "report": ""}}
         extras['returncode'] = exc.returncode
         print(f"Test: {name} failed.\n{out}")
+    except subprocess.TimeoutExpired as exc:
+        out = exc.output.decode("utf-8")
+        results = {name: {"passed": False,
+                          "status": "timeout",
+                          "exception": exc,
+                          "report": ""}}
+        extras['returncode'] = 1
+        print(f"Test: {name} failed due to time out.\n{out}")
 
     end = str(datetime.now())
-    data.update({"test_name": name,
-                 "results": results,
-                 "test_start_time": start,
-                 "test_end_time" : end,
-                 "extras": extras,
-                 "function": name,
-                 "module": "Sanity Checks",
-                 "stdout": out,
+    data.update({ "test_name" : name,
+                  "results" : results,
+                  "test_start_time": start,
+                  "test_end_time" : end,
+                  "extras": extras,
+                  "function" : name,
+                  "module" : "Sanity Checks",
             })
+    if stdout:
+        data["stdout"] = out
+    else:
+        print(out)
+
     return data
 
 def get_end():
@@ -90,17 +102,18 @@ def get_end():
 
 def get_args():
     parser = argparse.ArgumentParser(description='Runs SDK Tests by passing in shell commands')
-    parser.add_argument('-c', '--command', action='store', type=str, default=None,
+    test_group = parser.add_mutually_exclusive_group(required=True)
+    test_group.add_argument('-c', '--command', action='store', type=str, default=None,
                         help='The command in which you want to test.')
     parser.add_argument('-n', '--name', action='store', type=str, default=None,
                         help='The name of the test.')
-    parser.add_argument('-s', '--start', action="store_true",  default=False,
+    test_group.add_argument('-s', '--start', action="store_true",  default=False,
                         help='Start a series of test runs with the same id')
-    parser.add_argument('-e', '--end', action="store_true",  default=False,
+    test_group.add_argument('-e', '--end', action="store_true",  default=False,
                         help='End a series of test runs with the same id')
     parser.add_argument('--stdout', action="store_true",  default=False,
                         help='Add std out of test to result')
-    args = parser.parse_args(sys.argv[1:])
+    args = parser.parse_args()
     return args
 
 def main():
@@ -116,7 +129,7 @@ def main():
         print("No viable option called, Exiting")
         exit(1)
 
-    msg = {"id" : location, "key" : "42", "data" : data}
+    msg = {"id": location, "key": "42", "data": data}
     import pprint
     pprint.pprint([url, msg])
     requests.post(url, json=msg, verify=False)
