@@ -55,6 +55,7 @@ def get_result(command, name, stdout):
                           "exception": None,
                           "report": ""}}
         extras['returncode'] = 0
+        print(f"Test: {name} succeeded.\n{out}")
     except subprocess.CalledProcessError as exc:
         out = exc.output.decode("utf-8")
         results = {name: {"passed": False,
@@ -70,7 +71,7 @@ def get_result(command, name, stdout):
                           "exception": repr(exc),
                           "report": ""}}
         extras['returncode'] = 1
-        print(f"Test: {name} failed due to time out.\n{out}")
+        print(f"Test: {name} timed out.\n{out}")
 
     end = str(datetime.now())
     data.update({ "test_name" : name,
