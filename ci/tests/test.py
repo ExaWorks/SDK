@@ -59,7 +59,7 @@ def get_result(command, name, stdout):
         out = exc.output.decode("utf-8")
         results = {name: {"passed": False,
                           "status": "failed",
-                          "exception": exc,
+                          "exception": repr(exc),
                           "report": ""}}
         extras['returncode'] = exc.returncode
         print(f"Test: {name} failed.\n{out}")
@@ -67,7 +67,7 @@ def get_result(command, name, stdout):
         out = exc.output.decode("utf-8")
         results = {name: {"passed": False,
                           "status": "timeout",
-                          "exception": exc,
+                          "exception": repr(exc),
                           "report": ""}}
         extras['returncode'] = 1
         print(f"Test: {name} failed due to time out.\n{out}")
