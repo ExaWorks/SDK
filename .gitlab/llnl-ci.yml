@@ -12,6 +12,7 @@ Spack Update:
     - shell
   script:
     - cd $SPACK_WORK_DIR/spack/
+    - git reset --hard
     - git pull --ff
 
 Spack Build rhel7-broadwell:
