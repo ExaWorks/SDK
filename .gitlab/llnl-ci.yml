@@ -13,7 +13,7 @@ Spack Update:
   script:
     - cd $SPACK_WORK_DIR/spack/
     - git checkout HEAD^ .
-    - git pull --ff
+    - git pull
     - chmod -fR 02770 .
 
 Spack Build rhel7-broadwell:
