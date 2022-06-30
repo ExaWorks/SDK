@@ -14,7 +14,7 @@ Spack Update:
     - cd $SPACK_WORK_DIR/spack/
     - git checkout HEAD^ .
     - git pull
-    - chmod -R 02770 .
+    - chmod -R 02770 . || true
 
 Spack Build rhel7-broadwell:
   stage: build rhel7-broadwell
