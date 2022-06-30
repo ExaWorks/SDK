@@ -12,8 +12,9 @@ Spack Update:
     - shell
   script:
     - cd $SPACK_WORK_DIR/spack/
-    - git reset --hard
+    - git checkout HEAD^ .
     - git pull --ff
+    - chmod -fR 02770 .
 
 Spack Build rhel7-broadwell:
   stage: build rhel7-broadwell
