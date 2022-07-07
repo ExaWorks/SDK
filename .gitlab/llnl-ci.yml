@@ -13,7 +13,7 @@ Spack Update:
   script:
     - cd $SPACK_WORK_DIR/spack/
     - git checkout HEAD^ .
-    - git pull
+    - git pull --ff
     - chmod -fR 02770 . || true
 
 Spack Build rhel7-broadwell:
@@ -28,7 +28,8 @@ Spack Build rhel7-broadwell:
   script: &build_script
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack env activate $SPACK_ENV_NAME
-    - spack uninstall -y exaworks%$COMPILER py-pytest%$COMPILER || true
+    - spack uninstall -y exaworks%$COMPILER  || true
+    - spack uninstall -y py-pytest%$COMPILER || true
     - spack install --fresh exaworks%$COMPILER py-pytest%$COMPILER
 
 Spack Build rhel7-ppc64le:

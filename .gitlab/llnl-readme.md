@@ -9,6 +9,10 @@ chgrp -R exaworks .
 git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git
 chmod -fR 02770 .
 ```
+```bash
+# ensure that there is no old compilers-file
+rm -f ~/.spack/linux/compilers.yaml
+```
 
 ## 1.a. Spack setup on Quartz
 Login to **Quartz** (`ssh <user>@quartz.llnl.gov`) and go to the group directory
@@ -77,6 +81,13 @@ Use pre-downloaded packages
 # copy (`scp`) Python tarball into `pre-stage` directory
 # refer `pre-stage` directory to `spack`
 spack stage -p pre-stage python
+```
+
+### Issue with cached obsolete packages
+`Error: Package 'armpl' not found.` [#31453](https://github.com/spack/spack/issues/31453)
+```bash
+spack clean -ab
+# or `spack clean -fmps` to keep cached downloads
 ```
 
 ---
