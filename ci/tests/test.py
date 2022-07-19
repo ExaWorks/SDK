@@ -49,7 +49,7 @@ def get_result(command, name, stdout):
     start = str(datetime.now())
 
     try:
-        out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, timeout=1200).decode("utf-8")
+        out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, timeout=600).decode("utf-8")
         ret = True
     except subprocess.CalledProcessError as exc:
         out = exc.output.decode("utf-8")

@@ -56,7 +56,7 @@ Spack Build rhel7-cascadelake:
 
 Spack Test:
   variables:
-    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 15"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   stage: test
   before_script:
     - whoami
