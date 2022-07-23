@@ -12,7 +12,9 @@ Spack Update:
     - shell
   script:
     - cd $SPACK_WORK_DIR/spack/
+    - git checkout HEAD^ .
     - git pull --ff
+    - chmod -fR 02770 . || true
 
 Spack Build rhel7-broadwell:
   stage: build rhel7-broadwell
@@ -26,7 +28,8 @@ Spack Build rhel7-broadwell:
   script: &build_script
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack env activate $SPACK_ENV_NAME
-    - spack uninstall -y exaworks%$COMPILER py-pytest%$COMPILER || true
+    - spack uninstall -y exaworks%$COMPILER  || true
+    - spack uninstall -y py-pytest%$COMPILER || true
     - spack install --fresh exaworks%$COMPILER py-pytest%$COMPILER
 
 Spack Build rhel7-ppc64le:
@@ -53,7 +56,7 @@ Spack Build rhel7-cascadelake:
 
 Spack Test:
   variables:
-    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 15"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   stage: test
   before_script:
     - whoami

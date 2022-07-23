@@ -131,8 +131,6 @@ def main():
         exit(1)
 
     msg = {"id": location, "key": "42", "data": data}
-    import pprint
-    pprint.pprint([url, msg])
     requests.post(url, json=msg, verify=False)
 
 if __name__ == '__main__':

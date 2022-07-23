@@ -20,7 +20,6 @@ queue_rules:
       - status-success="Run test suite (ubuntu2004, pip, mpich, 3.7)"
       - status-success="Run test suite (ubuntu2004, pip, mpich, 3.8)"
       - status-success="Run test suite (ubuntu2004, pip, mpich, 3.9)"
-
       - status-success="validate commits"
 
 pull_request_rules:

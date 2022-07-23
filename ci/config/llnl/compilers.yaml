@@ -1,0 +1,40 @@
+compilers:
+- compiler:
+    spec: gcc@9.4.0
+    paths:
+      cc: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-ppc64le/gcc-4.9.3/gcc-9.4.0-l7rjqbxn2lj54efqn22pizvhqbq433ay/bin/gcc
+      cxx: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-ppc64le/gcc-4.9.3/gcc-9.4.0-l7rjqbxn2lj54efqn22pizvhqbq433ay/bin/g++
+      f77: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-ppc64le/gcc-4.9.3/gcc-9.4.0-l7rjqbxn2lj54efqn22pizvhqbq433ay/bin/gfortran
+      fc: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-ppc64le/gcc-4.9.3/gcc-9.4.0-l7rjqbxn2lj54efqn22pizvhqbq433ay/bin/gfortran
+    flags: {}
+    operating_system: rhel7
+    target: ppc64le
+    modules: []
+    environment: {}
+    extra_rpaths: []
+- compiler:
+    spec: gcc@8.1.0
+    paths:
+      cc: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-x86_64/gcc-4.9.3/gcc-8.1.0-7p5pbywpk3zpsdad3tlvlshw6bqe67fp/bin/gcc
+      cxx: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-x86_64/gcc-4.9.3/gcc-8.1.0-7p5pbywpk3zpsdad3tlvlshw6bqe67fp/bin/g++
+      f77: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-x86_64/gcc-4.9.3/gcc-8.1.0-7p5pbywpk3zpsdad3tlvlshw6bqe67fp/bin/gfortran
+      fc: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-x86_64/gcc-4.9.3/gcc-8.1.0-7p5pbywpk3zpsdad3tlvlshw6bqe67fp/bin/gfortran
+    flags: {}
+    operating_system: rhel7
+    target: x86_64
+    modules: []
+    environment: {}
+    extra_rpaths: []
+- compiler:
+    spec: gcc@8.2.0
+    paths:
+      cc: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-x86_64/gcc-4.9.3/gcc-8.2.0-dzdneu7z2l3lqtocwe76rxb62aeg3fuv/bin/gcc
+      cxx: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-x86_64/gcc-4.9.3/gcc-8.2.0-dzdneu7z2l3lqtocwe76rxb62aeg3fuv/bin/g++
+      f77: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-x86_64/gcc-4.9.3/gcc-8.2.0-dzdneu7z2l3lqtocwe76rxb62aeg3fuv/bin/gfortran
+      fc: /usr/WS1/exaworks/sdk/spack/opt/spack/linux-rhel7-x86_64/gcc-4.9.3/gcc-8.2.0-dzdneu7z2l3lqtocwe76rxb62aeg3fuv/bin/gfortran
+    flags: {}
+    operating_system: rhel7
+    target: x86_64
+    modules: []
+    environment: {}
+    extra_rpaths: []

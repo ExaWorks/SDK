@@ -8,6 +8,12 @@ jobs:
     name: Run test suite
     runs-on: ubuntu-latest
 
+    services:
+      rabbitmq:
+        image: rabbitmq
+        ports:
+          - 5672/tcp
+
     strategy:
       fail-fast: false
       matrix:
@@ -33,34 +39,36 @@ jobs:
           --build-arg MPI=${{ matrix.mpi }} \
           docker/base/
         docker build \
-          -t rp:${{ env.DOCKER_TAG }} \
+          -t rct:${{ env.DOCKER_TAG }} \
           --build-arg BASE_IMAGE=exaworks/sdk-base:${{ env.DOCKER_TAG }} \
-          docker/rp
+          docker/rct
         docker build \
-          -t rp_parsl:${{ env.DOCKER_TAG }} \
-          --build-arg BASE_IMAGE=rp:${{ env.DOCKER_TAG }} \
+          -t rct_parsl:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rct:${{ env.DOCKER_TAG }} \
           docker/parsl
         docker build \
-          -t rp_parsl_swift:${{ env.DOCKER_TAG }} \
-          --build-arg BASE_IMAGE=rp_parsl:${{ env.DOCKER_TAG }} \
+          -t rct_parsl_swift:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rct_parsl:${{ env.DOCKER_TAG }} \
           docker/swift-t
         docker build \
-          -t rp_parsl_swift_flux:${{ env.DOCKER_TAG }} \
-          --build-arg BASE_IMAGE=rp_parsl_swift:${{ env.DOCKER_TAG }} \
+          -t rct_parsl_swift_flux:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rct_parsl_swift:${{ env.DOCKER_TAG }} \
           docker/flux
         docker build \
           -t exaworks_sdk:${{ env.DOCKER_TAG }} \
-          --build-arg BASE_IMAGE=rp_parsl_swift_flux:${{ env.DOCKER_TAG }} \
+          --build-arg BASE_IMAGE=rct_parsl_swift_flux:${{ env.DOCKER_TAG }} \
           docker/integration
 
     - name: Run tests (${{ env.DOCKER_TAG }})
       run: |
         total=0
         export tag=${{ env.DOCKER_TAG }}
-        for core in flux parsl rp swift flux-parsl
+        for core in flux parsl rp re swift flux-parsl
         do
-          docker run exaworks_sdk:${{ env.DOCKER_TAG }} \
-          bash --login -c /tests/$core/test.sh
+          docker run \
+            --network ${{ job.services.rabbitmq.network }} \
+            exaworks_sdk:${{ env.DOCKER_TAG }} \
+            bash --login -c /tests/$core/test.sh
           ret=$?
           echo "$core   : $ret"
           total=$(($total + $ret))
