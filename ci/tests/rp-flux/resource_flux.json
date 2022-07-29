@@ -5,8 +5,10 @@
         "virtenv_mode"                : "local",
         "agent_scheduler"             : "FLUX",
         "agent_spawner"               : "FLUX",
-        "agent_launch_method"         : "FORK",
-        "task_launch_method"          : "FLUX",
-        "mpi_launch_method"           : "FLUX"
+        "launch_methods"              : {
+                                         "order"  : ["FLUX", "FORK"],
+                                         "FLUX"   : {},
+                                         "FORK"   : {}
+                                        }
     }
 }
