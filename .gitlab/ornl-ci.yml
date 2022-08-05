@@ -21,9 +21,13 @@ Spack Build:
     - export test="Spack"
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
-#    - export imnumber="LLNL-MI-834241"
     - python3 ci/tests/test.py -s
     - test -d $WORK/spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
+    - pushd $WORK/spack/
+    - git checkout HEAD^ .
+    - git pull --ff
+    - popd
+    - chmod -fR 02770 . || true
     - . $WORK/spack/share/spack/setup-env.sh
     - spack install py-pytest
     - python3 ci/tests/test.py -n 'spack build' -c "spack install exaworks"
@@ -34,8 +38,6 @@ Spack Test:
   parallel:
       matrix:
         - TEST : ["rp", "swift-t", "parsl", "flux", "rp-flux", "parsl-flux"]
-  before_script:
-    - whoami
   tags:
     - batch
   needs: [Spack Build]
@@ -45,6 +47,10 @@ Spack Test:
     WORK: "/gpfs/wolf/proj-shared/csc449/ci/"
   script:
     - . $WORK/spack/share/spack/setup-env.sh
+    - spack env activate $SPACK_ENV_NAME
+    - spack uninstall -y exaworks%$COMPILER  || true
+    - spack uninstall -y py-pytest%$COMPILER || true
+    - spack install --fresh exaworks%$COMPILER py-pytest%$COMPILER
     - spack load exaworks py-pytest
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
@@ -52,16 +58,11 @@ Spack Test:
     - export test="$TEST"
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
-#    - export imnumber="LLNL-MI-834241"
     - python3 ci/tests/test.py --stdout -n "$TEST" -c "bash ci/tests/${TEST}/test.sh"
-  after_script:
-    - whoami
 
 
 Spack Clean:
   stage: clean
-  before_script:
-    - whoami
   tags:
     - nobatch
   needs: [Spack Test]

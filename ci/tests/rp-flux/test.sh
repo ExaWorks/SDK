@@ -5,7 +5,7 @@ cp resource_flux.json ~/.radical/pilot/configs/resource_flux.json
 
 cd radical.pilot
 echo '--- smoke test'
-./examples/00_getting_started.py 'local.localhost_flux'
+./examples/00_getting_started.py 'flux.localhost_flux'
 ret=$?
 echo "--- smoke test $ret"
 

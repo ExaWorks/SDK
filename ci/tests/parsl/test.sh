@@ -9,13 +9,13 @@ Hello World!
 EOF
 
 if diff /tmp/test-output /tmp/expected-output; then
-	echo "Output matches"
+    echo "Output matches"
 else
-	echo "Output does not match"
+    echo "Output does not match"
     echo "--- diff ---"
     diff /tmp/test-output /tmp/expected-output
     echo "------------"
-	exit 1
+    exit 1
 fi
 
 echo "Success!"
