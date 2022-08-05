@@ -22,9 +22,11 @@ Spack Build:
     - export location="ornl-$(echo $CI_RUNNER_TAGS | cut -f 1 -d ',')"
     - export contact="andre@merzky.net"
     - python3 ci/tests/test.py -s
+    - rm -rf $WORK/spack
     - test -d $WORK/spack || git clone -c feature.manyFiles=true https://github.com/spack/spack.git $WORK/spack
     - pushd $WORK/spack/
     - git checkout HEAD^ .
+    - git reset --hard HEAD
     - git pull --ff
     - popd
     - chmod -fR 02770 . || true
