@@ -84,3 +84,4 @@ Spack Test:
     - python3 ci/tests/test.py -e
   after_script:
     - whoami
+    
