@@ -14,7 +14,7 @@ Spack Setup:
     SPACK_WORK_DIR: "/gpfs/wolf/proj-shared/csc449/ci/"
     SPACK_ENV_NAME: "ascent"
   script:
-    - if [ ! -d $SPACK_WORK_DIR/spack ]; then exit 0 fi
+    - test -d $SPACK_WORK_DIR/spack && exit 0
     - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $SPACK_WORK_DIR/spack
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack env create $SPACK_ENV_NAME || true
