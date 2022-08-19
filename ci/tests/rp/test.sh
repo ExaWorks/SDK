@@ -29,3 +29,4 @@ echo "--- component test $ret"
 
 test "$ret" = 0 && echo "Success!"
 exit $ret
+
