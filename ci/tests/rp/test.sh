@@ -19,3 +19,4 @@ echo "--- component test $ret"
 echo "Success!"
 
 exit $ret
+

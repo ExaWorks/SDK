@@ -49,21 +49,31 @@ def get_result(command, name, stdout):
     start = str(datetime.now())
 
     try:
-        out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, timeout=600).decode("utf-8")
-        ret = True
+        out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, timeout=1200).decode("utf-8")
+        results = {name: {"passed": True,
+                          "status": "passed",
+                          "exception": None,
+                          "report": ""}}
+        extras['returncode'] = 0
+        print(f"Test: {name} succeeded.\n{out}")
     except subprocess.CalledProcessError as exc:
         out = exc.output.decode("utf-8")
-        ret = False
+        results = {name: {"passed": False,
+                          "status": "failed",
+                          "exception": repr(exc),
+                          "report": ""}}
+        extras['returncode'] = exc.returncode
         print(f"Test: {name} failed.\n{out}")
     except subprocess.TimeoutExpired as exc:
         out = exc.output.decode("utf-8")
-        ret = False
-        print(f"Test: {name} failed due to time out.\n{out}")
+        results = {name: {"passed": False,
+                          "status": "timeout",
+                          "exception": repr(exc),
+                          "report": ""}}
+        extras['returncode'] = 1
+        print(f"Test: {name} timed out.\n{out}")
 
     end = str(datetime.now())
-    results = { name:
-                       {"passed" : ret},
-              }
     data.update({ "test_name" : name,
                   "results" : results,
                   "test_start_time": start,
@@ -77,7 +87,7 @@ def get_result(command, name, stdout):
     else:
         print(out)
 
-    return data, ret
+    return data
 
 def get_end():
     results = {}
@@ -115,12 +125,12 @@ def main():
     elif args.end:
         data = get_end()
     elif args.command:
-        data, ret = get_result(args.command, args.name, args.stdout)
+        data = get_result(args.command, args.name, args.stdout)
     else:
         print("No viable option called, Exiting")
         exit(1)
 
-    msg = {"id" : location, "key" : "42", "data" : data}
+    msg = {"id": location, "key": "42", "data": data}
     requests.post(url, json=msg, verify=False)
 
 if __name__ == '__main__':
