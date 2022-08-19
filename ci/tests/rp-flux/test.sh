@@ -20,4 +20,5 @@ echo '--- smoke test'
 ret=$?
 echo "--- smoke test $ret"
 
-echo "Success!"
+test "$ret" = 0 && echo "Success!"
+exit $ret

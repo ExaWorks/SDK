@@ -19,12 +19,13 @@ echo "--- smoke test $ret"
 
 echo '--- unit test'
 pytest -vvv tests/unit_tests
-test "$ret" = 0 || ret=$?
+test "$ret" = 0 && ret=$?
 echo "--- unit test $ret"
 
 echo '--- component test'
 pytest -vvv tests/component_tests
-test "$ret" = 0 || ret=$?
+test "$ret" = 0 && ret=$?
 echo "--- component test $ret"
 
-echo "Success!"
+test "$ret" = 0 && echo "Success!"
+exit $ret
