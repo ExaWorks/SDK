@@ -17,7 +17,7 @@ Spack Setup:
     # rm -rf $SPACK_WORK_DIR/spack; exit 1
     # test -d $SPACK_WORK_DIR/spack && exit 0
     # git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $SPACK_WORK_DIR/spack
-    - x=`cat t.yml | grep -e '^spack' | cut -c 6`; sed -ie "s/unify. true/unify$x true/g"  $SPACK_WORK_DIR/spack/var/spack/environments/ascent/spack.yaml
+    - x=`cat $SPACK_WORK_DIR/spack/var/spack/environments/ascent/spack.yaml | grep -e '^spack' | cut -c 6`; sed -ie "s/unify. true/unify$x true/g"  $SPACK_WORK_DIR/spack/var/spack/environments/ascent/spack.yaml
     - cat $SPACK_WORK_DIR/spack/var/spack/environments/ascent/spack.yam
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack env create $SPACK_ENV_NAME || true
