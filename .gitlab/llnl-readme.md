@@ -2,6 +2,8 @@
 
 (*) [Livermore Computing Resources and Environment](https://hpc.llnl.gov/documentation/tutorials/livermore-computing-resources-and-environment)
 
+These instructions walk through setting up Spack, with the correct compilers.  Choosing compilers is time consuming, as multiple compilers and versions are possible.  Some combinations did not work, probably related to Flux dependencies. Once the compiler is installed and confirmed to work, the CI may then be invoked.
+
 Use group directory `/usr/workspace/exaworks`
 ```bash
 mkdir -p sdk/pre-stage; cd sdk
