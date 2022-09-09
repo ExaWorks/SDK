@@ -44,7 +44,10 @@ extensions = [
     'sphinx.ext.githubpages',
     'nbsphinx',
     'sphinx_copybutton',
-    'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
+    'sphinx.ext.autodoc.typehints',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.viewcode'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -67,3 +70,21 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+html_favicon = 'favicon.ico'
+html_css_files = [
+    'css/custom.css',
+]
+# html_logo = "images/exaworks-psi-j-logo-white.png"
+html_theme_options = {
+    'logo_only': True,
+    'display_version': True,
+}
+autoclass_content = 'both'
+add_module_names = False
+python_use_unqualified_type_names = True
+autodoc_mock_imports = ['flux']
+nitpick_ignore = [
+    ('py:class', 'distutils.version.StrictVersion'),
+    ('py:class', 'distutils.version.Version')
+]
