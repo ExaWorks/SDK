@@ -37,6 +37,7 @@ Spack Update:
     - cd $SPACK_WORK_DIR/spack/
     - git checkout HEAD^ .
     - git pull --ff
+    - git reset --hard HEAD
     - chmod -fR 02770 . || true
 
 Spack Build ascent:
