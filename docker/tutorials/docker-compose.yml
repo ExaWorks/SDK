@@ -1,0 +1,22 @@
+version: "3.4"
+
+services:
+
+  sdk:
+    image: exaworks/sdk
+    volumes:
+      - sdk_tests:/tests
+
+  tutorials:
+    image: exaworks/sdk-tutorials
+    ports:
+      - "8888:8888"
+    volumes:
+      - sdk_tests:/tutorials/tests
+    build:
+      context: ../../docs/source/tutorials/
+      dockerfile: ../../../docker/tutorials/Dockerfile
+
+volumes:
+  sdk_tests:
+
