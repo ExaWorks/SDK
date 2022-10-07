@@ -36,6 +36,7 @@ Spack Update:
   script:
     - cd $SPACK_WORK_DIR/spack/
     - git checkout HEAD^ .
+    - git reset --hard HEAD
     - git pull --ff
     - chmod -fR 02770 . || true
 
