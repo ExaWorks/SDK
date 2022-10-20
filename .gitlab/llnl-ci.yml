@@ -5,6 +5,11 @@ stages:
   - build rhel7-cascadelake
   - test
 
+default:
+  after_script:
+    - cd $SPACK_WORK_DIR/spack/
+    - chmod -fR 02770 . || true
+
 Spack Update:
   stage: update
   tags:
@@ -15,7 +20,6 @@ Spack Update:
     - git checkout HEAD^ .
     - git reset --hard HEAD
     - git pull --ff
-    - chmod -fR 02770 . || true
 
 Spack Build rhel7-broadwell:
   stage: build rhel7-broadwell
