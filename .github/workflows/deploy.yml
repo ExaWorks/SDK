@@ -3,7 +3,8 @@ on:
   push: { branches: master }
 
 jobs:
-  test:
+
+  deploy-base:
     name: Deploy docker images
     runs-on: ubuntu-latest
 
@@ -14,6 +15,7 @@ jobs:
         packagemanager: ["pip"]
         mpi: ["openmpi", "mpich"]
         pyversion: ["3.7", "3.8", "3.9"]
+
     env:
       DOCKER_TAG: "${{ matrix.dockerbase }}_${{ matrix.packagemanager }}_${{ matrix.mpi }}_${{ matrix.pyversion }}"
 
@@ -22,31 +24,30 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Login to Docker Hub
-      uses: docker/login-action@v1
+      uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
+      uses: docker/login-action@v2
       with:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Docker Buildx
-      id: buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v2
 
     - name: Build and push base image (${{ env.DOCKER_TAG }})
-      id: docker_build
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v3
       with:
         context: ./docker/base/
         file: ./docker/base/${{ matrix.dockerbase }}/Dockerfile
         push: true
         build-args: |
           PACKAGE_MANAGER=${{ matrix.packagemanager }}
+          PYTHON_VERSION=${{ matrix.pyversion }}
           MPI=${{ matrix.mpi }}
         tags: |
           exaworks/sdk-base:${{ env.DOCKER_TAG }}
@@ -83,3 +84,29 @@ jobs:
         docker push exaworks/sdk-base:latest
         docker tag exaworks/sdk:${{ env.DOCKER_TAG }} exaworks/sdk:latest
         docker push exaworks/sdk:latest
+
+  deploy-tutorials:
+    name: Deploy docker image with tutorials
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push image with tutorials
+        uses: docker/build-push-action@v3
+        with:
+          context: ./docs/source/tutorials/
+          file: ./docker/tutorials/Dockerfile
+          push: true
+          tags: exaworks/sdk-tutorials:latest
+
