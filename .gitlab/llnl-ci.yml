@@ -1,8 +1,6 @@
 stages:
   - update
-  - build rhel7-broadwell
-  - build rhel7-ppc64le
-  - build rhel7-cascadelake
+  - build
   - test
 
 default:
@@ -11,7 +9,7 @@ default:
     - chgrp -fR exaworks . || true
     - chmod -fR 02770 . || true
 
-Spack Update:
+spack-update:
   stage: update
   tags:
     - quartz
@@ -22,8 +20,10 @@ Spack Update:
     - git reset --hard HEAD
     - git pull --ff
 
-Spack Build rhel7-broadwell:
-  stage: build rhel7-broadwell
+spack-build-quartz:
+  stage: build
+  needs:
+    - job: spack-update
   variables:
     HOST : "quartz"
     SPACK_ENV_NAME : "rhel7-broadwell"
@@ -38,8 +38,10 @@ Spack Build rhel7-broadwell:
     - spack uninstall -y py-pytest%$COMPILER || true
     - spack install --fresh exaworks%$COMPILER py-pytest%$COMPILER
 
-Spack Build rhel7-ppc64le:
-  stage: build rhel7-ppc64le
+spack-build-lassen:
+  stage: build
+  needs:
+    - job: spack-update
   variables:
     HOST : "lassen"
     SPACK_ENV_NAME : "rhel7-ppc64le"
@@ -49,8 +51,10 @@ Spack Build rhel7-ppc64le:
     - shell
   script: *build_script
 
-Spack Build rhel7-cascadelake:
-  stage: build rhel7-cascadelake
+spack-build-ruby:
+  stage: build
+  needs:
+    - job: spack-update
   variables:
     HOST : "ruby"
     SPACK_ENV_NAME : "rhel7-cascadelake"
@@ -60,10 +64,14 @@ Spack Build rhel7-cascadelake:
     - shell
   script: *build_script
 
-Spack Test:
+sdk-test:
+  stage: test
+  needs:
+    - job: spack-build-quartz
+    - job: spack-build-lassen
+    - job: spack-build-ruby
   variables:
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
-  stage: test
   before_script:
     - whoami
   parallel:
@@ -92,9 +100,10 @@ Spack Test:
     - python3 ci/tests/test.py -s
     - >
         for TEST in flux parsl rp swift-t parsl-flux; do
-        python3 ci/tests/test.py -n $TEST -c
-        "bash ci/tests/${TEST}/test.sh";
+            python3 ci/tests/test.py -n $TEST -c
+            "bash ci/tests/${TEST}/test.sh";
         done;
     - python3 ci/tests/test.py -e
   after_script:
     - whoami
+
