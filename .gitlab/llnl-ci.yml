@@ -8,6 +8,7 @@ stages:
 default:
   after_script:
     - cd $SPACK_WORK_DIR/spack/
+    - chgrp -fR exaworks . || true
     - chmod -fR 02770 . || true
 
 Spack Update:

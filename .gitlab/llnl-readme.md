@@ -5,7 +5,7 @@
 Use group directory `/usr/workspace/exaworks`
 ```bash
 mkdir -p sdk/pre-stage; cd sdk
-chgrp -R exaworks .
+chgrp -fR exaworks .
 git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git
 chmod -fR 02770 .
 ```
