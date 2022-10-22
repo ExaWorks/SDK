@@ -5,6 +5,7 @@
 Use group directory `/usr/workspace/exaworks`
 ```bash
 mkdir -p sdk/pre-stage; cd sdk
+newgrp exaworks
 chgrp -fR exaworks .
 git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git
 chmod -fR 02770 .
@@ -66,7 +67,8 @@ spack install --fail-fast exaworks%gcc@8.2.0
 ## 2. Final steps
 AFTER all spack environments are set then update group permissions:
 ```bash
-chgrp -R exaworks .
+# newgrp exaworks
+chgrp -fR exaworks .
 chmod -fR 02770 .
 ```
 
