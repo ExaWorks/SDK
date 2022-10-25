@@ -1,4 +1,6 @@
 stages:
+  - setup
+  - compile
   - update
   - build
   - test
@@ -7,8 +9,48 @@ default:
   before_script:
     - newgrp exaworks
   after_script:
-    - cd $SPACK_WORK_DIR/spack/
+    - cd $SPACK_WORK_DIR/spack
     - chmod -fR 02770 .
+
+spack-setup:
+  stage: setup
+  tags:
+    - quartz
+    - shell
+  script:
+    - mkdir -p $SPACK_WORK_DIR
+    - test -d $SPACK_WORK_DIR/spack && exit 0
+    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $SPACK_WORK_DIR/spack
+
+env-setup:
+  stage: compile
+  needs:
+    - job: spack-setup
+  parallel:
+    matrix:
+      - HOST: [ "quartz" ]
+        SPACK_ENV_NAME: [ "rhel7-broadwell" ]
+        COMPILER: [ "gcc@8.1.0" ]
+        TARGET_ARCH_OPT: [ "target=x86_64" ]
+      - HOST: [ "lassen" ]
+        SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
+        COMPILER: [ "gcc@9.4.0" ]
+        TARGET_ARCH_OPT: [ "target=ppc64le" ]
+      - HOST: [ "ruby" ]
+        SPACK_ENV_NAME: [ "rhel7-cascadelake" ]
+        COMPILER: [ "gcc@8.2.0" ]
+        TARGET_ARCH_OPT: [ "" ]
+  tags:
+    - $HOST
+    - shell
+  script:
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - test "$(spack env list | grep $SPACK_ENV_NAME)" && exit 0
+    - spack env create $SPACK_ENV_NAME
+    - spack env activate $SPACK_ENV_NAME
+    - spack compiler find
+    - spack install --fail-fast $COMPILER%gcc@4.9.3 $TARGET_ARCH_OPT
+    - spack compiler add $(spack location -i $COMPILER)
 
 spack-update:
   stage: update
@@ -21,71 +63,49 @@ spack-update:
     - git reset --hard HEAD
     - git pull --ff
 
-spack-build-quartz:
+spack-build:
   stage: build
   needs:
     - job: spack-update
-  variables:
-    HOST : "quartz"
-    SPACK_ENV_NAME : "rhel7-broadwell"
-    COMPILER : "gcc@8.1.0"
+  parallel:
+    matrix:
+      - HOST: [ "quartz" ]
+        SPACK_ENV_NAME: [ "rhel7-broadwell" ]
+        COMPILER: [ "gcc@8.1.0" ]
+      - HOST: [ "lassen" ]
+        SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
+        COMPILER: [ "gcc@9.4.0" ]
+      - HOST: [ "ruby" ]
+        SPACK_ENV_NAME: [ "rhel7-cascadelake" ]
+        COMPILER: [ "gcc@8.2.0" ]
   tags:
     - $HOST
     - shell
-  script: &build_script
+  script:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack env activate $SPACK_ENV_NAME
-    - spack uninstall -y exaworks%$COMPILER  || true
-    - spack uninstall -y py-pytest%$COMPILER || true
+    - spack uninstall -y exaworks%$COMPILER py-pytest%$COMPILER || true
     - spack install --fresh exaworks%$COMPILER py-pytest%$COMPILER
-
-spack-build-lassen:
-  stage: build
-  needs:
-    - job: spack-update
-  variables:
-    HOST : "lassen"
-    SPACK_ENV_NAME : "rhel7-ppc64le"
-    COMPILER : "gcc@9.4.0"
-  tags:
-    - $HOST
-    - shell
-  script: *build_script
-
-spack-build-ruby:
-  stage: build
-  needs:
-    - job: spack-update
-  variables:
-    HOST : "ruby"
-    SPACK_ENV_NAME : "rhel7-cascadelake"
-    COMPILER : "gcc@8.2.0"
-  tags:
-    - $HOST
-    - shell
-  script: *build_script
 
 sdk-test:
   stage: test
   needs:
-    - job: spack-build-quartz
-    - job: spack-build-lassen
-    - job: spack-build-ruby
+    - job: spack-build
   variables:
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   before_script:
     - whoami
   parallel:
     matrix:
-      - HOST : ["quartz"]
-        SPACK_ENV_NAME : ["rhel7-broadwell"]
-      - HOST : ["lassen"]
-        SPACK_ENV_NAME : ["rhel7-ppc64le"]
-      - HOST : ["ruby"]
-        SPACK_ENV_NAME : ["rhel7-cascadelake"]
+      - HOST: [ "quartz" ]
+        SPACK_ENV_NAME: [ "rhel7-broadwell" ]
+      - HOST: [ "lassen" ]
+        SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
+      - HOST: [ "ruby" ]
+        SPACK_ENV_NAME: [ "rhel7-cascadelake" ]
   tags:
-    - batch
     - $HOST
+    - batch
   script:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack env activate $SPACK_ENV_NAME
