@@ -48,8 +48,8 @@ env-setup:
     - test "$(spack env list | grep $SPACK_ENV_NAME)" && exit 0
     - spack env create $SPACK_ENV_NAME
     - spack env activate $SPACK_ENV_NAME
-    - spack -e . config add concretizer:unify:true
-    - spack -e . config add concretizer:reuse:false
+    - spack config add concretizer:unify:true
+    - spack config add concretizer:reuse:false
     - spack compiler find
     - spack install --fail-fast $COMPILER%gcc@4.9.3 $TARGET_ARCH_OPT
     - spack compiler add $(spack location -i $COMPILER)
