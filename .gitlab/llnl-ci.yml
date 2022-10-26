@@ -51,8 +51,8 @@ env-setup:
     - spack config add concretizer:unify:true
     - spack config add concretizer:reuse:false
     - spack compiler find
-    - spack add $COMPILER%gcc@4.9.3
-    - spack install --fail-fast $TARGET_ARCH_OPT
+    - spack add $COMPILER%gcc@4.9.3 $TARGET_ARCH_OPT
+    - spack install
     - spack compiler add $(spack location -i $COMPILER)
 
 spack-update:
