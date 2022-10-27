@@ -47,7 +47,9 @@ env-setup:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - test "$(spack env list | grep $SPACK_ENV_NAME)" && exit 0
     - spack env create $SPACK_ENV_NAME
-    - spack env activate $SPACK_ENV_NAME
+    - for i in {1..3}; do 
+        spack env activate $SPACK_ENV_NAME && break || sleep 5; 
+      done
     - spack config add concretizer:unify:true
     - spack config add concretizer:reuse:false
     - spack compiler find
@@ -86,7 +88,9 @@ spack-build:
     - shell
   script:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
-    - spack env activate $SPACK_ENV_NAME
+    - for i in {1..3}; do
+        spack env activate $SPACK_ENV_NAME && break || sleep 5;
+      done
     - spack uninstall -y exaworks%$COMPILER py-pytest%$COMPILER || true
     - spack add exaworks%$COMPILER py-pytest%$COMPILER
     - spack concretize -f
@@ -113,7 +117,9 @@ sdk-test:
     - batch
   script:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
-    - spack env activate $SPACK_ENV_NAME
+    - for i in {1..3}; do
+        spack env activate $SPACK_ENV_NAME && break || sleep 5;
+      done
     - spack load exaworks py-pytest
     - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
     - export run_id=$RANDOM
