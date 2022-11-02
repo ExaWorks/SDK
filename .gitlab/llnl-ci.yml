@@ -4,6 +4,7 @@ stages:
   - update
   - build
   - test
+  - cleanup
 
 default:
   before_script:
@@ -52,6 +53,7 @@ env-setup:
       done
     - spack config add concretizer:unify:true
     - spack config add concretizer:reuse:false
+    - spack config add db_lock_timeout:300
     - spack compiler find
     - spack add $COMPILER%gcc@4.9.3 $TARGET_ARCH_OPT
     - spack install
@@ -138,4 +140,15 @@ sdk-test:
     - python3 ci/tests/test.py -e
   after_script:
     - whoami
+
+spack-cleanup:
+  stage: cleanup
+  needs:
+    - job: sdk-test
+  tags:
+    - quartz
+    - shell
+  script:
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - spack clean -a
 
