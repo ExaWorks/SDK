@@ -10,6 +10,7 @@ default:
   before_script:
     - newgrp exaworks
   after_script:
+    - newgrp exaworks
     - cd $SPACK_WORK_DIR/spack
     - chmod -fR 02770 .
 
