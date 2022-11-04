@@ -6,11 +6,10 @@ stages:
   - test
   - cleanup
 
-default:
-  before_script:
-    - newgrp exaworks
-  after_script:
-    - chmod -fR 02770 $SPACK_WORK_DIR/spack
+.final_steps:
+  script: &finalize
+    - chgrp -fR exaworks $SPACK_WORK_DIR/spack || true
+    - chmod -fR 02770 $SPACK_WORK_DIR/spack    || true
 
 spack-setup:
   stage: setup
@@ -21,6 +20,7 @@ spack-setup:
     - mkdir -p $SPACK_WORK_DIR
     - test -d $SPACK_WORK_DIR/spack && exit 0
     - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $SPACK_WORK_DIR/spack
+    - *finalize
 
 env-setup:
   stage: compile
@@ -57,6 +57,7 @@ env-setup:
     - spack add $COMPILER%gcc@4.9.3 $TARGET_ARCH_OPT
     - spack install
     - spack compiler add $(spack location -i $COMPILER)
+    - *finalize
 
 spack-update:
   stage: update
@@ -68,6 +69,7 @@ spack-update:
     - git checkout HEAD^ .
     - git reset --hard HEAD
     - git pull --ff
+    - *finalize
 
 spack-build:
   stage: build
@@ -96,6 +98,7 @@ spack-build:
     - spack add exaworks%$COMPILER py-pytest%$COMPILER
     - spack concretize -f
     - spack install
+    - *finalize
 
 sdk-test:
   stage: test
@@ -103,6 +106,7 @@ sdk-test:
     - job: spack-build
   variables:
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
+    LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 30"
   before_script:
     - whoami
   parallel:
@@ -140,14 +144,22 @@ sdk-test:
   after_script:
     - whoami
 
-spack-cleanup:
+.spack-cleanup: &spack-cleanup
   stage: cleanup
-  needs:
-    - job: sdk-test
   tags:
     - quartz
     - shell
   script:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
-    - spack clean -a
+    - spack clean -a || true
+    - *finalize
+
+cleanup_on_success:
+  when: on_success
+  <<: *spack-cleanup
+
+cleanup_on_failure:
+  needs: ["spack-build"]
+  when: on_failure
+  <<: *spack-cleanup
 
