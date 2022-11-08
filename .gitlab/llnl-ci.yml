@@ -152,6 +152,8 @@ sdk-test:
   script:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack clean -a || true
+    - rm -rf $HOME/.spack/cache
+    - spack providers
     - *finalize
 
 cleanup_on_success:
