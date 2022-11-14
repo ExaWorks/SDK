@@ -55,7 +55,7 @@ env-setup:
     - spack config add config:db_lock_timeout:300
     - spack compiler find
     - spack add $COMPILER ^python@3.9 %gcc@4.9.3 $TARGET_ARCH_OPT
-    - spack install
+    - spack install || (spack env deactivate && spack env remove $SPACK_ENV_NAME -y && exit 1)
     - spack compiler add $(spack location -i $COMPILER)
     - *finalize
 
@@ -136,11 +136,9 @@ sdk-test:
     - export contact="morton30@llnl.gov"
     - export imnumber="LLNL-MI-834241"
     - python3 ci/tests/test.py -s
-    - >
-        for TEST in flux parsl rp swift-t parsl-flux; do
-        python3 ci/tests/test.py -n $TEST -c
-        "bash ci/tests/${TEST}/test.sh";
-        done;
+    - for TEST in flux parsl rp swift-t parsl-flux; do
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
+      done
     - python3 ci/tests/test.py -e
   after_script:
     - whoami
