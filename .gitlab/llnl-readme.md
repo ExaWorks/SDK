@@ -26,7 +26,7 @@ spack env create rhel7-broadwell
 spack env activate rhel7-broadwell
 spack compiler find
 # install sdk compatible compiler 
-spack install --fail-fast gcc@8.1.0%gcc@4.9.3 target=x86_64
+spack install --fail-fast gcc@8.1.0 ^python@3.9 %gcc@4.9.3 target=x86_64
 spack compiler add $(spack location -i gcc@8.1.0)
 # use pre-downloaded packages (see Troubleshooting)
 #   spack stage -p pre-stage python
@@ -41,7 +41,7 @@ Login to **Lassen** (`ssh <user>@lassen.llnl.gov`) and go to the group directory
 spack env create rhel7-ppc64le
 spack env activate rhel7-ppc64le
 spack compiler find
-spack install --fail-fast gcc@9.4.0%gcc@4.9.3 target=ppc64le
+spack install --fail-fast gcc@9.4.0 ^python@3.9 %gcc@4.9.3 target=ppc64le
 spack compiler add $(spack location -i gcc@9.4.0)
 # use pre-downloaded packages (see Troubleshooting)
 #   spack stage -p pre-stage python
@@ -55,7 +55,7 @@ Login to **Ruby** (`ssh <user>@ruby.llnl.gov`) and go to the group directory
 spack env create rhel7-cascadelake
 spack env activate rhel7-cascadelake
 spack compiler find
-spack install --fail-fast gcc@8.2.0%gcc@4.9.3
+spack install --fail-fast gcc@8.2.0 ^python@3.9 %gcc@4.9.3
 spack compiler add $(spack location -i gcc@8.2.0)
 # use pre-downloaded packages (see Troubleshooting)
 #   spack stage -p pre-stage python
