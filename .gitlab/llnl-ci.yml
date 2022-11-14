@@ -54,7 +54,7 @@ env-setup:
     - spack config add concretizer:reuse:false
     - spack config add config:db_lock_timeout:300
     - spack compiler find
-    - spack add $COMPILER%gcc@4.9.3 $TARGET_ARCH_OPT
+    - spack add $COMPILER ^python@3.9 %gcc@4.9.3 $TARGET_ARCH_OPT
     - spack install
     - spack compiler add $(spack location -i $COMPILER)
     - *finalize
