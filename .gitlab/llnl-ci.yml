@@ -31,7 +31,7 @@ env-setup:
       - HOST: [ "quartz" ]
         SPACK_ENV_NAME: [ "rhel7-broadwell" ]
         COMPILER: [ "gcc@8.1.0" ]
-        TARGET_ARCH_OPT: [ "target=x86_64" ]
+        TARGET_ARCH_OPT: [ "target=broadwell" ]
       - HOST: [ "lassen" ]
         SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
         COMPILER: [ "gcc@9.4.0" ]
@@ -39,7 +39,7 @@ env-setup:
       - HOST: [ "ruby" ]
         SPACK_ENV_NAME: [ "rhel7-cascadelake" ]
         COMPILER: [ "gcc@8.2.0" ]
-        TARGET_ARCH_OPT: [ "" ]
+        TARGET_ARCH_OPT: [ "target=cascadelake" ]
   tags:
     - $HOST
     - shell
@@ -54,7 +54,7 @@ env-setup:
     - spack config add concretizer:reuse:false
     - spack config add config:db_lock_timeout:300
     - spack compiler find
-    - spack add $COMPILER ^python@3.9 %gcc@4.9.3 $TARGET_ARCH_OPT
+    - spack add $COMPILER~nvptx ^python@3.9 %gcc@4.9.3 $TARGET_ARCH_OPT
     - spack install || (spack env deactivate && spack env remove $SPACK_ENV_NAME -y && exit 1)
     - spack compiler add $(spack location -i $COMPILER)
     - *finalize
