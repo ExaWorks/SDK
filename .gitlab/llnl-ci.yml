@@ -31,7 +31,7 @@ env-setup:
       - HOST: [ "quartz" ]
         SPACK_ENV_NAME: [ "rhel7-broadwell" ]
         COMPILER: [ "gcc@8.1.0" ]
-        TARGET_ARCH_OPT: [ "target=broadwell" ]
+        TARGET_ARCH_OPT: [ "target=x86_64" ]
       - HOST: [ "lassen" ]
         SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
         COMPILER: [ "gcc@9.4.0" ]
@@ -39,7 +39,7 @@ env-setup:
       - HOST: [ "ruby" ]
         SPACK_ENV_NAME: [ "rhel7-cascadelake" ]
         COMPILER: [ "gcc@8.2.0" ]
-        TARGET_ARCH_OPT: [ "target=cascadelake" ]
+        TARGET_ARCH_OPT: [ "" ]
   tags:
     - $HOST
     - shell
