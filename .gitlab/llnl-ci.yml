@@ -155,12 +155,17 @@ sdk-test:
     - spack providers
     - *finalize
 
-cleanup_on_success:
-  when: on_success
+cleanup-on-compile-failure:
+  needs: [ "env-setup" ]
+  when: on_failure
   <<: *spack-cleanup
 
-cleanup_on_failure:
-  needs: ["spack-build"]
+cleanup-on-build-failure:
+  needs: [ "spack-build" ]
   when: on_failure
+  <<: *spack-cleanup
+
+cleanup-on-success:
+  when: on_success
   <<: *spack-cleanup
 
