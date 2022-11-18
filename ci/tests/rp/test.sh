@@ -10,12 +10,15 @@ else
 fi
 
 git clone -b v$rp_version --single-branch https://github.com/radical-cybertools/radical.pilot.git
-
 cd radical.pilot
+
 echo '--- smoke test'
-./examples/00_getting_started.py
+./examples/00_getting_started.py local.localhost_test
 ret=$?
 echo "--- smoke test $ret"
+
+SID=$(ls -rt | grep rp.session)
+test -z "$SID" || rm -rf "$HOME/radical.pilot.sandbox/$SID"
 
 echo '--- unit test'
 pytest -vvv tests/unit_tests
