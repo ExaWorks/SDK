@@ -18,7 +18,7 @@ ret=$?
 echo "--- smoke test $ret"
 
 SID=$(ls -rt | grep rp.session)
-rm -rf "$HOME/radical.pilot.sandbox/$SID" || true
+test -z "$SID" || rm -rf "$HOME/radical.pilot.sandbox/$SID"
 
 echo '--- unit test'
 pytest -vvv tests/unit_tests
