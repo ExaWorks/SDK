@@ -1,8 +1,8 @@
 .. _chapter_contributing:
 
-============
-Contributing
-============
+===================
+Contributing to SDK
+===================
 
 This document outlines the policies and recommendations for inclusion in the
 ExaWorks SDK. The policies are based on those defined by the xSDK and LLNL
