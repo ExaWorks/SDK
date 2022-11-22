@@ -4,16 +4,6 @@
 Contributing
 ============
 
-ExaWorks SDK supports the workflows needs of a diverse range of users,
-administrators, and developers. It enables teams to produce scalable and
-portable workflows for a wide range of exascale applications. SDK does not
-replace the many workflow solutions already deployed and used by scientists, but
-rather it provides a robust collection of community-identified technologies and
-components that can be leveraged by users.  Most importantly, SDK enables a
-sustainable software infrastructure for workflows so that the software artifacts
-produced by teams will be easier to port, modify, and utilize long after
-projects end.
-
 This document outlines the policies and recommendations for inclusion in the
 ExaWorks SDK. The policies are based on those defined by the xSDK and LLNL
 RADIUSS projects and reflect best practices for open source development,
