@@ -28,4 +28,4 @@ SDK Core Components
 SDK Container Image
 -------------------
 
-* `Preparing, running and testing <tutorials/SDK_docker_image.ipynb>`_
+* `Preparing, running and testing <tutorials/docker_image.ipynb>`_
