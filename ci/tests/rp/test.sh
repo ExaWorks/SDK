@@ -9,11 +9,22 @@ else
     exit 1
 fi
 
+# each ci job runs in a private runner environment
+mkdir -p .radical/pilot/configs
+cat > .radical/pilot/configs/resource_local.json <<EOF
+{
+    "localhost": {
+        "virtenv": "$(pwd)/ve.rp"
+    }
+}
+EOF
+export RADICAL_CONFIG_USER_DIR=$(pwd)
+
 git clone -b v$rp_version --single-branch https://github.com/radical-cybertools/radical.pilot.git
 cd radical.pilot
 
 echo '--- smoke test'
-./examples/00_getting_started.py local.localhost_test
+./examples/00_getting_started.py local.localhost
 ret=$?
 echo "--- smoke test $ret"
 
