@@ -30,8 +30,6 @@ services:
       - "27017:27017"
     networks:
       - sdk-network
-    logging:
-      driver: "none"
 
   mongo-init:
     image: mongo:4.4
@@ -59,8 +57,6 @@ services:
       - "15672:15672"
     networks:
       - sdk-network
-    logging:
-      driver: "none"
 
 networks:
   sdk-network:
