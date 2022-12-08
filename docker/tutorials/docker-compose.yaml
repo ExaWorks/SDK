@@ -1,0 +1,67 @@
+version: "3.4"
+
+services:
+
+  sdk-tutorials:
+    image: exaworks/sdk-tutorials
+    container_name: sdk-tutorials
+    build:
+      context: ../../docs/source/tutorials/
+      dockerfile: ../../../docker/tutorials/Dockerfile
+    ports:
+      - "8888:8888"
+    networks:
+      - sdk-network
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+  mongodb:
+    image: mongo:4.4
+    container_name: mongodb
+    hostname: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root_user
+      - MONGO_INITDB_ROOT_PASSWORD=root_pass
+      - MONGO_INITDB_USERNAME=guest
+      - MONGO_INITDB_PASSWORD=guest
+      - MONGO_INITDB_DATABASE=default
+    ports:
+      - "27017:27017"
+    networks:
+      - sdk-network
+    logging:
+      driver: "none"
+
+  mongo-init:
+    image: mongo:4.4
+    container_name: mongo-init
+    restart: "no"
+    command:
+      - /bin/bash
+      - -c
+      - "sleep 10 && \
+         mongo --host mongodb -u root_user -p root_pass \
+               --authenticationDatabase admin default \
+               --eval \"db.createUser({user: 'guest', pwd: 'guest', \
+                        roles: [{role: 'readWrite', db: 'default'}]});\""
+    networks:
+      - sdk-network
+    depends_on:
+      - mongodb
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - sdk-network
+    logging:
+      driver: "none"
+
+networks:
+  sdk-network:
+    name: sdk-network

@@ -8,13 +8,13 @@ Jupyter Docker images - https://github.com/jupyter/docker-stacks
 ./docker/tutorials/build.sh
 ```
 
-## Run container image (base)
+## A. Run container image (base)
 
 ```shell
 docker run --rm -it -p 8888:8888 exaworks/sdk-tutorials
 ```
 
-## Run container image (extended - for RADICAL-EnTK)
+## B. Run container image (extended - for RADICAL-EnTK)
 
 Docker network
 ```shell
@@ -50,3 +50,13 @@ Run container with network
 ```shell
 docker run --rm -it -p 8888:8888 --network sdk-network exaworks/sdk-tutorials
 ```
+
+## C. Run `docker-compose`
+
+```shell
+docker compose up -d
+docker compose logs -f sdk-tutorials
+# stop containers
+#   docker compose stop
+```
+
