@@ -3,6 +3,10 @@ FROM jupyter/minimal-notebook:python-3.9
 
 ENV JUPYTER_ENABLE_LAB=yes
 
+USER root
+
+RUN apt-get update -y && apt-get install -y bc curl gnupg
+
 USER ${NB_UID}
 
 WORKDIR /tutorials/
@@ -17,3 +21,7 @@ RUN conda install -y \
 RUN cd parsl \
  && git clone -b main --single-branch https://github.com/ExaWorks/molecular-design-parsl-demo \
  && pip install -e molecular-design-parsl-demo/
+
+# RADICAL-EnTK
+
+RUN conda install -y -c conda-forge radical.entk
