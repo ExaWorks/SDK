@@ -54,6 +54,8 @@ docker run --rm -it -p 8888:8888 --network sdk-network exaworks/sdk-tutorials
 ## C. Run `docker-compose`
 
 ```shell
+cd docker/tutorials
+
 docker compose up -d
 docker compose logs -f sdk-tutorials
 # stop containers
