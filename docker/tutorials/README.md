@@ -1,8 +1,12 @@
 # Docker container with tutorial notebooks
 
+Follow either method A, B or C to run the tutorial notebooks. Note that if you
+want to run the RADICAL-Cybertools tutorial, you will have to follow either
+method B or C.
+
 ## Build container image
 
-Jupyter Docker images - https://github.com/jupyter/docker-stacks 
+Jupyter Docker images - https://github.com/jupyter/docker-stacks
 
 ```shell
 ./docker/tutorials/build.sh
@@ -16,13 +20,15 @@ docker run --rm -it -p 8888:8888 exaworks/sdk-tutorials
 
 ## B. Run container image (extended - for RADICAL-EnTK)
 
-Docker network
+Docker network:
+
 ```shell
 # create a network to communicate with services
 docker network create sdk-network
 ```
 
-Launch MongoDB service
+Launch MongoDB service:
+
 ```shell
 docker run -d --hostname mongodb --name mongodb -p 27017:27017 \
            -e MONGO_INITDB_ROOT_USERNAME=root_user \
@@ -39,14 +45,16 @@ docker exec mongodb bash -c \
                            roles: [{role: 'readWrite', db: 'default'}]});\""
 ```
 
-Launch RabbitMQ service
+Launch RabbitMQ service:
+
 ```shell
 # run the service
 docker run -d --hostname rabbitmq --name rabbitmq -p 15672:15672 -p 5672:5672 \
            --network sdk-network rabbitmq:3-management
 ```
 
-Run container with network
+Run container with network:
+
 ```shell
 docker run --rm -it -p 8888:8888 --network sdk-network exaworks/sdk-tutorials
 ```
@@ -61,4 +69,3 @@ docker compose logs -f sdk-tutorials
 # stop containers
 #   docker compose stop
 ```
-

@@ -10,14 +10,38 @@ Exaworks SDK Docker container, and how to Exaworks SDK tests. We also offer
 details that might be useful for developers that would like to contribute to
 Exaworks SDK.
 
-.. note::
 
-   Each tutorial is a self-container Jupyter Notebook. You can download each
-   notebook, setup a suitable local environment and run the notebook locally.
+Running the Tutorials
+---------------------
+
+Tutorials can be run via our self-contained Docker container or indipendently.
+When run indipendently, the user has to setup a suitable running environment for
+each tutorial. That can be technically demanding and it requires referring to
+the documentation site of each component.
+
+To run the tutorials in the ExaWorks SDK Docker container:
+
+1. clone the ExaWorks SDK repository:
+
+  ```
+  clone
+  ```
+
+2. Follow the instructions in `SDK/docker/tutorials/README.md <>`_, choosing one
+   of the three methods A, B or C to execute your container. Note that if you
+   want to run the RADICAL-Cybertools tutorial, you will have to chose either B
+   or C.
+3. After following the instructions, you will be given a URI to cut and paste in
+   your browser to access to the Jupyter Notebook server that is running in the
+   SBK container.
+4. Load and execute each tutorial in the Jupyter Notebook server on your
+   browser.
+5. Once finished, stop the SDK container and, in case, the MongoDB and RabbitMQ
+   containers you started to execute the RADICAL-Cybertools tutorial.
 
 
-SDK Core Components
--------------------
+SDK Core Components Tutorials
+-----------------------------
 
 * `Flux <tutorials/flux.ipynb>`_
 * `Parsl <tutorials/parsl.ipynb>`_
@@ -25,7 +49,3 @@ SDK Core Components
 * `RADICAL-Cybertools <tutorials/rct.ipynb>`_
 * `Swift/T <tutorials/swift.ipynb>`_
 
-SDK Container Image
--------------------
-
-* `Preparing, running and testing <tutorials/docker_image.ipynb>`_
