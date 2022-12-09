@@ -14,8 +14,8 @@ Exaworks SDK.
 Running the Tutorials
 ---------------------
 
-Tutorials can be run via our self-contained Docker container or indipendently.
-When run indipendently, the user has to setup a suitable running environment for
+Tutorials can be run via our self-contained Docker container or independently.
+When run independently, the user has to setup a suitable running environment for
 each tutorial. That can be technically demanding and it requires referring to
 the documentation site of each component.
 
@@ -33,7 +33,7 @@ To run the tutorials in the ExaWorks SDK Docker container:
    or C.
 3. After following the instructions, you will be given a URI to cut and paste in
    your browser to access to the Jupyter Notebook server that is running in the
-   SBK container.
+   SDK container.
 4. Load and execute each tutorial in the Jupyter Notebook server on your
    browser.
 5. Once finished, stop the SDK container and, in case, the MongoDB and RabbitMQ
@@ -44,7 +44,7 @@ SDK Core Components Tutorials
 -----------------------------
 
 * `Flux <tutorials/flux.ipynb>`_
-* `Parsl <tutorials/parsl.ipynb>`_
+* `Parsl <tutorials/parsl/parsl.ipynb>`_
 * `PSI/J <tutorials/psij.ipynb>`_
 * `RADICAL-Cybertools <tutorials/rct.ipynb>`_
 * `Swift/T <tutorials/swift.ipynb>`_

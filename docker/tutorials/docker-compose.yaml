@@ -18,7 +18,7 @@ services:
 
   mongodb:
     image: mongo:4.4
-    container_name: mongodb
+    container_name: sdk-mongodb
     hostname: mongodb
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root_user
@@ -33,7 +33,7 @@ services:
 
   mongo-init:
     image: mongo:4.4
-    container_name: mongo-init
+    container_name: sdk-mongo-init
     restart: "no"
     command:
       - /bin/bash
@@ -50,7 +50,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    container_name: sdk-rabbitmq
     hostname: rabbitmq
     ports:
       - "5672:5672"
