@@ -24,7 +24,7 @@ To run the tutorials in the ExaWorks SDK Docker container:
 1. clone the ExaWorks SDK repository:
 
   ```
-  clone git@github.com:ExaWorks/SDK.git
+  git clone git@github.com:ExaWorks/SDK.git
   ```
 
 2. Follow the instructions in `SDK/docker/tutorials/README.md <https://github.com/ExaWorks/SDK/blob/master/docker/tutorials/README.md>`_, choosing one
