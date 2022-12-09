@@ -27,7 +27,7 @@ To run the tutorials in the ExaWorks SDK Docker container:
   clone
   ```
 
-2. Follow the instructions in `SDK/docker/tutorials/README.md <>`_, choosing one
+2. Follow the instructions in `SDK/docker/tutorials/README.md <https://github.com/ExaWorks/SDK/blob/master/docker/tutorials/README.md>`_, choosing one
    of the three methods A, B or C to execute your container. Note that if you
    want to run the RADICAL-Cybertools tutorial, you will have to chose either B
    or C.
