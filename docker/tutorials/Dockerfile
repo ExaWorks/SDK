@@ -25,3 +25,7 @@ RUN cd parsl \
 # RADICAL-EnTK
 
 RUN conda install -y -c conda-forge radical.entk
+
+# RP-Parsl Integration usecase nwchem
+
+RUN conda install -c conda-forge nwchem
