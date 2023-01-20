@@ -1,5 +1,6 @@
 
-FROM jupyter/minimal-notebook:python-3.9
+ARG BUILDPLATFORM=linux/amd64
+FROM --platform=${BUILDPLATFORM} jupyter/minimal-notebook:python-3.9
 
 ENV JUPYTER_ENABLE_LAB=yes
 

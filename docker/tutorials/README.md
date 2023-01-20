@@ -12,6 +12,12 @@ Jupyter Docker images - https://github.com/jupyter/docker-stacks
 ./docker/tutorials/build.sh
 ```
 
+**NOTE**: for ARM platform, please, pull the image from the DockerHub directly
+
+```shell
+docker pull exaworks/sdk-tutorials
+```
+
 ## A. Run container image (base)
 
 ```shell
