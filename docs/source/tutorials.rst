@@ -47,5 +47,5 @@ SDK Core Components Tutorials
 * `Parsl <tutorials/parsl/parsl.ipynb>`_
 * `PSI/J <tutorials/psij.ipynb>`_
 * `RADICAL-Cybertools <tutorials/rct.ipynb>`_
-* `Swift/T <tutorials/swift.ipynb>`_
+* `Swift/T <tutorials/swift-t/swift-t.ipynb>`_
 
