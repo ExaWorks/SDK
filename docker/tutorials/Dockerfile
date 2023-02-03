@@ -30,3 +30,8 @@ RUN conda install -y -c conda-forge radical.entk
 # RP-Parsl Integration usecase nwchem
 
 RUN conda install -c conda-forge nwchem
+
+# Needed for MPI example in PSI/J
+
+RUN conda install -y -c conda-forge gxx_linux-64
+RUN conda install -y -c conda-forge openmpi
