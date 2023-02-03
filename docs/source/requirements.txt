@@ -1,5 +1,6 @@
 sphinx_copybutton
 nbsphinx
 ipykernel
-nbsphinx
 sphinx-rtd-theme
+pandoc
+ipywidgets

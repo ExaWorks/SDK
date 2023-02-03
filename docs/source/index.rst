@@ -2,7 +2,7 @@ ExaWorks: Software Development Kit
 ==================================
 
 .. image:: https://readthedocs.org/projects/exaworkssdk/badge/?version=latest
-   :target: http://exaworkssdk.readthedocs.io/en/latest/?badge=latest
+   :target: http://radicalanalytics.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
 ExaWorks **Software Development Kit (SDK)** offers: (1) packaging for a curated
@@ -40,12 +40,9 @@ workflows.
    :numbered:
    :maxdepth: 2
 
-   .. introduction.rst
    components.rst
-   .. usage.rst
    tutorials.rst
    contribute.rst
-   .. development.rst
 
 
 Indices and tables
