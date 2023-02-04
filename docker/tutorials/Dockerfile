@@ -45,8 +45,7 @@ COPY --chown=${NB_UID}:${NB_GID} ./ ./
 # Parsl
 
 RUN git clone -b main --single-branch https://github.com/ExaWorks/molecular-design-parsl-demo \
-    parsl/molecular-design-parsl-demo \
- && cd parsl/molecular-design-parsl-demo \
+ && cd molecular-design-parsl-demo \
  && sed -i '1d' environment.yml \
  && mamba env create -n parsl -f environment.yml \
  && mamba update -y -n parsl \
