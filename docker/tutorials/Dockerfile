@@ -1,8 +1,9 @@
 
-ARG BUILD_PLATFORM=linux/amd64
+# https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
+ARG BUILDPLATFORM=linux/amd64
 ARG PY_VER=3.9
 
-FROM --platform=${BUILD_PLATFORM} jupyter/minimal-notebook:python-${PY_VER}
+FROM --platform=${BUILDPLATFORM} jupyter/minimal-notebook:python-${PY_VER}
 
 ENV JUPYTER_ENABLE_LAB=yes
 
