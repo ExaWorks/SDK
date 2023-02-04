@@ -22,8 +22,8 @@ needs_sphinx = '1.6'
 # -- Project information -----------------------------------------------------
 
 project = 'ExaWorks SDK'
-copyright = '2022, ExaWork Team'
-author = 'ExaWork Team'
+copyright = '2022, ExaWorks Team'
+author = 'ExaWorks Team'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0'

@@ -2,7 +2,7 @@ ExaWorks: Software Development Kit
 ==================================
 
 .. image:: https://readthedocs.org/projects/exaworkssdk/badge/?version=latest
-   :target: http://radicalanalytics.readthedocs.io/en/latest/?badge=latest
+   :target: http://exaworkssdk.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
 ExaWorks **Software Development Kit (SDK)** offers: (1) packaging for a curated
@@ -23,7 +23,7 @@ on a variety of DoE HPC platforms.
 Currently, ExaWorks SDK offers Docker containers and `Spack
 <https://spack.readthedocs.io/>`_ packages for `Flux
 <http://flux-framework.org>`_, `Parsl <https://parsl-project.org>`_, `PSI/J
-<https://exaworks.org/psi-j-python/>`_, `RADICAL-Cybertools
+<https://exaworks.org/psij-python/>`_, `RADICAL-Cybertools
 <https://radical-cybertools.github.io>`_, and `Swift/T
 <http://swift-lang.org/Swift-T>`_. Each package is deployed and tested on a
 growing number of DoE HPC platforms. Applications teams can draw from SDK's
