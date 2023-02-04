@@ -23,7 +23,7 @@ on a variety of DoE HPC platforms.
 Currently, ExaWorks SDK offers Docker containers and `Spack
 <https://spack.readthedocs.io/>`_ packages for `Flux
 <http://flux-framework.org>`_, `Parsl <https://parsl-project.org>`_, `PSI/J
-<https://exaworks.org/psi-j-python/>`_, `RADICAL-Cybertools
+<https://exaworks.org/psij-python/>`_, `RADICAL-Cybertools
 <https://radical-cybertools.github.io>`_, and `Swift/T
 <http://swift-lang.org/Swift-T>`_. Each package is deployed and tested on a
 growing number of DoE HPC platforms. Applications teams can draw from SDK's
@@ -40,12 +40,9 @@ workflows.
    :numbered:
    :maxdepth: 2
 
-   .. introduction.rst
    components.rst
-   .. usage.rst
    tutorials.rst
    contribute.rst
-   .. development.rst
 
 
 Indices and tables

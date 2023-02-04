@@ -13,17 +13,21 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+import sphinx_rtd_theme
+from sphinx.ext.apidoc import main
+
+needs_sphinx = '1.6'
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'ExaWorks SDK'
-copyright = '2022, ExaWork Devel Team'
-author = 'ExaWork Devel Team'
+copyright = '2022, ExaWorks Team'
+author = 'ExaWorks Team'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
-
+release = '1.0'
+version = release
 
 # -- General configuration ---------------------------------------------------
 
@@ -65,6 +69,7 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

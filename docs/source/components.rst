@@ -12,7 +12,7 @@ The SDK has four core components but it is open to the contribution of any syste
   managing parallel computation on one to many nodes.  It contains abstractions
   to support various parallel and distributed workloads: from bag-of-tasks to
   dataflow, short to long duration tasks, single core through to multi-node.
-* `PSI/J <https://exaworks.org/psi-j-python/>`_. The Portable Submission
+* `PSI/J <https://exaworks.org/psij-python/>`_. The Portable Submission
   Interface for Jobs is a Python abstraction layer over cluster schedulers. A
   number of executors and launchers allow PSI/J to communicate with specific job
   schedulers.
