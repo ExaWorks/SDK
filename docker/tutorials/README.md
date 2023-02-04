@@ -6,7 +6,8 @@ method B or C.
 
 ## Build container image
 
-Jupyter Docker images - https://github.com/jupyter/docker-stacks
+SDK Tutorials container is based on 
+[jupyter/minimal-notebook](https://github.com/jupyter/docker-stacks) image.
 
 ```shell
 ./docker/tutorials/build.sh
@@ -24,7 +25,26 @@ docker pull exaworks/sdk-tutorials
 docker run --rm -it -p 8888:8888 exaworks/sdk-tutorials
 ```
 
-## B. Run container image (with MongoDB and RabbitMQ services)
+## B. Run `docker-compose` (extended)
+
+It starts `sdk-tutorials` container with auxiliary services, such as MongoDB
+and RabbitMQ, which are used by the RADICAL-Cybertools components.
+
+```shell
+cd docker/tutorials
+
+docker compose up -d
+docker compose logs -f sdk-tutorials
+# stop containers
+#   docker compose stop
+# remove containers
+#   docker compose rm -f
+```
+
+## C. Run container image with MongoDB and RabbitMQ services manually
+
+These steps do the same as `docker-compose`, but all necessary commands are
+executed manually.
 
 Docker network to communicate with services:
 
@@ -69,17 +89,4 @@ Stop services after work is done:
 docker stop sdk-mongodb sdk-rabbitmq
 # stop and remove containers
 #   docker rm -f sdk-mongodb sdk-rabbitmq
-```
-
-## C. Run `docker-compose`
-
-```shell
-cd docker/tutorials
-
-docker compose up -d
-docker compose logs -f sdk-tutorials
-# stop containers
-#   docker compose stop
-# remove containers
-#   docker compose rm -f
 ```
