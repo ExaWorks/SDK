@@ -33,5 +33,6 @@ RUN conda install -c conda-forge nwchem
 
 # Needed for MPI example in PSI/J
 
-RUN conda install -y -c conda-forge gxx_linux-64
-RUN conda install -y -c conda-forge openmpi
+RUN mamba install -y -c conda-forge \
+    gxx_linux-64 \
+    openmpi
