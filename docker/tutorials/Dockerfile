@@ -62,3 +62,7 @@ RUN mamba install -y -c conda-forge \
 
 RUN mamba install -y -c conda-forge \
     nwchem
+
+# Swift/T: Install last to avoid dependency issues
+RUN mamba install -y -c conda-forge gcc zsh openjdk=11 openmpi
+RUN mamba install -y -c conda-forge http://web.cels.anl.gov/~woz/swift-t-1.6.0-py39_1.tar.bz2
