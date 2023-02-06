@@ -40,12 +40,19 @@ To run the tutorials in the ExaWorks SDK Docker container:
    containers you started to execute the RADICAL-Cybertools tutorial.
 
 
-SDK Core Components Tutorials
------------------------------
 
-* `Flux <tutorials/flux.ipynb>`_
-* `Parsl <tutorials/parsl/parsl.ipynb>`_
-* `PSI/J <tutorials/psij.ipynb>`_
-* `RADICAL-Cybertools <tutorials/rct.ipynb>`_
-* `Swift/T <tutorials/swift-t/swift-t.ipynb>`_
+SDK Tutorials
+-------------
+
+.. * `Flux <tutorials/flux.ipynb>`_
+.. * `Parsl <tutorials/parsl.ipynb>`_
+.. * `PSI/J <tutorials/psij.ipynb>`_
+.. * `RADICAL-Cybertools <tutorials/rct.ipynb>`_
+.. * `Swift/T <tutorials/swift-t.ipynb>`_
+
+.. toctree::
+   :maxdepth: 2
+   :glob:
+
+   tutorials/*
 
