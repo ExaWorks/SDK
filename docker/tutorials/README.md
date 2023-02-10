@@ -16,13 +16,18 @@ SDK Tutorials container is based on
 **NOTE**: for ARM platform, please, pull the image from the DockerHub directly
 
 ```shell
-docker pull exaworks/sdk-tutorials
+# use a specific tag if needed, otherwise "latest" is used (by default)
+docker pull exaworks/sdk-tutorials:latest
 ```
 
 ## A. Run container image (base)
 
 ```shell
 docker run --rm -it -p 8888:8888 exaworks/sdk-tutorials
+# OR
+#   run.sh [tag_name]
+# OR with mounted tutorials directory
+#   run-local.sh [tag_name]
 ```
 
 ## B. Run `docker-compose` (extended)
@@ -32,6 +37,8 @@ and RabbitMQ, which are used by the RADICAL-Cybertools components.
 
 ```shell
 cd docker/tutorials
+# if a specific tag is needed, then export the following env variable, e.g.,
+#   export SDK_TUTORIALS_TAG=ecp-tutorials-2023
 
 docker compose up -d
 docker compose logs -f sdk-tutorials

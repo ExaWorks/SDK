@@ -3,7 +3,7 @@ version: "3.4"
 services:
 
   sdk-tutorials:
-    image: exaworks/sdk-tutorials
+    image: exaworks/sdk-tutorials:${SDK_TUTORIALS_TAG:-latest}
     container_name: sdk-tutorials
     build:
       context: ../../docs/source/tutorials/
