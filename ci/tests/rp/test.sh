@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if which radical-pilot-version >/dev/null; then
     rp_version="$(radical-pilot-version)"
     if [[ -z $rp_version ]]; then

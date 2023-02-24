@@ -1,14 +1,21 @@
 {
     "localhost_flux": {
-        "pre_bootstrap_0"             : [],
-        "pre_bootstrap_1"             : [],
-        "virtenv_mode"                : "local",
+        "schemas"                     : ["local"],
+        "local"                       :
+        {
+            "job_manager_endpoint"    : "fork://localhost/",
+            "filesystem_endpoint"     : "file://localhost/"
+        },
         "agent_scheduler"             : "FLUX",
         "agent_spawner"               : "FLUX",
         "launch_methods"              : {
                                          "order"  : ["FLUX", "FORK"],
                                          "FLUX"   : {},
                                          "FORK"   : {}
-                                        }
+                                        },
+        "python_dist"                 : "default",
+        "virtenv"                     : "$(pwd)/ve.rp",
+        "virtenv_mode"                : "create",
+        "rp_version"                  : "local"
     }
 }
