@@ -30,7 +30,7 @@ jobs:
         export branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
         docker pull exaworks/sdk:${{ env.DOCKER_TAG }}
         python3 .github/test.py -s
-        for core in flux parsl rp swift flux-parsl
+        for core in flux parsl rp swift parsl-flux rp-flux
         do
           python3 .github/test.py -n $core -c \
           "docker run exaworks/sdk:${{ env.DOCKER_TAG }} \

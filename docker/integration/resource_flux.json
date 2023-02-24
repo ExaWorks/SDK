@@ -1,0 +1,18 @@
+{
+    "localhost_flux": {
+        "schemas"                     : ["local"],
+        "local"                       :
+        {
+            "job_manager_endpoint"    : "fork://localhost/",
+            "filesystem_endpoint"     : "file://localhost/"
+        },
+        "agent_scheduler"             : "FLUX",
+        "agent_spawner"               : "FLUX",
+        "launch_methods"              : {
+                                         "order"  : ["FLUX", "FORK"],
+                                         "FLUX"   : {},
+                                         "FORK"   : {}
+                                        },
+        "virtenv_mode"                : "local"
+    }
+}
