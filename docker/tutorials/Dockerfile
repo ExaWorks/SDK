@@ -42,11 +42,10 @@ RUN printf '\n\
 WORKDIR /tutorials/
 COPY --chown=${NB_UID}:${NB_GID} ./ ./
 
-# RADICAL-Pilot (RP) & RADICAL-EnTK (RE)
+# RADICAL-Cybertools (RADICAL-EnTK and RADICAL-Pilot)
 
 RUN mamba install -y -c conda-forge \
-    radical.pilot=1.20 \
-    radical.entk=1.20
+    'radical.entk>=1.30'
 
 # Parsl-RP integration usecase NWChem
 
