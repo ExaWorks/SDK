@@ -83,7 +83,7 @@ Spack Test:
     - export contact="andre@merzky.net"
     - python3 ci/tests/test.py -s
     - >
-        for TEST in flux parsl rp swift-t parsl-flux; do
+        for TEST in flux parsl rp swift-t parsl-flux rp-flux; do
         python3 ci/tests/test.py -n $TEST -c
         "bash ci/tests/${TEST}/test.sh";
         done;
