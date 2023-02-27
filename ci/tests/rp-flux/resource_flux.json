@@ -6,6 +6,7 @@
             "job_manager_endpoint"    : "fork://localhost/",
             "filesystem_endpoint"     : "file://localhost/"
         },
+        "resource_manager"            : "FORK",
         "agent_scheduler"             : "FLUX",
         "agent_spawner"               : "FLUX",
         "launch_methods"              : {

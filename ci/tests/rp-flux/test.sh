@@ -16,7 +16,10 @@ mkdir -p .radical/pilot/configs
 cp resource_flux.json .radical/pilot/configs/resource_flux.json
 export RADICAL_CONFIG_USER_DIR=$(pwd)
 
-git clone -b v$rp_version --single-branch https://github.com/radical-cybertools/radical.pilot.git
+if [[ ! -d "./radical.pilot" ]]; then
+    git clone -b v$rp_version --single-branch \
+    https://github.com/radical-cybertools/radical.pilot.git
+fi
 cd radical.pilot
 
 echo '--- smoke test'
