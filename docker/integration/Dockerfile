@@ -9,8 +9,8 @@ COPY parsl-flux.sh /tests/parsl-flux/test.sh
 
 # RP-Flux integration
 
-RUN mkdir -p ~/.radical/pilot/configs/
-COPY resource_flux.json ~/.radical/pilot/configs/resource_flux.json
+RUN mkdir -p /root/.radical/pilot/configs/
+COPY resource_flux.json /root/.radical/pilot/configs/resource_flux.json
 COPY rp-flux.sh /tests/rp-flux/test.sh
 
 CMD bash
