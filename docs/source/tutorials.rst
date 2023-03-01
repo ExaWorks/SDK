@@ -36,8 +36,8 @@ To run the tutorials in the ExaWorks SDK Docker container:
    SDK container.
 4. Load and execute each tutorial in the Jupyter Notebook server on your
    browser.
-5. Once finished, stop the SDK container and, in case, the MongoDB and RabbitMQ
-   containers you started to execute the RADICAL-Cybertools tutorial.
+5. Once finished, stop the SDK container and, in case, the MongoDB container,
+   you started to execute the RADICAL-Cybertools tutorial.
 
 
 
