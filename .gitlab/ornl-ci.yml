@@ -9,8 +9,8 @@ stages:
 
 .final_steps:
   script: &finalize
-    - chgrp -fR exaworks $SPACK_WORK_DIR/spack || true
-    - chmod -fR 02770 $SPACK_WORK_DIR/spack    || true
+    - chgrp -fR csc449 $SPACK_WORK_DIR/spack || true
+    - chmod -fR 02770  $SPACK_WORK_DIR/spack || true
 
 spack-setup:
   stage: setup
@@ -33,7 +33,7 @@ env-setup:
         SPACK_ENV_NAME: [ "ascent" ]
   tags:
     - $HOST
-    - shell
+    - nobatch
   script:
     - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - test "$(spack env list | grep $SPACK_ENV_NAME)" && exit 0
