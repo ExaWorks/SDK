@@ -13,7 +13,7 @@ fi
 
 # each ci job runs in a private runner environment
 mkdir -p .radical/pilot/configs
-cp resource_flux.json .radical/pilot/configs/resource_flux.json
+cp ci/tests/rp-flux/resource_flux.json .radical/pilot/configs/resource_flux.json
 export RADICAL_CONFIG_USER_DIR=$(pwd)
 
 if [[ ! -d "./radical.pilot" ]]; then
