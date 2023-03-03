@@ -7,10 +7,9 @@ FROM ${BASE_IMAGE}
 RUN mkdir -p /data/db /var/log/mongodb /var/run/mongodb
 ENV RADICAL_PILOT_DBURL=mongodb://localhost/am
 
-# RCT installation (use EnTK devel package temporary)
+# RCT installation (RADICAL-EnTK includes RADICAL-Pilot)
 RUN pip install \
-    radical.pilot \
-    git+https://github.com/radical-cybertools/radical.entk.git@devel
+    radical.entk
 
 # clone RP and RE to get the test suite
 RUN git clone -b master --single-branch https://github.com/radical-cybertools/radical.pilot.git \

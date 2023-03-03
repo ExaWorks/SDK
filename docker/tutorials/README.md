@@ -32,8 +32,8 @@ docker run --rm -it -p 8888:8888 exaworks/sdk-tutorials
 
 ## B. Run `docker-compose` (extended)
 
-It starts `sdk-tutorials` container with auxiliary services, such as MongoDB
-and RabbitMQ, which are used by the RADICAL-Cybertools components.
+It starts `sdk-tutorials` container with an auxiliary service - MongoDB - which
+is used by the RADICAL-Cybertools components (part of a communication layer).
 
 ```shell
 cd docker/tutorials
@@ -48,7 +48,7 @@ docker compose logs -f sdk-tutorials
 #   docker compose rm -f
 ```
 
-## C. Run container image with MongoDB and RabbitMQ services manually
+## C. Run container image with MongoDB service manually
 
 These steps do the same as `docker-compose`, but all necessary commands are
 executed manually.
@@ -76,24 +76,18 @@ docker exec sdk-mongodb bash -c \
                            roles: [{role: 'readWrite', db: 'default'}]});\""
 ```
 
-Launch RabbitMQ service:
-
-```shell
-docker run -d --hostname rabbitmq --name sdk-rabbitmq -p 15672:15672 \
-           -p 5672:5672 --network sdk-network rabbitmq:3-management
-```
-
 Run container with network:
 
 ```shell
 docker run --rm -it -p 8888:8888 --network sdk-network exaworks/sdk-tutorials
 ```
 
-Stop services after work is done:
+Stop an auxiliary service after work is done:
 
 ```shell
-# stop containers
-docker stop sdk-mongodb sdk-rabbitmq
-# stop and remove containers
-#   docker rm -f sdk-mongodb sdk-rabbitmq
+# stop container
+docker stop sdk-mongodb
+# stop and remove container
+#   docker rm -f sdk-mongodb
 ```
+
