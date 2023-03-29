@@ -14,6 +14,7 @@
                                          "FLUX"   : {},
                                          "FORK"   : {}
                                         },
+        "default_remote_workdir"      : "$HOME",
         "python_dist"                 : "default",
         "virtenv"                     : "$(pwd)/ve.rp",
         "virtenv_mode"                : "create",

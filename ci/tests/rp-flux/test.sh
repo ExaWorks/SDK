@@ -27,5 +27,8 @@ echo '--- smoke test'
 ret=$?
 echo "--- smoke test $ret"
 
+rm -rf $HOME/radical.pilot.sandbox/*
+echo '--- cleaned pilot sandbox'
+
 test "$ret" = 0 && echo "Success!"
 exit $ret

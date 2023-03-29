@@ -46,6 +46,9 @@ pytest -vvv tests/component_tests
 test "$ret" = 0 && ret=$?
 echo "--- component test $ret"
 
+rm -rf $HOME/radical.pilot.sandbox/*
+echo '--- cleaned pilot sandbox'
+
 test "$ret" = 0 && echo "Success!"
 exit $ret
 
