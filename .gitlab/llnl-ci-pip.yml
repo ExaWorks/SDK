@@ -1,0 +1,96 @@
+stages:
+  - pip-env-setup
+  - pip-test
+  - pip-cleanup
+
+.final_steps:
+  script: &finalize
+    - chgrp -fR exaworks $SDK_WORK_DIR/pip || true
+    - chmod -fR 02770 $SDK_WORK_DIR/pip    || true
+
+pip-env-setup:
+  stage: pip-env-setup
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
+  parallel:
+    matrix:
+      - HOST : [ "quartz", "ruby"]
+        RUNNER_TYPE: "shell"
+      # - HOST : [ "lassen" ]
+      #   ENVIRONMENT: [ "BATCH" ]
+      #   RUNNER_TYPE: "batch"
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+  script:
+    - mkdir -p ${SDK_WORK_DIR}/pip/
+    - cd ${SDK_WORK_DIR}/pip/
+    - python3 -m venv ${HOST}-venv
+    - cd ${HOST}-venv
+    - source bin/activate
+    - pip install --upgrade pip
+    - pip install --no-cache-dir parsl
+    - pip install --no-cache-dir radical.pilot
+    - pip install --no-cache-dir pytest
+    - pip install --no-cache-dir pytest-tap
+    - git clone git@github.com:ExaWorks/SDK.git
+    - *finalize
+
+pip-tests:
+  stage: pip-test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
+  parallel:
+    matrix:
+      - HOST : [ "quartz", "ruby"]
+        RUNNER_TYPE: "shell"
+      # - HOST : [ "lassen" ] ## Check if rust is located on lassen, model
+      #   ENVIRONMENT: [ "BATCH" ]
+      #   RUNNER_TYPE: "batch"
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+  script:
+    - cd ${SDK_WORK_DIR}/pip/${HOST}-venv
+    - source ./bin/activate
+    - cd SDK
+    - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+    - export run_id=$CI_PIPELINE_ID
+    - export branch=$CI_COMMIT_BRANCH
+    - export url=$TESTING_HOST
+    - export test="Pip"
+    - export location="llnl-$HOST"
+    - export contact="arambula2@llnl.gov"
+    - export imnumber="LLNL-MI-834241"
+    - python3 ci/tests/test.py -s
+    - for TEST in parsl rp parsl-flux; do
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
+      done
+    - python3 ci/tests/test.py -e
+    - deactivate
+
+.pip-env-cleanup: &pip-env-cleanup
+  stage: pip-cleanup
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
+  tags:
+    - quartz
+    - shell
+  script:
+    - cd $SDK_WORK_DIR
+    - rm -rf pip
+    - *finalize
+
+pip-cleanup-on-env-setup-failure:
+  needs: [ "pip-env-setup" ]
+  when: on_failure
+  <<: *pip-env-cleanup
+
+pip-cleanup-on-test-failure:
+  needs: [ "pip-tests" ]
+  when: on_failure
+  <<: *pip-env-cleanup
+
+pip-cleanup-on-success:
+  when: on_success
+  <<: *pip-env-cleanup
