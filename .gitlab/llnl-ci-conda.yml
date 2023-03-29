@@ -1,0 +1,115 @@
+stages:
+  - conda-env-setup
+  - conda-test
+  - conda-cleanup
+
+.final_steps:
+  script: &finalize
+    - chgrp -fR exaworks $SDK_WORK_DIR/conda || true
+    - chmod -fR 02770 $SDK_WORK_DIR/conda    || true
+
+conda-env-setup:
+  stage: conda-env-setup
+  parallel:
+    matrix:
+      - HOST : [ "quartz", "ruby"]
+        RUNNER_TYPE: "shell"
+        # - HOST : [ "lassen" ]
+        #   ENVIRONMENT: [ "BATCH" ]
+        #   RUNNER_TYPE: "batch"
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+  script:
+    - mkdir -p ${SDK_WORK_DIR}/conda/
+    - cd ${SDK_WORK_DIR}/conda/
+    - eval "$(conda shell.posix hook)"
+    - conda create --prefix ./${HOST}-exaworks-sdk-venv python=3.7 -y
+    - conda env list
+    - conda activate ./${HOST}-exaworks-sdk-venv
+    - conda env list
+    - ls
+    - pwd 
+    - conda config --add channels conda-forge
+    - conda config --add channels lightsource2-tag 
+    - conda install swift-t
+    - conda install parsl
+    - conda install radical.pilot
+    - pip install pytest
+    - pip install pytest-tap
+    - pip install requests
+    - conda list
+    - *finalize
+
+sdk-clone:
+  stage: conda-env-setup
+  needs: [ "conda-env-setup" ]
+  tags:
+    - quartz
+    - shell
+  script:
+    - cd ${SDK_WORK_DIR}/conda/
+    - git clone git@github.com:ExaWorks/SDK.git
+    - *finalize
+
+conda-tests:
+  stage: conda-test
+  parallel:
+    matrix:
+      - HOST : [ "quartz", "ruby"]
+        RUNNER_TYPE: "shell"
+        # - HOST : [ "lassen" ]
+        #   ENVIRONMENT: [ "BATCH" ]
+        #   RUNNER_TYPE: "batch"
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+  script:
+    - cd ${SDK_WORK_DIR}/conda/
+    - pwd 
+    - ls
+    - eval "$(conda shell.posix hook)"
+    - echo $(pwd)/${HOST}-exaworks-sdk-venv
+    - echo $CONDA_DEFAULT_ENV
+    - conda activate ./${HOST}-exaworks-sdk-venv
+    - echo $CONDA_DEFAULT_ENV
+    - conda info --envs
+    - conda list
+    - cd SDK
+    - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+    - export run_id=$CI_PIPELINE_ID
+    - export branch=$CI_COMMIT_BRANCH
+    - export url=$TESTING_HOST
+    - export test="Conda"
+    - export location="llnl-$HOST"
+    - export contact="arambula2@llnl.gov"
+    - export imnumber="LLNL-MI-834241"
+    - python3 ci/tests/test.py -s
+    - for TEST in parsl rp parsl-flux; do
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
+      done
+    - python3 ci/tests/test.py -e
+
+.conda-env-cleanup: &conda-env-cleanup
+  stage: conda-cleanup
+  tags:
+    - quartz
+    - shell
+  script:
+    - cd $SDK_WORK_DIR
+    - rm -rf conda
+    - *finalize
+
+conda-cleanup-on-build-failure:
+  needs: [ "conda-env-setup" ]
+  when: on_failure
+  <<: *conda-env-cleanup
+
+conda-cleanup-on-test-failure:
+  needs: [ "conda-tests" ]
+  when: on_failure
+  <<: *conda-env-cleanup
+
+conda-cleanup-on-success:
+  when: on_success
+  <<: *conda-env-cleanup
