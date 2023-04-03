@@ -57,7 +57,7 @@ jobs:
       run: |
         total=0
         export tag=${{ env.DOCKER_TAG }}
-        for core in flux parsl rp re swift flux-parsl
+        for core in flux parsl rp re swift parsl-flux rp-flux
         do
           docker run \
             exaworks_sdk:${{ env.DOCKER_TAG }} \

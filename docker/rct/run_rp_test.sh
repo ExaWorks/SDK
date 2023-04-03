@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# run mongodb, let it settle
 echo '--- start MongoDB'
 if [[ -f "/etc/mongod.conf" ]]; then
     CONFIG_OPT="--config /etc/mongod.conf"
@@ -10,7 +9,7 @@ mongod --fork --logpath /tmp/mongodb.log $CONFIG_OPT
 
 radical-stack
 
-cd radical.pilot
+cd /radical.pilot
 echo '--- smoke test'
 ./examples/00_getting_started.py
 ret=$?
