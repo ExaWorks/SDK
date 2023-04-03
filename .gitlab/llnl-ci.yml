@@ -1,0 +1,9 @@
+include:
+  - local: 'llnl-ci-pip.yml'
+  - local: 'llnl-ci-conda.yml'
+  - local: 'llnl-ci-spack.yml'
+
+stages:
+  - env-setup
+  - test
+  - cleanup
