@@ -1,30 +1,26 @@
-
 stages:
-  - setup
-  - compile
-  - update
-  - build
+  - env-setup
   - test
   - cleanup
 
 .final_steps:
   script: &finalize
-    - chgrp -fR exaworks $SPACK_WORK_DIR/spack || true
-    - chmod -fR 02770 $SPACK_WORK_DIR/spack    || true
+    - chgrp -fR exaworks $SDK_WORK_DIR/spack || true
+    - chmod -fR 02770 $SDK_WORK_DIR/spack    || true
 
 spack-setup:
-  stage: setup
+  stage: env-setup
   tags:
     - quartz
     - shell
   script:
-    - mkdir -p $SPACK_WORK_DIR
-    - test -d $SPACK_WORK_DIR/spack && exit 0
-    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $SPACK_WORK_DIR/spack
+    - mkdir -p $SDK_WORK_DIR
+    - test -d $SDK_WORK_DIR/spack && exit 0
+    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $SDK_WORK_DIR/spack
     - *finalize
 
-env-setup:
-  stage: compile
+spack-compile:
+  stage: env-setup
   needs:
     - job: spack-setup
   parallel:
@@ -45,7 +41,7 @@ env-setup:
     - $HOST
     - shell
   script:
-    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - . $SDK_WORK_DIR/spack/share/spack/setup-env.sh
     - test "$(spack env list | grep $SPACK_ENV_NAME)" && exit 0
     - spack env create $SPACK_ENV_NAME
     - for i in {1..3}; do
@@ -61,19 +57,21 @@ env-setup:
     - *finalize
 
 spack-update:
-  stage: update
+  stage: env-setup
+  needs:
+    - job: spack-compile
   tags:
     - quartz
     - shell
   script:
-    - cd $SPACK_WORK_DIR/spack/
+    - cd $SDK_WORK_DIR/spack/
     - git checkout HEAD^ .
     - git reset --hard HEAD
     - git pull --ff
     - *finalize
 
 spack-build:
-  stage: build
+  stage: env-setup
   needs:
     - job: spack-update
   parallel:
@@ -91,7 +89,7 @@ spack-build:
     - $HOST
     - shell
   script:
-    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - . $SDK_WORK_DIR/spack/share/spack/setup-env.sh
     - for i in {1..3}; do
         spack env activate $SPACK_ENV_NAME && break || sleep 5;
       done
@@ -101,7 +99,7 @@ spack-build:
     - spack install
     - *finalize
 
-sdk-test:
+spack-tests:
   stage: test
   needs:
     - job: spack-build
@@ -124,7 +122,7 @@ sdk-test:
     - $HOST
     - batch
   script:
-    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - . $SDK_WORK_DIR/spack/share/spack/setup-env.sh
     - for i in {1..3}; do
         spack env activate $SPACK_ENV_NAME && break || sleep 5;
       done
@@ -135,7 +133,7 @@ sdk-test:
     - export url=$TESTING_HOST
     - export test="Spack"
     - export location="llnl-$HOST"
-    - export contact="morton30@llnl.gov"
+    - export contact="arambula2@llnl.gov"
     - export imnumber="LLNL-MI-834241"
     - python3 ci/tests/test.py -s
     - for TEST in flux parsl rp swift-t parsl-flux rp-flux; do
@@ -151,14 +149,14 @@ sdk-test:
     - quartz
     - shell
   script:
-    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
+    - . $SDK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack clean -a || true
     - rm -rf $HOME/.spack/cache
     - spack providers
     - *finalize
 
 cleanup-on-compile-failure:
-  needs: [ "env-setup" ]
+  needs: [ "spack-compile" ]
   when: on_failure
   <<: *spack-cleanup
 
@@ -168,6 +166,6 @@ cleanup-on-build-failure:
   <<: *spack-cleanup
 
 cleanup-on-success:
+  needs: [ "spack-tests" ]
   when: on_success
   <<: *spack-cleanup
-
