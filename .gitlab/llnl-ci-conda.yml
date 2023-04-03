@@ -1,7 +1,7 @@
 stages:
-  - conda-env-setup
-  - conda-test
-  - conda-cleanup
+  - env-setup
+  - test
+  - cleanup
 
 .final_steps:
   script: &finalize
@@ -9,7 +9,7 @@ stages:
     - chmod -fR 02770 $SDK_WORK_DIR/conda    || true
 
 conda-env-setup:
-  stage: conda-env-setup
+  stage: env-setup
   parallel:
     matrix:
       - HOST : [ "quartz", "ruby"]
@@ -37,23 +37,23 @@ conda-env-setup:
     - conda install radical.pilot
     - pip install pytest
     - pip install pytest-tap
-    - pip install requests
-    - conda list
     - *finalize
 
-sdk-clone:
-  stage: conda-env-setup
+conda-sdk-clone:
+  stage: env-setup
   needs: [ "conda-env-setup" ]
   tags:
     - quartz
     - shell
   script:
     - cd ${SDK_WORK_DIR}/conda/
-    - git clone git@github.com:ExaWorks/SDK.git
+    # - git clone git@github.com:ExaWorks/SDK.git
+    - git clone git@github.com:RamonAra209/SDK-with-updated-requests-class.git SDK
     - *finalize
 
 conda-tests:
-  stage: conda-test
+  stage: test
+  needs: [ "conda-sdk-clone" ]
   parallel:
     matrix:
       - HOST : [ "quartz", "ruby"]
@@ -91,7 +91,8 @@ conda-tests:
     - python3 ci/tests/test.py -e
 
 .conda-env-cleanup: &conda-env-cleanup
-  stage: conda-cleanup
+  stage: cleanup
+  needs: [ "conda-tests" ]
   tags:
     - quartz
     - shell
@@ -111,5 +112,7 @@ conda-cleanup-on-test-failure:
   <<: *conda-env-cleanup
 
 conda-cleanup-on-success:
+  needs: [ "conda-tests" ]
   when: on_success
   <<: *conda-env-cleanup
+
