@@ -1,7 +1,12 @@
 stages:
-  - pip-env-setup
-  - pip-test
-  - pip-cleanup
+  - env-setup
+  - test
+  - cleanup
+
+.final_steps:
+  script: &finalize
+    - chgrp -fR exaworks $SDK_WORK_DIR/pip || true
+    - chmod -fR 02770 $SDK_WORK_DIR/pip    || true
 
 .final_steps:
   script: &finalize
@@ -9,9 +14,7 @@ stages:
     - chmod -fR 02770 $SDK_WORK_DIR/pip    || true
 
 pip-env-setup:
-  stage: pip-env-setup
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'schedule'
+  stage: env-setup
   parallel:
     matrix:
       - HOST : [ "quartz", "ruby"]
@@ -33,13 +36,13 @@ pip-env-setup:
     - pip install --no-cache-dir radical.pilot
     - pip install --no-cache-dir pytest
     - pip install --no-cache-dir pytest-tap
-    - git clone git@github.com:ExaWorks/SDK.git
+    # - git clone git@github.com:ExaWorks/SDK.git
+    - git clone git@github.com:RamonAra209/SDK-with-updated-requests-class.git SDK
     - *finalize
 
 pip-tests:
-  stage: pip-test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'schedule'
+  stage: test
+  needs: [ "pip-env-setup" ]
   parallel:
     matrix:
       - HOST : [ "quartz", "ruby"]
@@ -70,9 +73,8 @@ pip-tests:
     - deactivate
 
 .pip-env-cleanup: &pip-env-cleanup
-  stage: pip-cleanup
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'schedule'
+  stage: cleanup
+  needs: [ "pip-tests" ]
   tags:
     - quartz
     - shell
@@ -92,5 +94,6 @@ pip-cleanup-on-test-failure:
   <<: *pip-env-cleanup
 
 pip-cleanup-on-success:
+  needs: [ "pip-tests" ]
   when: on_success
   <<: *pip-env-cleanup
