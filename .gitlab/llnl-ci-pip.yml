@@ -8,11 +8,6 @@ stages:
     - chgrp -fR exaworks $SDK_WORK_DIR/pip || true
     - chmod -fR 02770 $SDK_WORK_DIR/pip    || true
 
-.final_steps:
-  script: &finalize
-    - chgrp -fR exaworks $SDK_WORK_DIR/pip || true
-    - chmod -fR 02770 $SDK_WORK_DIR/pip    || true
-
 pip-env-setup:
   stage: setup
   parallel:
