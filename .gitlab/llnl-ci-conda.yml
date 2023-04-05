@@ -106,8 +106,12 @@ conda-cleanup-on-test-failure:
   when: on_failure
   <<: *conda-env-cleanup
 
+conda-cleanup-on-sdk-clone-failure:
+  needs: [ "conda-sdk-clone" ]
+  when: on_failure
+  <<: *conda-env-cleanup
+
 conda-cleanup-on-success:
   needs: [ "conda-tests" ]
   when: on_success
   <<: *conda-env-cleanup
-
