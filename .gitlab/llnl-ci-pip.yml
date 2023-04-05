@@ -34,6 +34,8 @@ pip-env-setup:
     - echo $REQUIREMENTS_DIR
     - ls $REQUIREMENTS_DIR
     - pip install --upgrade pip
+    - pip install -U pip setuptools wheel
+    - pip cache purge
     - pip install --no-cache-dir -r $REQUIREMENTS_DIR/venv-requirements.txt
     - pip list 
     - *finalize
@@ -83,6 +85,7 @@ pip-tests:
   script:
     - cd $SDK_WORK_DIR
     - rm -rf pip
+    - pip cache purge
     - *finalize
 
 pip-cleanup-on-env-setup-failure:
