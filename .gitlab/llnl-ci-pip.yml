@@ -1,5 +1,5 @@
 stages:
-  - env-setup
+  - setup
   - test
   - cleanup
 
@@ -14,7 +14,7 @@ stages:
     - chmod -fR 02770 $SDK_WORK_DIR/pip    || true
 
 pip-env-setup:
-  stage: env-setup
+  stage: setup
   parallel:
     matrix:
       - HOST : [ "quartz", "ruby"]

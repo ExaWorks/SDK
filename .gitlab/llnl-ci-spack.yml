@@ -1,5 +1,5 @@
 stages:
-  - env-setup
+  - setup
   - test
   - cleanup
 
@@ -9,7 +9,7 @@ stages:
     - chmod -fR 02770 $SDK_WORK_DIR/spack    || true
 
 spack-setup:
-  stage: env-setup
+  stage: setup
   tags:
     - quartz
     - shell
@@ -20,7 +20,7 @@ spack-setup:
     - *finalize
 
 spack-compile:
-  stage: env-setup
+  stage: setup
   needs:
     - job: spack-setup
   parallel:
@@ -57,7 +57,7 @@ spack-compile:
     - *finalize
 
 spack-update:
-  stage: env-setup
+  stage: setup
   needs:
     - job: spack-compile
   tags:
@@ -71,7 +71,7 @@ spack-update:
     - *finalize
 
 spack-build:
-  stage: env-setup
+  stage: setup
   needs:
     - job: spack-update
   parallel:

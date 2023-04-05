@@ -4,6 +4,6 @@ include:
   - local: 'llnl-ci-spack.yml'
 
 stages:
-  - env-setup
+  - setup
   - test
   - cleanup
