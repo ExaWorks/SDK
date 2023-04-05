@@ -21,6 +21,7 @@ conda-env-setup:
     - $HOST
     - $RUNNER_TYPE
   script:
+    - export REQUIREMENTS_DIR=$(pwd)
     - mkdir -p ${SDK_WORK_DIR}/conda/
     - cd ${SDK_WORK_DIR}/conda/
     - eval "$(conda shell.posix hook)"
@@ -30,13 +31,9 @@ conda-env-setup:
     - conda env list
     - ls
     - pwd 
-    - conda config --add channels conda-forge
-    - conda config --add channels lightsource2-tag 
-    - conda install swift-t
-    - conda install parsl
-    - conda install radical.pilot
-    - pip install pytest
-    - pip install pytest-tap
+    - conda env update --file $REQUIREMENTS_DIR/conda-requirements.yml
+    - conda list
+    - pip list
     - *finalize
 
 conda-sdk-clone:
