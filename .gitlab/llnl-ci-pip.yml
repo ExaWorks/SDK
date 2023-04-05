@@ -1,3 +1,8 @@
+variables:
+  PIP_WORK_DIR: $SDK_WORK_DIR/pip
+  RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+  TEST_TYPE: "pip"
+
 stages:
   - setup
   - test
@@ -5,8 +10,8 @@ stages:
 
 .final_steps:
   script: &finalize
-    - chgrp -fR exaworks $SDK_WORK_DIR/pip || true
-    - chmod -fR 02770 $SDK_WORK_DIR/pip    || true
+    - chgrp -fR exaworks $PIP_WORK_DIR || true
+    - chmod -fR 02770 $PIP_WORK_DIR    || true
 
 pip-env-setup:
   stage: setup
@@ -27,8 +32,8 @@ pip-env-setup:
     - $RUNNER_TYPE
   script:
     - export REQUIREMENTS_DIR=$(pwd)
-    - mkdir -p ${SDK_WORK_DIR}/pip/
-    - cd ${SDK_WORK_DIR}/pip/
+    - mkdir -p $PIP_WORK_DIR
+    - cd $PIP_WORK_DIR
     - python3 -m venv ${VENV_ENV_NAME}
     - source ${VENV_ENV_NAME}/bin/activate
     - echo $REQUIREMENTS_DIR
@@ -59,14 +64,13 @@ pip-tests:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - cd ${SDK_WORK_DIR}/pip/
+    - cd $PIP_WORK_DIR
     - source ${VENV_ENV_NAME}/bin/activate
     - cd SDK
-    - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url=$TESTING_HOST
-    - export test="Pip"
+    - export test=$TEST_TYPE
     - export location="llnl-$HOST"
     - export contact="arambula2@llnl.gov"
     - export imnumber="LLNL-MI-834241"

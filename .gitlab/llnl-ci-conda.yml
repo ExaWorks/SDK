@@ -1,3 +1,8 @@
+variables:
+  CONDA_WORK_DIR: $SDK_WORK_DIR/conda
+  RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+  TEST_TYPE: "conda"
+
 stages:
   - setup
   - test
@@ -5,8 +10,8 @@ stages:
 
 .final_steps:
   script: &finalize
-    - chgrp -fR exaworks $SDK_WORK_DIR/conda || true
-    - chmod -fR 02770 $SDK_WORK_DIR/conda    || true
+    - chgrp -fR exaworks $CONDA_WORK_DIR || true
+    - chmod -fR 02770 $CONDA_WORK_DIR    || true
 
 conda-env-setup:
   stage: setup
@@ -27,8 +32,8 @@ conda-env-setup:
     - $RUNNER_TYPE
   script:
     - export REQUIREMENTS_DIR=$(pwd)
-    - mkdir -p ${SDK_WORK_DIR}/conda/
-    - cd ${SDK_WORK_DIR}/conda/
+    - mkdir -p $CONDA_WORK_DIR
+    - cd $CONDA_WORK_DIR
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ./${CONDA_ENV_NAME} python=3.7 -y
     - conda env list
@@ -60,7 +65,7 @@ conda-tests:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - cd ${SDK_WORK_DIR}/conda/
+    - cd $CONDA_WORK_DIR
     - pwd 
     - ls
     - eval "$(conda shell.posix hook)"
@@ -71,11 +76,10 @@ conda-tests:
     - conda info --envs
     - conda list
     - cd SDK
-    - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url=$TESTING_HOST
-    - export test="Conda"
+    - export test=$TEST_TYPE
     - export location="llnl-$HOST"
     - export contact="arambula2@llnl.gov"
     - export imnumber="LLNL-MI-834241"

@@ -1,3 +1,8 @@
+variables:
+  SPACK_WORK_DIR: $SDK_WORK_DIR/spack
+  RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+  TEST_TYPE: "spack"
+
 stages:
   - setup
   - test
@@ -5,8 +10,8 @@ stages:
 
 .final_steps:
   script: &finalize
-    - chgrp -fR exaworks $SDK_WORK_DIR/spack || true
-    - chmod -fR 02770 $SDK_WORK_DIR/spack    || true
+    - chgrp -fR exaworks $SPACK_WORK_DIR || true
+    - chmod -fR 02770 $SPACK_WORK_DIR    || true
 
 spack-setup:
   stage: setup
@@ -14,9 +19,9 @@ spack-setup:
     - quartz
     - shell
   script:
-    - mkdir -p $SDK_WORK_DIR
-    - test -d $SDK_WORK_DIR/spack && exit 0
-    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $SDK_WORK_DIR/spack
+    - mkdir -p $SPACK_WORK_DIR
+    - test -d $SPACK_WORK_DIR/spack && exit 0
+    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $SPACK_WORK_DIR/spack
     - *finalize
 
 spack-compile:
@@ -41,7 +46,7 @@ spack-compile:
     - $HOST
     - shell
   script:
-    - . $SDK_WORK_DIR/spack/share/spack/setup-env.sh
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - test "$(spack env list | grep $SPACK_ENV_NAME)" && exit 0
     - spack env create $SPACK_ENV_NAME
     - for i in {1..3}; do
@@ -64,7 +69,7 @@ spack-update:
     - quartz
     - shell
   script:
-    - cd $SDK_WORK_DIR/spack/
+    - cd $SPACK_WORK_DIR/spack/
     - git checkout HEAD^ .
     - git reset --hard HEAD
     - git pull --ff
@@ -89,7 +94,7 @@ spack-build:
     - $HOST
     - shell
   script:
-    - . $SDK_WORK_DIR/spack/share/spack/setup-env.sh
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - for i in {1..3}; do
         spack env activate $SPACK_ENV_NAME && break || sleep 5;
       done
@@ -122,16 +127,15 @@ spack-tests:
     - $HOST
     - batch
   script:
-    - . $SDK_WORK_DIR/spack/share/spack/setup-env.sh
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - for i in {1..3}; do
         spack env activate $SPACK_ENV_NAME && break || sleep 5;
       done
     - spack load exaworks py-pytest
-    - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url=$TESTING_HOST
-    - export test="Spack"
+    - export test=$TEST_TYPE
     - export location="llnl-$HOST"
     - export contact="arambula2@llnl.gov"
     - export imnumber="LLNL-MI-834241"
@@ -149,7 +153,7 @@ spack-tests:
     - quartz
     - shell
   script:
-    - . $SDK_WORK_DIR/spack/share/spack/setup-env.sh
+    - . $SPACK_WORK_DIR/spack/share/spack/setup-env.sh
     - spack clean -a || true
     - rm -rf $HOME/.spack/cache
     - spack providers
