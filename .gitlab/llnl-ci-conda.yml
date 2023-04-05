@@ -12,11 +12,16 @@ conda-env-setup:
   stage: setup
   parallel:
     matrix:
-      - HOST : [ "quartz", "ruby"]
+      - HOST : [ "quartz" ]
+        CONDA_ENV_NAME: [ "quartz-env" ]
         RUNNER_TYPE: "shell"
-        # - HOST : [ "lassen" ]
-        #   ENVIRONMENT: [ "BATCH" ]
-        #   RUNNER_TYPE: "batch"
+      - HOST : [ "ruby" ]
+        CONDA_ENV_NAME: [ "ruby-env" ]
+        RUNNER_TYPE: "shell"
+      # - HOST : [ "lassen" ]
+      #   ENVIRONMENT: [ "BATCH" ]
+      #   CONDA_ENV_NAME: [ "lassen-env" ]
+      #   RUNNER_TYPE: "batch"
   tags:
     - $HOST
     - $RUNNER_TYPE
@@ -25,9 +30,9 @@ conda-env-setup:
     - mkdir -p ${SDK_WORK_DIR}/conda/
     - cd ${SDK_WORK_DIR}/conda/
     - eval "$(conda shell.posix hook)"
-    - conda create --prefix ./${HOST}-exaworks-sdk-venv python=3.7 -y
+    - conda create --prefix ./${CONDA_ENV_NAME} python=3.7 -y
     - conda env list
-    - conda activate ./${HOST}-exaworks-sdk-venv
+    - conda activate ./${CONDA_ENV_NAME}
     - conda env list
     - ls
     - pwd 
@@ -52,11 +57,16 @@ conda-tests:
   needs: [ "conda-sdk-clone" ]
   parallel:
     matrix:
-      - HOST : [ "quartz", "ruby"]
+      - HOST : [ "quartz" ]
+        CONDA_ENV_NAME: [ "quartz-env" ]
         RUNNER_TYPE: "shell"
-        # - HOST : [ "lassen" ]
-        #   ENVIRONMENT: [ "BATCH" ]
-        #   RUNNER_TYPE: "batch"
+      - HOST : [ "ruby" ]
+        CONDA_ENV_NAME: [ "ruby-env" ]
+        RUNNER_TYPE: "shell"
+      # - HOST : [ "lassen" ]
+      #   ENVIRONMENT: [ "BATCH" ]
+      #   CONDA_ENV_NAME: [ "lassen-env" ]
+      #   RUNNER_TYPE: "batch"
   tags:
     - $HOST
     - $RUNNER_TYPE
@@ -67,7 +77,7 @@ conda-tests:
     - eval "$(conda shell.posix hook)"
     - echo $(pwd)/${HOST}-exaworks-sdk-venv
     - echo $CONDA_DEFAULT_ENV
-    - conda activate ./${HOST}-exaworks-sdk-venv
+    - conda activate ./${CONDA_ENV_NAME}
     - echo $CONDA_DEFAULT_ENV
     - conda info --envs
     - conda list

@@ -17,10 +17,15 @@ pip-env-setup:
   stage: setup
   parallel:
     matrix:
-      - HOST : [ "quartz", "ruby"]
+      - HOST : [ "quartz" ]
+        VENV_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "shell"
+      - HOST : [ "ruby" ]
+        VENV_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "shell"
       # - HOST : [ "lassen" ]
       #   ENVIRONMENT: [ "BATCH" ]
+      #   VENV_ENV_NAME: [ "lassen-env" ]
       #   RUNNER_TYPE: "batch"
   tags:
     - $HOST
@@ -29,8 +34,8 @@ pip-env-setup:
     - export REQUIREMENTS_DIR=$(pwd)
     - mkdir -p ${SDK_WORK_DIR}/pip/
     - cd ${SDK_WORK_DIR}/pip/
-    - python3 -m venv ${HOST}-venv
-    - cd ${HOST}-venv
+    - python3 -m venv ${VENV_ENV_NAME}
+    - cd ${VENV_ENV_NAME}
     - source bin/activate
     - echo $REQUIREMENTS_DIR
     - ls $REQUIREMENTS_DIR
@@ -44,16 +49,21 @@ pip-tests:
   needs: [ "pip-env-setup" ]
   parallel:
     matrix:
-      - HOST : [ "quartz", "ruby"]
+      - HOST : [ "quartz" ]
+        VENV_ENV_NAME: [ "quartz-env" ]
         RUNNER_TYPE: "shell"
-      # - HOST : [ "lassen" ] ## Check if rust is located on lassen, model
+      - HOST : [ "ruby" ]
+        VENV_ENV_NAME: [ "ruby-env" ]
+        RUNNER_TYPE: "shell"
+      # - HOST : [ "lassen" ]
       #   ENVIRONMENT: [ "BATCH" ]
+      #   VENV_ENV_NAME: [ "lassen-env" ]
       #   RUNNER_TYPE: "batch"
   tags:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - cd ${SDK_WORK_DIR}/pip/${HOST}-venv
+    - cd ${SDK_WORK_DIR}/pip/${VENV_ENV_NAME}
     - source ./bin/activate
     - cd SDK
     - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
