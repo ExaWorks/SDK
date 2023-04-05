@@ -30,8 +30,7 @@ pip-env-setup:
     - mkdir -p ${SDK_WORK_DIR}/pip/
     - cd ${SDK_WORK_DIR}/pip/
     - python3 -m venv ${VENV_ENV_NAME}
-    - cd ${VENV_ENV_NAME}
-    - source bin/activate
+    - source ${VENV_ENV_NAME}/bin/activate
     - echo $REQUIREMENTS_DIR
     - ls $REQUIREMENTS_DIR
     - pip install --upgrade pip
@@ -58,8 +57,8 @@ pip-tests:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - cd ${SDK_WORK_DIR}/pip/${VENV_ENV_NAME}
-    - source ./bin/activate
+    - cd ${SDK_WORK_DIR}/pip/
+    - source ${VENV_ENV_NAME}/bin/activate
     - cd SDK
     - export RADICAL_PILOT_DBURL=${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
     - export run_id=$CI_PIPELINE_ID
