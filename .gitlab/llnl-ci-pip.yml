@@ -73,7 +73,6 @@ pip-tests:
 
 .pip-env-cleanup: &pip-env-cleanup
   stage: cleanup
-  needs: [ "pip-tests" ]
   tags:
     - quartz
     - shell

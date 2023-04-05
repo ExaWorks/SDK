@@ -155,17 +155,17 @@ spack-tests:
     - spack providers
     - *finalize
 
-cleanup-on-compile-failure:
+spack-cleanup-on-compile-failure:
   needs: [ "spack-compile" ]
   when: on_failure
   <<: *spack-cleanup
 
-cleanup-on-build-failure:
+spack-cleanup-on-build-failure:
   needs: [ "spack-build" ]
   when: on_failure
   <<: *spack-cleanup
 
-cleanup-on-success:
+spack-cleanup-on-success:
   needs: [ "spack-tests" ]
   when: on_success
   <<: *spack-cleanup
