@@ -26,17 +26,17 @@ pip-env-setup:
     - $HOST
     - $RUNNER_TYPE
   script:
+    - export REQUIREMENTS_DIR=$(pwd)
     - mkdir -p ${SDK_WORK_DIR}/pip/
     - cd ${SDK_WORK_DIR}/pip/
     - python3 -m venv ${HOST}-venv
     - cd ${HOST}-venv
     - source bin/activate
+    - echo $REQUIREMENTS_DIR
+    - ls $REQUIREMENTS_DIR
     - pip install --upgrade pip
-    - pip install --no-cache-dir parsl
-    - pip install --no-cache-dir radical.pilot
-    - pip install --no-cache-dir pytest
-    - pip install --no-cache-dir pytest-tap
-    - git clone git@github.com:ExaWorks/SDK.git
+    - pip install --no-cache-dir -r $REQUIREMENTS_DIR/venv-requirements.txt
+    - pip list 
     - *finalize
 
 pip-tests:
