@@ -41,20 +41,9 @@ conda-env-setup:
     - pip list
     - *finalize
 
-conda-sdk-clone:
-  stage: setup
-  needs: [ "conda-env-setup" ]
-  tags:
-    - quartz
-    - shell
-  script:
-    - cd ${SDK_WORK_DIR}/conda/
-    - git clone git@github.com:ExaWorks/SDK.git
-    - *finalize
-
 conda-tests:
   stage: test
-  needs: [ "conda-sdk-clone" ]
+  needs: [ "conda-env-setup" ]
   parallel:
     matrix:
       - HOST : [ "quartz" ]
@@ -113,11 +102,6 @@ conda-cleanup-on-env-setup-failure:
 
 conda-cleanup-on-test-failure:
   needs: [ "conda-tests" ]
-  when: on_failure
-  <<: *conda-env-cleanup
-
-conda-cleanup-on-sdk-clone-failure:
-  needs: [ "conda-sdk-clone" ]
   when: on_failure
   <<: *conda-env-cleanup
 
