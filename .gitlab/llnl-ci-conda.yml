@@ -36,14 +36,8 @@ conda-env-setup:
     - cd $CONDA_WORK_DIR
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ./${CONDA_ENV_NAME} python=3.7 -y
-    - conda env list
     - conda activate ./${CONDA_ENV_NAME}
-    - conda env list
-    - ls
-    - pwd 
     - conda env update --file $REQUIREMENTS_DIR/conda-requirements.yml
-    - conda list
-    - pip list
     - *finalize
 
 conda-tests:
@@ -65,17 +59,8 @@ conda-tests:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - cd $CONDA_WORK_DIR
-    - pwd 
-    - ls
     - eval "$(conda shell.posix hook)"
-    - echo $(pwd)/${HOST}-exaworks-sdk-venv
-    - echo $CONDA_DEFAULT_ENV
     - conda activate ./${CONDA_ENV_NAME}
-    - echo $CONDA_DEFAULT_ENV
-    - conda info --envs
-    - conda list
-    - cd SDK
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url=$TESTING_HOST

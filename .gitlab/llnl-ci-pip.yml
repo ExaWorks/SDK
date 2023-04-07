@@ -36,13 +36,10 @@ pip-env-setup:
     - cd $PIP_WORK_DIR
     - python3 -m venv ${VENV_ENV_NAME}
     - source ${VENV_ENV_NAME}/bin/activate
-    - echo $REQUIREMENTS_DIR
-    - ls $REQUIREMENTS_DIR
     - pip install --upgrade pip
     - pip install -U pip setuptools wheel
     - pip cache purge
     - pip install --no-cache-dir -r $REQUIREMENTS_DIR/venv-requirements.txt
-    - pip list 
     - *finalize
 
 pip-tests:
@@ -66,7 +63,6 @@ pip-tests:
   script:
     - cd $PIP_WORK_DIR
     - source ${VENV_ENV_NAME}/bin/activate
-    - cd SDK
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url=$TESTING_HOST
