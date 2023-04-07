@@ -19,7 +19,6 @@ spack-setup:
     - quartz
     - shell
   script:
-    - mkdir -p $SPACK_WORK_DIR
     - test -d $SPACK_WORK_DIR/spack && exit 0
     - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $SPACK_WORK_DIR/spack
     - *finalize
