@@ -1,5 +1,6 @@
 variables:
   CONDA_WORK_DIR: $SDK_WORK_DIR/conda
+  CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
   RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
   TEST_TYPE: "conda"
 
@@ -31,13 +32,11 @@ conda-env-setup:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - export REQUIREMENTS_DIR=$(pwd)
     - mkdir -p $CONDA_WORK_DIR
-    - cd $CONDA_WORK_DIR
     - eval "$(conda shell.posix hook)"
-    - conda create --prefix ./${CONDA_ENV_NAME} python=3.7 -y
-    - conda activate ./${CONDA_ENV_NAME}
-    - conda env update --file $REQUIREMENTS_DIR/conda-requirements.yml
+    - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} python=3.7 -y
+    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
+    - conda env update --file $CONDA_REQUIREMENTS
     - *finalize
 
 conda-tests:
@@ -60,7 +59,7 @@ conda-tests:
     - $RUNNER_TYPE
   script:
     - eval "$(conda shell.posix hook)"
-    - conda activate ./${CONDA_ENV_NAME}
+    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url=$TESTING_HOST
