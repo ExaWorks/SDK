@@ -38,6 +38,27 @@ pip-env-setup:
     - pip install --upgrade pip
     - pip install -U pip setuptools wheel
     - pip cache purge
+
+pip-build:
+  stage: setup
+  needs: [ "pip-env-setup" ]
+  parallel:
+    matrix:
+      - HOST : [ "quartz" ]
+        VENV_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "shell"
+      - HOST : [ "ruby" ]
+        VENV_ENV_NAME: [ "ruby-env" ]
+        RUNNER_TYPE: "shell"
+      # - HOST : [ "lassen" ]
+      #   ENVIRONMENT: [ "BATCH" ]
+      #   VENV_ENV_NAME: [ "lassen-env" ]
+      #   RUNNER_TYPE: "batch"
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+  script:
+    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install --no-cache-dir -r $PIP_REQUIREMENTS
     - *finalize
 
