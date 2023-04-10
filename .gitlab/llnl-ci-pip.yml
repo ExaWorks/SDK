@@ -106,7 +106,6 @@ pip-tests:
     - shell
   script:
     - cd ${SDK_WORK_DIR}
-    - rm -rf pip
     - pip cache purge
     - *finalize
 
