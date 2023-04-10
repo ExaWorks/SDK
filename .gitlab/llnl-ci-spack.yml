@@ -176,3 +176,9 @@ spack-cleanup-on-success:
     - job: spack-tests
   when: on_success
   <<: *spack-cleanup
+
+spack-cleanup-on-test-failure:
+  needs:
+    - job: spack-tests
+  when: on_failure
+  <<: *spack-cleanup

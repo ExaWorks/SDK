@@ -109,9 +109,9 @@ pip-tests:
     - pip cache purge
     - *finalize
 
-pip-cleanup-on-env-setup-failure:
+pip-cleanup-on-build-failure:
   needs:
-    - job: pip-env-setup
+    - job: pip-build
   when: on_failure
   <<: *pip-env-cleanup
 

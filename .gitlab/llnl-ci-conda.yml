@@ -107,9 +107,9 @@ conda-tests:
     - rm -rf conda
     - *finalize
 
-conda-cleanup-on-env-setup-failure:
+conda-cleanup-on-build-failure:
   needs:
-    - job: conda-env-setup
+    - job: conda-build
   when: on_failure
   <<: *conda-env-cleanup
 
