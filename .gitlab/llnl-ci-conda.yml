@@ -1,5 +1,5 @@
 variables:
-  WORK_DIR: $SDK_WORK_DIR/conda
+  WORK_DIR: ${SDK_WORK_DIR}/conda
   REQUIREMENTS: .gitlab/conda-requirements.yml
   RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
   TEST_TYPE: "conda"
@@ -33,8 +33,8 @@ conda-env-setup:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - test -d $WORK_DIR/$CONDA_ENV_NAME && exit 0
-    - mkdir -p $WORK_DIR
+    - test -d ${WORK_DIR}/${CONDA_ENV_NAME} && exit 0
+    - mkdir -p ${WORK_DIR}
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ${WORK_DIR}/${CONDA_ENV_NAME} python=3.7 -y
     - conda activate ${WORK_DIR}/${CONDA_ENV_NAME}
@@ -59,7 +59,7 @@ conda-build:
   script:
     - eval "$(conda shell.posix hook)"
     - conda activate ${WORK_DIR}/${CONDA_ENV_NAME}
-    - conda env update --file $REQUIREMENTS
+    - conda env update --file ${REQUIREMENTS}
     - *finalize
 
 conda-tests:
@@ -84,10 +84,10 @@ conda-tests:
   script:
     - eval "$(conda shell.posix hook)"
     - conda activate ${WORK_DIR}/${CONDA_ENV_NAME}
-    - export run_id=$CI_PIPELINE_ID
-    - export branch=$CI_COMMIT_BRANCH
-    - export url=$TESTING_HOST
-    - export test=$TEST_TYPE
+    - export run_id=${CI_PIPELINE_ID}
+    - export branch=${CI_COMMIT_BRANCH}
+    - export url=${TESTING_HOST}
+    - export test=${TEST_TYPE}
     - export location="llnl-$HOST"
     - export contact="arambula2@llnl.gov"
     - export imnumber="LLNL-MI-834241"
@@ -103,7 +103,7 @@ conda-tests:
     - quartz
     - shell
   script:
-    - cd $SDK_WORK_DIR
+    - cd ${SDK_WORK_DIR}
     - rm -rf conda
     - *finalize
 
