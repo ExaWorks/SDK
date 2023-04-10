@@ -41,7 +41,8 @@ conda-env-setup:
 
 conda-tests:
   stage: test
-  needs: [ "conda-env-setup" ]
+  needs:
+    - job: conda-env-setup
   parallel:
     matrix:
       - HOST : [ "quartz" ]
@@ -84,16 +85,19 @@ conda-tests:
     - *finalize
 
 conda-cleanup-on-env-setup-failure:
-  needs: [ "conda-env-setup" ]
+  needs:
+    - job: conda-env-setup
   when: on_failure
   <<: *conda-env-cleanup
 
 conda-cleanup-on-test-failure:
-  needs: [ "conda-tests" ]
+  needs:
+    - job: conda-tests
   when: on_failure
   <<: *conda-env-cleanup
 
 conda-cleanup-on-success:
-  needs: [ "conda-tests" ]
+  needs:
+    - job: conda-tests
   when: on_success
   <<: *conda-env-cleanup

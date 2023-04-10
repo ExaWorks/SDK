@@ -159,16 +159,19 @@ spack-tests:
     - *finalize
 
 spack-cleanup-on-compile-failure:
-  needs: [ "spack-compile" ]
+  needs: 
+    - job: spack-compile
   when: on_failure
   <<: *spack-cleanup
 
 spack-cleanup-on-build-failure:
-  needs: [ "spack-build" ]
+  needs:
+    - job: spack-build
   when: on_failure
   <<: *spack-cleanup
 
 spack-cleanup-on-success:
-  needs: [ "spack-tests" ]
+  needs:
+    - job: spack-tests
   when: on_success
   <<: *spack-cleanup

@@ -41,7 +41,8 @@ pip-env-setup:
 
 pip-build:
   stage: setup
-  needs: [ "pip-env-setup" ]
+  needs:
+    - job: pip-env-setup
   parallel:
     matrix:
       - HOST : [ "quartz" ]
@@ -64,7 +65,8 @@ pip-build:
 
 pip-tests:
   stage: test
-  needs: [ "pip-env-setup" ]
+  needs: 
+    - job: pip-build
   parallel:
     matrix:
       - HOST : [ "quartz" ]
@@ -108,16 +110,19 @@ pip-tests:
     - *finalize
 
 pip-cleanup-on-env-setup-failure:
-  needs: [ "pip-env-setup" ]
+  needs:
+    - job: pip-env-setup
   when: on_failure
   <<: *pip-env-cleanup
 
 pip-cleanup-on-test-failure:
-  needs: [ "pip-tests" ]
+  needs:
+    - job: pip-tests
   when: on_failure
   <<: *pip-env-cleanup
 
 pip-cleanup-on-success:
-  needs: [ "pip-tests" ]
+  needs:
+    - job: pip-tests
   when: on_success
   <<: *pip-env-cleanup
