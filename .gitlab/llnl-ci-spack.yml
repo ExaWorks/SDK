@@ -1,5 +1,5 @@
 variables:
-  SPACK_WORK_DIR: $SDK_WORK_DIR/spack
+  WORK_DIR: $SDK_WORK_DIR/spack
   RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
   TEST_TYPE: "spack"
 
@@ -11,8 +11,8 @@ stages:
 
 .final_steps:
   script: &finalize
-    - chgrp -fR exaworks $SPACK_WORK_DIR || true
-    - chmod -fR 02770 $SPACK_WORK_DIR    || true
+    - chgrp -fR exaworks $WORK_DIR || true
+    - chmod -fR 02770 $WORK_DIR    || true
 
 spack-setup:
   stage: setup
@@ -20,8 +20,8 @@ spack-setup:
     - quartz
     - shell
   script:
-    - test -d $SPACK_WORK_DIR && exit 0
-    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $SPACK_WORK_DIR
+    - test -d $WORK_DIR && exit 0
+    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git $WORK_DIR
     - *finalize
 
 spack-compile:
@@ -46,7 +46,7 @@ spack-compile:
     - $HOST
     - shell
   script:
-    - . $SPACK_WORK_DIR/share/spack/setup-env.sh
+    - . $WORK_DIR/share/spack/setup-env.sh
     - test "$(spack env list | grep $SPACK_ENV_NAME)" && exit 0
     - spack env create $SPACK_ENV_NAME
     - for i in {1..3}; do
@@ -69,7 +69,7 @@ spack-update:
     - quartz
     - shell
   script:
-    - cd $SPACK_WORK_DIR
+    - cd $WORK_DIR
     - git checkout HEAD^ .
     - git reset --hard HEAD
     - git pull --ff
@@ -94,7 +94,7 @@ spack-build:
     - $HOST
     - shell
   script:
-    - . $SPACK_WORK_DIR/share/spack/setup-env.sh
+    - . $WORK_DIR/share/spack/setup-env.sh
     - for i in {1..3}; do
         spack env activate $SPACK_ENV_NAME && break || sleep 5;
       done
@@ -127,7 +127,7 @@ spack-tests:
     - $HOST
     - batch
   script:
-    - . $SPACK_WORK_DIR/share/spack/setup-env.sh
+    - . $WORK_DIR/share/spack/setup-env.sh
     - for i in {1..3}; do
         spack env activate $SPACK_ENV_NAME && break || sleep 5;
       done
@@ -153,7 +153,7 @@ spack-tests:
     - quartz
     - shell
   script:
-    - . $SPACK_WORK_DIR/share/spack/setup-env.sh
+    - . $WORK_DIR/share/spack/setup-env.sh
     - spack clean -a || true
     - rm -rf $HOME/.spack/cache
     - spack providers

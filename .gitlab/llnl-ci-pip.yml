@@ -1,6 +1,6 @@
 variables:
-  PIP_WORK_DIR: $SDK_WORK_DIR/pip
-  PIP_REQUIREMENTS: .gitlab/venv-requirements.txt
+  WORK_DIR: $SDK_WORK_DIR/pip
+  REQUIREMENTS: .gitlab/venv-requirements.txt
   RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
   TEST_TYPE: "pip"
 
@@ -12,8 +12,8 @@ stages:
 
 .final_steps:
   script: &finalize
-    - chgrp -fR exaworks $PIP_WORK_DIR || true
-    - chmod -fR 02770 $PIP_WORK_DIR    || true
+    - chgrp -fR exaworks $WORK_DIR || true
+    - chmod -fR 02770 $WORK_DIR    || true
 
 pip-env-setup:
   stage: setup
@@ -33,10 +33,10 @@ pip-env-setup:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - test -d $PIP_WORK_DIR/$VENV_ENV_NAME && exit 0
-    - mkdir -p $PIP_WORK_DIR
-    - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
-    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - test -d $WORK_DIR/$VENV_ENV_NAME && exit 0
+    - mkdir -p $WORK_DIR
+    - python3 -m venv ${WORK_DIR}/${VENV_ENV_NAME}
+    - source ${WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install -U pip setuptools wheel
     - pip cache purge
 
@@ -60,8 +60,8 @@ pip-build:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
-    - pip install --no-cache-dir -r $PIP_REQUIREMENTS
+    - source ${WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - pip install --no-cache-dir -r $REQUIREMENTS
     - *finalize
 
 pip-tests:
@@ -84,7 +84,7 @@ pip-tests:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - source ${WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url=$TESTING_HOST

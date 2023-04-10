@@ -1,6 +1,6 @@
 variables:
-  CONDA_WORK_DIR: $SDK_WORK_DIR/conda
-  CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
+  WORK_DIR: $SDK_WORK_DIR/conda
+  REQUIREMENTS: .gitlab/conda-requirements.yml
   RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
   TEST_TYPE: "conda"
 
@@ -12,8 +12,8 @@ stages:
 
 .final_steps:
   script: &finalize
-    - chgrp -fR exaworks $CONDA_WORK_DIR || true
-    - chmod -fR 02770 $CONDA_WORK_DIR    || true
+    - chgrp -fR exaworks $WORK_DIR || true
+    - chmod -fR 02770 $WORK_DIR    || true
 
 conda-env-setup:
   stage: setup
@@ -33,11 +33,11 @@ conda-env-setup:
     - $HOST
     - $RUNNER_TYPE
   script:
-    - test -d $CONDA_WORK_DIR/$CONDA_ENV_NAME && exit 0
-    - mkdir -p $CONDA_WORK_DIR
+    - test -d $WORK_DIR/$CONDA_ENV_NAME && exit 0
+    - mkdir -p $WORK_DIR
     - eval "$(conda shell.posix hook)"
-    - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} python=3.7 -y
-    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
+    - conda create --prefix ${WORK_DIR}/${CONDA_ENV_NAME} python=3.7 -y
+    - conda activate ${WORK_DIR}/${CONDA_ENV_NAME}
 
 conda-build:
   stage: build
@@ -58,8 +58,8 @@ conda-build:
     - $RUNNER_TYPE
   script:
     - eval "$(conda shell.posix hook)"
-    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
-    - conda env update --file $CONDA_REQUIREMENTS
+    - conda activate ${WORK_DIR}/${CONDA_ENV_NAME}
+    - conda env update --file $REQUIREMENTS
     - *finalize
 
 conda-tests:
@@ -83,7 +83,7 @@ conda-tests:
     - $RUNNER_TYPE
   script:
     - eval "$(conda shell.posix hook)"
-    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
+    - conda activate ${WORK_DIR}/${CONDA_ENV_NAME}
     - export run_id=$CI_PIPELINE_ID
     - export branch=$CI_COMMIT_BRANCH
     - export url=$TESTING_HOST
