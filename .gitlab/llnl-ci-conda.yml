@@ -32,6 +32,7 @@ conda-env-setup:
     - $HOST
     - $RUNNER_TYPE
   script:
+    - test -d $CONDA_WORK_DIR/$CONDA_ENV_NAME && exit 0
     - mkdir -p $CONDA_WORK_DIR
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} python=3.7 -y
