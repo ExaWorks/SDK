@@ -6,6 +6,7 @@ variables:
 
 stages:
   - setup
+  - build
   - test
   - cleanup
 
@@ -36,6 +37,27 @@ conda-env-setup:
     - mkdir -p $CONDA_WORK_DIR
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} python=3.7 -y
+    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
+
+conda-build:
+  stage: build
+  parallel:
+    matrix:
+      - HOST : [ "quartz" ]
+        CONDA_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "shell"
+      - HOST : [ "ruby" ]
+        CONDA_ENV_NAME: [ "ruby-env" ]
+        RUNNER_TYPE: "shell"
+      # - HOST : [ "lassen" ]
+      #   ENVIRONMENT: [ "BATCH" ]
+      #   CONDA_ENV_NAME: [ "lassen-env" ]
+      #   RUNNER_TYPE: "batch"
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+  script:
+    - eval "$(conda shell.posix hook)"
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - conda env update --file $CONDA_REQUIREMENTS
     - *finalize

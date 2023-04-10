@@ -3,5 +3,6 @@ include:
 
 stages:
   - setup
+  - build
   - test
   - cleanup

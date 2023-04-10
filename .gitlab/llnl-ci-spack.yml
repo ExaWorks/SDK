@@ -5,6 +5,7 @@ variables:
 
 stages:
   - setup
+  - build
   - test
   - cleanup
 
@@ -75,7 +76,7 @@ spack-update:
     - *finalize
 
 spack-build:
-  stage: setup
+  stage: build
   needs:
     - job: spack-update
   parallel:

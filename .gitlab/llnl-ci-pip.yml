@@ -6,6 +6,7 @@ variables:
 
 stages:
   - setup
+  - build
   - test
   - cleanup
 
@@ -40,7 +41,7 @@ pip-env-setup:
     - pip cache purge
 
 pip-build:
-  stage: setup
+  stage: build
   needs:
     - job: pip-env-setup
   parallel:
