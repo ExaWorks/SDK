@@ -36,7 +36,6 @@ pip-env-setup:
     - mkdir -p $PIP_WORK_DIR
     - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
-    - pip install --upgrade pip
     - pip install -U pip setuptools wheel
     - pip cache purge
 
