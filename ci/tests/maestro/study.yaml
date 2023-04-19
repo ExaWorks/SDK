@@ -4,7 +4,7 @@ description: #
 
 env:
     variables: # 
-        OUTPUT_PATH: ./tmp/samples/hello_bye_parameterized_funnel
+        OUTPUT_PATH: /tmp/samples/hello_bye_parameterized_funnel
     labels: # 
         HELLO_FORMAT: $(GREETING)_$(NAME).txt
         BYE_FORMAT: $(FAREWELL)_$(NAME).txt
