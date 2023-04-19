@@ -41,6 +41,8 @@ conda-env-setup:
 
 conda-build:
   stage: build
+  needs:
+    - job: conda-env-setup
   parallel:
     matrix:
       - HOST : [ "quartz" ]
@@ -65,7 +67,7 @@ conda-build:
 conda-tests:
   stage: test
   needs:
-    - job: conda-env-setup
+    - job: conda-build
   parallel:
     matrix:
       - HOST : [ "quartz" ]
