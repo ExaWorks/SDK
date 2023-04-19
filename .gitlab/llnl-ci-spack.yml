@@ -1,7 +1,6 @@
 variables:
-  WORK_DIR: ${SDK_WORK_DIR}/spack
+  SPACK_WORK_DIR: ${SDK_WORK_DIR}/spack 
   RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
-  TEST_TYPE: "spack"
 
 stages:
   - setup
@@ -11,8 +10,8 @@ stages:
 
 .final_steps:
   script: &finalize
-    - chgrp -fR exaworks ${WORK_DIR} || true
-    - chmod -fR 02770 ${WORK_DIR}    || true
+    - chgrp -fR exaworks ${SPACK_WORK_DIR} || true
+    - chmod -fR 02770 ${SPACK_WORK_DIR}    || true
 
 spack-setup:
   stage: setup
@@ -20,8 +19,8 @@ spack-setup:
     - ruby
     - shell
   script:
-    - test -d ${WORK_DIR} && exit 0
-    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git ${WORK_DIR}
+    - test -d ${SPACK_WORK_DIR} && exit 0
+    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git ${SPACK_WORK_DIR}
     - *finalize
 
 spack-compile:
@@ -46,7 +45,7 @@ spack-compile:
     - $HOST
     - shell
   script:
-    - . ${WORK_DIR}/share/spack/setup-env.sh
+    - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
     - test "$(spack env list | grep $SPACK_ENV_NAME)" && exit 0
     - spack env create ${SPACK_ENV_NAME}
     - for i in {1..3}; do
@@ -69,7 +68,7 @@ spack-update:
     - ruby
     - shell
   script:
-    - cd ${WORK_DIR}
+    - cd ${SPACK_WORK_DIR}
     - git checkout HEAD^ .
     - git reset --hard HEAD
     - git pull --ff
@@ -94,7 +93,7 @@ spack-build:
     - $HOST
     - shell
   script:
-    - . ${WORK_DIR}/share/spack/setup-env.sh
+    - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
     - for i in {1..3}; do
         spack env activate ${SPACK_ENV_NAME} && break || sleep 5;
       done
@@ -127,7 +126,7 @@ spack-tests:
     - $HOST
     - batch
   script:
-    - . ${WORK_DIR}/share/spack/setup-env.sh
+    - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
     - for i in {1..3}; do
         spack env activate ${SPACK_ENV_NAME} && break || sleep 5;
       done
@@ -135,7 +134,7 @@ spack-tests:
     - export run_id=${CI_PIPELINE_ID}
     - export branch=${CI_COMMIT_BRANCH}
     - export url=${TESTING_HOST}
-    - export test=${TEST_TYPE}
+    - export test="Spack"
     - export location="llnl-$HOST"
     - export contact="arambula2@llnl.gov"
     - export imnumber="LLNL-MI-834241"
@@ -153,7 +152,7 @@ spack-tests:
     - ruby
     - shell
   script:
-    - . ${WORK_DIR}/share/spack/setup-env.sh
+    - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
     - spack clean -a || true
     - rm -rf ${HOME}/.spack/cache
     - spack providers
