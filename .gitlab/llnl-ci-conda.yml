@@ -105,8 +105,6 @@ conda-tests:
     - quartz
     - shell
   script:
-    - cd ${SDK_WORK_DIR}
-    - rm -rf conda
     - *finalize
 
 conda-cleanup-on-build-failure:
@@ -119,10 +117,4 @@ conda-cleanup-on-test-failure:
   needs:
     - job: conda-tests
   when: on_failure
-  <<: *conda-env-cleanup
-
-conda-cleanup-on-success:
-  needs:
-    - job: conda-tests
-  when: on_success
   <<: *conda-env-cleanup

@@ -105,7 +105,6 @@ pip-tests:
     - quartz
     - shell
   script:
-    - cd ${SDK_WORK_DIR}
     - pip cache purge
     - *finalize
 
