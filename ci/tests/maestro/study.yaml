@@ -1,0 +1,42 @@
+description: # 
+    name: hello_bye_parameterized_funnel
+    description: A study that says hello and bye to multiple people, and a final good bye to all.
+
+env:
+    variables: # 
+        OUTPUT_PATH: ./tmp/samples/hello_bye_parameterized_funnel
+    labels: # 
+        HELLO_FORMAT: $(GREETING)_$(NAME).txt
+        BYE_FORMAT: $(FAREWELL)_$(NAME).txt
+
+study:
+    - name: say-hello
+      description: Say hello to someone!
+      run: # 
+          cmd: |
+            echo "$(GREETING), $(NAME)!" > $(HELLO_FORMAT)
+
+    - name: say-bye
+      description: Say bye to someone!
+      run:
+          cmd: |
+            echo "$(FAREWELL), $(NAME)!" > $(BYE_FORMAT)
+          depends: [say-hello] # 
+
+    - name: bye-all
+      description: Say bye to everyone!
+      run:
+          cmd: |
+            echo "Good-bye, World!" > good_bye_all.txt
+          depends: [say-bye_*]
+
+global.parameters:
+    NAME:  # 
+        values: [Pam, Jim, Michael, Dwight]
+        label: NAME.%%
+    GREETING:
+        values: [Hello, Ciao, Hey, Hi]
+        label: GREETING.%%
+    FAREWELL:
+        values: [Goodbye, Farewell, So long, See you later]
+        label: FAREWELL.%%
