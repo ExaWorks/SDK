@@ -72,10 +72,10 @@ pip-tests:
     matrix:
       - HOST : [ "quartz" ]
         VENV_ENV_NAME: [ "quartz-env" ]
-        RUNNER_TYPE: "shell"
+        RUNNER_TYPE: "batch"
       - HOST : [ "ruby" ]
         VENV_ENV_NAME: [ "ruby-env" ]
-        RUNNER_TYPE: "shell"
+        RUNNER_TYPE: "batch"
       # - HOST : [ "lassen" ]
       #   ENVIRONMENT: [ "BATCH" ]
       #   VENV_ENV_NAME: [ "lassen-env" ]

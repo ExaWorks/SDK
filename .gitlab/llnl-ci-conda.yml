@@ -70,10 +70,10 @@ conda-tests:
     matrix:
       - HOST : [ "quartz" ]
         CONDA_ENV_NAME: [ "quartz-env" ]
-        RUNNER_TYPE: "shell"
+        RUNNER_TYPE: "batch"
       - HOST : [ "ruby" ]
         CONDA_ENV_NAME: [ "ruby-env" ]
-        RUNNER_TYPE: "shell"
+        RUNNER_TYPE: "batch"
       # - HOST : [ "lassen" ]
       #   ENVIRONMENT: [ "BATCH" ]
       #   CONDA_ENV_NAME: [ "lassen-env" ]
