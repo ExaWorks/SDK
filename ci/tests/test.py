@@ -7,6 +7,8 @@ import subprocess
 import sys
 import os
 from pprint import pprint as pp
+import urllib3
+import ssl
 
 test = os.getenv("test")
 run_id = os.getenv("run_id")
@@ -30,6 +32,28 @@ if imnumber:
 data = { "run_id" : run_id,
          "branch": branch,
         }
+
+
+class TransferAdapter(requests.adapters.HTTPAdapter):
+    # "Transport adapter" that allows us to use custom ssl_context.
+    def __init__(self, ssl_context=None, **kwargs):
+        self.ssl_context = ssl_context
+        super().__init__(**kwargs)
+
+    def init_poolmanager(self, connections, maxsize, block=False):
+        self.poolmanager = urllib3.poolmanager.PoolManager(
+            num_pools=connections, maxsize=maxsize,
+            block=block, ssl_context=self.ssl_context
+        )
+
+    def get_legacy_session():
+        ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+        ctx.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
+        ctx.check_hostname = False
+        session = requests.session()
+        session.mount('https://', TransferAdapter(ctx))
+        return session
+
 
 def get_conf():
     results = {}
@@ -131,7 +155,7 @@ def main():
         exit(1)
 
     msg = {"id": location, "key": "42", "data": data}
-    requests.post(url, json=msg, verify=False)
+    get_legacy_session().post(url, json=msg, verify=False)
 
 if __name__ == '__main__':
     main()
