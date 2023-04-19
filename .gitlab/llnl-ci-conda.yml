@@ -36,7 +36,6 @@ conda-env-setup:
     - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} python=3.7 -y
-    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
 
 conda-build:
   stage: build
@@ -72,13 +71,17 @@ conda-tests:
       # - HOST : [ "quartz" ]
       #   CONDA_ENV_NAME: [ "quartz-env" ]
       #   RUNNER_TYPE: "batch"
+        # LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
       - HOST : [ "ruby" ]
         CONDA_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "batch"
+        LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
       # - HOST : [ "lassen" ]
       #   ENVIRONMENT: [ "BATCH" ]
       #   CONDA_ENV_NAME: [ "lassen-env" ]
       #   RUNNER_TYPE: "batch"
+        # LLNL_LSF_SCHEDULER_PARAMETERS: [ "-nnodes 1 -W 30" ]
+        # LSB_JOB_STARTER: [ "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD" ]
   tags:
     - $HOST
     - $RUNNER_TYPE
