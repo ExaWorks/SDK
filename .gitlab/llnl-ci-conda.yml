@@ -19,9 +19,9 @@ conda-env-setup:
   stage: setup
   parallel:
     matrix:
-      - HOST : [ "quartz" ]
-        CONDA_ENV_NAME: [ "quartz-env" ]
-        RUNNER_TYPE: "shell"
+      # - HOST : [ "quartz" ]
+      #   CONDA_ENV_NAME: [ "quartz-env" ]
+      #   RUNNER_TYPE: "shell"
       - HOST : [ "ruby" ]
         CONDA_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "shell"
@@ -45,9 +45,9 @@ conda-build:
     - job: conda-env-setup
   parallel:
     matrix:
-      - HOST : [ "quartz" ]
-        CONDA_ENV_NAME: [ "quartz-env" ]
-        RUNNER_TYPE: "shell"
+      # - HOST : [ "quartz" ]
+      #   CONDA_ENV_NAME: [ "quartz-env" ]
+      #   RUNNER_TYPE: "shell"
       - HOST : [ "ruby" ]
         CONDA_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "shell"
@@ -70,9 +70,9 @@ conda-tests:
     - job: conda-build
   parallel:
     matrix:
-      - HOST : [ "quartz" ]
-        CONDA_ENV_NAME: [ "quartz-env" ]
-        RUNNER_TYPE: "batch"
+      # - HOST : [ "quartz" ]
+      #   CONDA_ENV_NAME: [ "quartz-env" ]
+      #   RUNNER_TYPE: "batch"
       - HOST : [ "ruby" ]
         CONDA_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "batch"
@@ -102,7 +102,7 @@ conda-tests:
 .conda-env-cleanup: &conda-env-cleanup
   stage: cleanup
   tags:
-    - quartz
+    - ruby
     - shell
   script:
     - *finalize

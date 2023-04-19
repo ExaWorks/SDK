@@ -19,9 +19,9 @@ pip-env-setup:
   stage: setup
   parallel:
     matrix:
-      - HOST : [ "quartz" ]
-        VENV_ENV_NAME: [ "quartz-env" ]
-        RUNNER_TYPE: "shell"
+      # - HOST : [ "quartz" ]
+      #   VENV_ENV_NAME: [ "quartz-env" ]
+      #   RUNNER_TYPE: "shell"
       - HOST : [ "ruby" ]
         VENV_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "shell"
@@ -46,9 +46,9 @@ pip-build:
     - job: pip-env-setup
   parallel:
     matrix:
-      - HOST : [ "quartz" ]
-        VENV_ENV_NAME: [ "quartz-env" ]
-        RUNNER_TYPE: "shell"
+      # - HOST : [ "quartz" ]
+      #   VENV_ENV_NAME: [ "quartz-env" ]
+      #   RUNNER_TYPE: "shell"
       - HOST : [ "ruby" ]
         VENV_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "shell"
@@ -70,9 +70,9 @@ pip-tests:
     - job: pip-build
   parallel:
     matrix:
-      - HOST : [ "quartz" ]
-        VENV_ENV_NAME: [ "quartz-env" ]
-        RUNNER_TYPE: "batch"
+      # - HOST : [ "quartz" ]
+      #   VENV_ENV_NAME: [ "quartz-env" ]
+      #   RUNNER_TYPE: "batch"
       - HOST : [ "ruby" ]
         VENV_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "batch"
@@ -102,7 +102,7 @@ pip-tests:
 .pip-env-cleanup: &pip-env-cleanup
   stage: cleanup
   tags:
-    - quartz
+    - ruby
     - shell
   script:
     - pip cache purge
