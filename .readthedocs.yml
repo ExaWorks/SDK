@@ -9,6 +9,7 @@ build:
     - openmpi-bin
     - openjdk-11-jdk
     - gcc
+    - g++
     - wget
     - tar
     - ant
