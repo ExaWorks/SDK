@@ -1,14 +1,11 @@
 import argparse
-import requests
-from datetime import datetime
-import random
-import pprint
-import subprocess
-import sys
 import os
-from pprint import pprint as pp
-import urllib3
+import requests.adapters
 import ssl
+import subprocess
+import urllib3
+
+from datetime import datetime
 
 test = os.getenv("test")
 run_id = os.getenv("run_id")
@@ -21,7 +18,7 @@ imnumber = os.getenv("imnumber")
 config = { "maintainer_email" : maintainer_email}
 
 extras = { "config" : config,
-           "Test": test,
+           "test": test,
            "git_branch" : branch,
            "start_time" : str(datetime.now())
          }
@@ -34,25 +31,29 @@ data = { "run_id" : run_id,
         }
 
 
-class TransferAdapter(requests.adapters.HTTPAdapter):
-    # "Transport adapter" that allows us to use custom ssl_context.
+class TransportAdapter(requests.adapters.HTTPAdapter):
+    """
+    Transport adapter that allows to use custom ssl_context.
+    """
+
     def __init__(self, ssl_context=None, **kwargs):
         self.ssl_context = ssl_context
         super().__init__(**kwargs)
 
-    def init_poolmanager(self, connections, maxsize, block=False):
+    def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
         self.poolmanager = urllib3.poolmanager.PoolManager(
             num_pools=connections, maxsize=maxsize,
             block=block, ssl_context=self.ssl_context
         )
 
-    def get_legacy_session():
-        ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-        ctx.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
-        ctx.check_hostname = False
-        session = requests.session()
-        session.mount('https://', TransferAdapter(ctx))
-        return session
+
+def get_legacy_session():
+    ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+    ctx.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
+    ctx.check_hostname = False
+    session = requests.session()
+    session.mount('https://', TransportAdapter(ctx))
+    return session
 
 
 def get_conf():
@@ -125,6 +126,7 @@ def get_end():
 
     return data
 
+
 def get_args():
     parser = argparse.ArgumentParser(description='Runs SDK Tests by passing in shell commands')
     test_group = parser.add_mutually_exclusive_group(required=True)
@@ -140,6 +142,7 @@ def get_args():
                         help='Add std out of test to result')
     args = parser.parse_args()
     return args
+
 
 def main():
     args = get_args()
@@ -157,5 +160,7 @@ def main():
     msg = {"id": location, "key": "42", "data": data}
     get_legacy_session().post(url, json=msg, verify=False)
 
+
 if __name__ == '__main__':
     main()
+
