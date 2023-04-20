@@ -1,7 +1,13 @@
 version: 2
 formats: all
+
+build:
+  apt_packages:
+    - libopenmpi-dev
+    - openmpi-bin
+
 python:
-  version: 3.6
+  version: 3.7
   install:
     - requirements: docs/source/requirements.txt
   system_packages: true
