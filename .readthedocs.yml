@@ -8,15 +8,9 @@ build:
     - libopenmpi-dev
     - openmpi-bin
     - openjdk-11-jdk
-    # - gcc
-    # - g++
-    # - autoconf
-    # - wget
-    # - tar
     - ant
     - mpich
     - swig
-    # - tcl-dev
     - zsh
   jobs:
     post_install:
