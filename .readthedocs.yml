@@ -8,6 +8,7 @@ build:
     - libopenmpi-dev
     - openmpi-bin
     - openjdk-11-jdk
+    - gcc
     - wget
     - tar
     - ant
