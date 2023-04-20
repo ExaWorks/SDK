@@ -10,6 +10,7 @@ build:
     - openjdk-11-jdk
     - gcc
     - g++
+    - autoconf
     - wget
     - tar
     - ant
@@ -19,10 +20,10 @@ build:
     - zsh
   jobs:
     post_install:
-      - wget http://swift-lang.github.io/swift-t-downloads/1.4/swift-t-1.4.3.tar.gz
-      - tar xfz swift-t-1.4.3.tar.gz
-      - swift-t-1.4.3/dev/build/init-settings.sh
-      - swift-t-1.4.3/dev/build/build-swift-t.sh
+      - wget http://swift-lang.github.io/swift-t-downloads/1.5/swift-t-1.5.0.tar.gz
+      - tar xfz swift-t-1.5.0.tar.gz
+      - swift-t-1.5.0/dev/build/init-settings.sh
+      - swift-t-1.5.0/dev/build/build-swift-t.sh
 
 formats: all
 
