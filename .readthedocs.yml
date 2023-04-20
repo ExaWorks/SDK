@@ -10,11 +10,11 @@ build:
     - openjdk-11-jre
     - wget
     - tar
-    # - ant
-    # - mpich
-    # - swig
-    # - tcl-dev
-    # - zsh
+    - ant
+    - mpich
+    - swig
+    - tcl-dev
+    - zsh
   jobs:
     post_install:
       - wget http://swift-lang.github.io/swift-t-downloads/1.5/swift-t-1.5.0.tar.gz
