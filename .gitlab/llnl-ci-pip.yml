@@ -108,7 +108,7 @@ pip-tests:
     - ruby
     - shell
   script:
-    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - source ${PIP_WORK_DIR}/ruby-env/bin/activate
     - pip cache purge
     - *finalize
 
