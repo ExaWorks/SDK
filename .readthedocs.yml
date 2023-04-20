@@ -10,11 +10,19 @@ build:
     - openjdk-11-jre
     - wget
     - tar
+    - ant
+    - mpich
+    - swig
+    - tcl-dev
+    - zsh
   jobs:
     post_install:
       - wget http://swift-lang.github.io/swift-t-downloads/1.3/swift-t-debs-1.3.tar.gz
       - tar xfz swift-t-debs-1.3.tar.gz
-      - ./swift-t-debs/install-debs.sh
+      - dpkg -i swift-t-debs/exmcutils-dev_0.5.4_amd64.deb
+      - dpkg -i swift-t-debs/adlbx-dev_0.8.1_amd64.deb
+      - dpkg -i swift-t-debs/turbine_1.1.0_amd64.deb
+      - dpkg -i swift-t-debs/stc_0.7.4_amd64.deb
 
 formats: all
 
