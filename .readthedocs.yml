@@ -5,7 +5,7 @@ build:
   apt_packages:
     - libopenmpi-dev
     - openmpi-bin
-    - openjdk=11
+    - openjdk-11-jre
 
 python:
   version: 3.7
