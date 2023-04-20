@@ -71,11 +71,11 @@ conda-tests:
       # - HOST : [ "quartz" ]
       #   CONDA_ENV_NAME: [ "quartz-env" ]
       #   RUNNER_TYPE: "batch"
-        # LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
+        # LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 60" ]
       - HOST : [ "ruby" ]
         CONDA_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "batch"
-        LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
+        LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 60" ]
       # - HOST : [ "lassen" ]
       #   ENVIRONMENT: [ "BATCH" ]
       #   CONDA_ENV_NAME: [ "lassen-env" ]
