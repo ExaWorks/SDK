@@ -34,7 +34,12 @@ conda-env-setup:
   script:
     - mkdir -p ${CONDA_WORK_DIR}
     - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
+    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ${SDK_WORK_DIR}/miniconda.sh
+    - chmod +x ${SDK_WORK_DIR}/miniconda.sh
+    - ${SDK_WORK_DIR}/miniconda.sh -b -p ${SDK_WORK_DIR}/miniconda3
+    - source ${SDK_WORK_DIR}/miniconda3/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
+    - conda update -y -n base -c defaults conda
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} python=3.7 -y
 
 conda-build:
@@ -60,6 +65,7 @@ conda-build:
     - eval "$(conda shell.posix hook)"
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - conda env update --file ${CONDA_REQUIREMENTS}
+    - conda update -y --all
     - *finalize
 
 conda-tests:
