@@ -18,9 +18,9 @@ conda-env-setup:
   stage: setup
   parallel:
     matrix:
-      # - HOST : [ "quartz" ]
-      #   CONDA_ENV_NAME: [ "quartz-env" ]
-      #   RUNNER_TYPE: "shell"
+      - HOST : [ "quartz" ]
+        CONDA_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "shell"
       - HOST : [ "ruby" ]
         CONDA_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "shell"
@@ -43,9 +43,9 @@ conda-build:
     - job: conda-env-setup
   parallel:
     matrix:
-      # - HOST : [ "quartz" ]
-      #   CONDA_ENV_NAME: [ "quartz-env" ]
-      #   RUNNER_TYPE: "shell"
+      - HOST : [ "quartz" ]
+        CONDA_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "shell"
       - HOST : [ "ruby" ]
         CONDA_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "shell"
@@ -68,10 +68,10 @@ conda-tests:
     - job: conda-build
   parallel:
     matrix:
-      # - HOST : [ "quartz" ]
-      #   CONDA_ENV_NAME: [ "quartz-env" ]
-      #   RUNNER_TYPE: "batch"
-        # LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 60" ]
+      - HOST : [ "quartz" ]
+        CONDA_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "batch"
+        LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 60" ]
       - HOST : [ "ruby" ]
         CONDA_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "batch"

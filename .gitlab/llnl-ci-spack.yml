@@ -29,10 +29,10 @@ spack-compile:
     - job: spack-setup
   parallel:
     matrix:
-      # - HOST: [ "quartz" ]
-      #   SPACK_ENV_NAME: [ "rhel7-broadwell" ]
-      #   COMPILER: [ "gcc@8.1.0" ]
-        # TARGET_ARCH_OPT: [ "target=x86_64" ]
+      - HOST: [ "quartz" ]
+        SPACK_ENV_NAME: [ "rhel7-broadwell" ]
+        COMPILER: [ "gcc@8.1.0" ]
+        TARGET_ARCH_OPT: [ "target=x86_64" ]
       - HOST: [ "lassen" ]
         SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
         COMPILER: [ "gcc@9.4.0" ]
@@ -80,9 +80,9 @@ spack-build:
     - job: spack-update
   parallel:
     matrix:
-      # - HOST: [ "quartz" ]
-      #   SPACK_ENV_NAME: [ "rhel7-broadwell" ]
-      #   COMPILER: [ "gcc@8.1.0" ]
+      - HOST: [ "quartz" ]
+        SPACK_ENV_NAME: [ "rhel7-broadwell" ]
+        COMPILER: [ "gcc@8.1.0" ]
       - HOST: [ "lassen" ]
         SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
         COMPILER: [ "gcc@9.4.0" ]
@@ -111,9 +111,9 @@ spack-tests:
     - whoami
   parallel:
     matrix:
-      # - HOST: [ "quartz" ]
-      #   SPACK_ENV_NAME: [ "rhel7-broadwell" ]
-      #   LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
+      - HOST: [ "quartz" ]
+        SPACK_ENV_NAME: [ "rhel7-broadwell" ]
+        LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
       - HOST: [ "lassen" ]
         SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
         LLNL_LSF_SCHEDULER_PARAMETERS: [ "-nnodes 1 -W 30" ]

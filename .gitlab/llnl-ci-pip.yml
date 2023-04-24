@@ -18,9 +18,9 @@ pip-env-setup:
   stage: setup
   parallel:
     matrix:
-      # - HOST : [ "quartz" ]
-      #   VENV_ENV_NAME: [ "quartz-env" ]
-      #   RUNNER_TYPE: "shell"
+      - HOST : [ "quartz" ]
+        VENV_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "shell"
       - HOST : [ "ruby" ]
         VENV_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "shell"
@@ -45,9 +45,9 @@ pip-build:
     - job: pip-env-setup
   parallel:
     matrix:
-      # - HOST : [ "quartz" ]
-      #   VENV_ENV_NAME: [ "quartz-env" ]
-      #   RUNNER_TYPE: "shell"
+      - HOST : [ "quartz" ]
+        VENV_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "shell"
       - HOST : [ "ruby" ]
         VENV_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "shell"
@@ -69,10 +69,10 @@ pip-tests:
     - job: pip-build
   parallel:
     matrix:
-      # - HOST : [ "quartz" ]
-      #   VENV_ENV_NAME: [ "quartz-env" ]
-      #   RUNNER_TYPE: "batch"
-        # LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
+      - HOST : [ "quartz" ]
+        VENV_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "batch"
+        LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
       - HOST : [ "ruby" ]
         VENV_ENV_NAME: [ "ruby-env" ]
         RUNNER_TYPE: "batch"
