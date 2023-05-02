@@ -1,0 +1,164 @@
+variables:
+  CONDA_WORK_DIR: ${SDK_WORK_DIR}/conda
+  CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
+  RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+
+stages:
+  - setup
+  - build
+  - test
+  - cleanup
+
+.final_steps:
+  script: &finalize
+    - chgrp -fR exaworks ${CONDA_WORK_DIR} || true
+    - chmod -fR 02770 ${CONDA_WORK_DIR}    || true
+
+conda-setup:
+  stage: setup
+  parallel:
+    matrix:
+      - HOST : [ "quartz" ]
+        CONDA_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "shell"
+        CONDA_ARCH: "x86_64"
+      - HOST : [ "ruby" ]
+        CONDA_ENV_NAME: [ "ruby-env" ]
+        RUNNER_TYPE: "shell"
+        CONDA_ARCH: "x86_64"
+      # - HOST : [ "lassen" ]
+      #   ENVIRONMENT: [ "BATCH" ]
+      #   CONDA_ENV_NAME: [ "lassen-env" ]
+      #   RUNNER_TYPE: "batch"
+        # CONDA_ARCH: "ppc64le"
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+  script:
+    - mkdir -p ${CONDA_WORK_DIR}
+    - test -d ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH} && exit 0
+    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-${CONDA_ARCH}.sh -O ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
+    - chmod +x ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
+    - ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh -b -p ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}
+    - *finalize
+
+conda-env-setup:
+  stage: setup
+  parallel:
+    matrix:
+      - HOST : [ "quartz" ]
+        CONDA_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "shell"
+        CONDA_ARCH: "x86_64"
+      - HOST : [ "ruby" ]
+        CONDA_ENV_NAME: [ "ruby-env" ]
+        RUNNER_TYPE: "shell"
+        CONDA_ARCH: "x86_64"
+      # - HOST : [ "lassen" ]
+      #   ENVIRONMENT: [ "BATCH" ]
+      #   CONDA_ENV_NAME: [ "lassen-env" ]
+      #   RUNNER_TYPE: "batch"
+        # CONDA_ARCH: "ppc64le"
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+  script:
+    - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
+    - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
+    - eval "$(conda shell.posix hook)"
+    - conda update -y -n base -c defaults conda
+    - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} python=3.7 -y
+    - *finalize
+
+conda-build:
+  stage: build
+  needs:
+    - job: conda-env-setup
+  parallel:
+    matrix:
+      - HOST : [ "quartz" ]
+        CONDA_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "shell"
+        CONDA_ARCH: "x86_64"
+      - HOST : [ "ruby" ]
+        CONDA_ENV_NAME: [ "ruby-env" ]
+        RUNNER_TYPE: "shell"
+        CONDA_ARCH: "x86_64"
+      # - HOST : [ "lassen" ]
+      #   ENVIRONMENT: [ "BATCH" ]
+      #   CONDA_ENV_NAME: [ "lassen-env" ]
+      #   RUNNER_TYPE: "batch"
+        # CONDA_ARCH: "ppc64le"
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+  script:
+    - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
+    - eval "$(conda shell.posix hook)"
+    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
+    - conda env update --file ${CONDA_REQUIREMENTS}
+    - conda update -y --all
+    - *finalize
+
+conda-tests:
+  stage: test
+  needs:
+    - job: conda-build
+  parallel:
+    matrix:
+      - HOST : [ "quartz" ]
+        CONDA_ENV_NAME: [ "quartz-env" ]
+        RUNNER_TYPE: "batch"
+        LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 60" ]
+        CONDA_ARCH: "x86_64"
+      - HOST : [ "ruby" ]
+        CONDA_ENV_NAME: [ "ruby-env" ]
+        RUNNER_TYPE: "batch"
+        LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 60" ]
+        CONDA_ARCH: "x86_64"
+      # - HOST : [ "lassen" ]
+      #   ENVIRONMENT: [ "BATCH" ]
+      #   CONDA_ENV_NAME: [ "lassen-env" ]
+      #   RUNNER_TYPE: "batch"
+        # LLNL_LSF_SCHEDULER_PARAMETERS: [ "-nnodes 1 -W 30" ]
+        # LSB_JOB_STARTER: [ "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD" ]
+        # CONDA_ARCH: "ppc64le"
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+  script:
+    - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
+    - eval "$(conda shell.posix hook)"
+    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
+    - export run_id=${CI_PIPELINE_ID}
+    - export branch=${CI_COMMIT_BRANCH}
+    - export url=${TESTING_HOST}
+    - export test="Conda"
+    - export location="llnl-$HOST"
+    - export contact="arambula2@llnl.gov"
+    - export imnumber="LLNL-MI-834241"
+    - python3 ci/tests/test.py -s
+    - for TEST in parsl rp swift-t; do
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
+      done
+    - python3 ci/tests/test.py -e
+
+.conda-env-cleanup: &conda-env-cleanup
+  stage: cleanup
+  tags:
+    - ruby
+    - shell
+  script:
+    - *finalize
+
+conda-cleanup-on-build-failure:
+  needs:
+    - job: conda-build
+  when: on_failure
+  <<: *conda-env-cleanup
+
+conda-cleanup-on-test-failure:
+  needs:
+    - job: conda-tests
+  when: on_failure
+  <<: *conda-env-cleanup
