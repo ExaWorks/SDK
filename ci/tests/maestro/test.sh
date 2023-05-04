@@ -6,6 +6,8 @@
 
 # pip install maestrowf
 
+
+> /tmp/test-output
 echo y | maestro run ci/tests/maestro/study.yaml >> /tmp/test-output
 
 cat <<EOF >/tmp/expected-output
