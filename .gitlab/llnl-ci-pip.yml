@@ -14,6 +14,11 @@ stages:
     - chgrp -fR exaworks ${PIP_WORK_DIR} || true
     - chmod -fR 02770 ${PIP_WORK_DIR}    || true
 
+.job_tags:
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+
 .on_quartz:
   variables:
     HOST: [ "quartz" ]
@@ -25,9 +30,6 @@ stages:
 
 .pip-env-setup:
   stage: setup
-  tags:
-    - $HOST
-    - $RUNNER_TYPE
   script:
     - mkdir -p ${PIP_WORK_DIR}
     - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
@@ -38,7 +40,7 @@ stages:
 
 setup_on_quartz:
   RUNNER_TYPE: "shell"
-  extends: [.on_quartz, .pip-env-setup]
+  extends: [.on_quartz, .job_tags, .pip-env-setup]
 
 # setup_on_ruby:
 #   RUNNER_TYPE: "shell"
@@ -71,9 +73,6 @@ setup_on_quartz:
 
 .pip-build:
   stage: build
-  tags:
-    - $HOST
-    - $RUNNER_TYPE
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
@@ -82,7 +81,7 @@ setup_on_quartz:
 build_on_quartz:
   RUNNER_TYPE: "shell"
   needs: [.setup_on_quartz]
-  extends: [.on_quartz, .pip-build]
+  extends: [.on_quartz, .job_tags, .pip-build]
 
 # build_on_ruby:
 #   HOST : [ "ruby" ]
@@ -118,9 +117,6 @@ build_on_quartz:
 
 .pip-test:
   stage: test
-  tags:
-    - $HOST
-    - $RUNNER_TYPE
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - export run_id=${CI_PIPELINE_ID}
@@ -138,12 +134,10 @@ build_on_quartz:
     - deactivate
 
 test_on_quartz:
-  HOST : [ "quartz" ]
-  VENV_ENV_NAME: [ "quartz-env" ]
   RUNNER_TYPE: "batch"
   LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
   needs: [.build_on_quartz]
-  extends: [.pip-test]
+  extends: [.on_quartz, .job_tags, .pip-test]
 
 # test_on_ruby:
 #   HOST : [ "ruby" ]
