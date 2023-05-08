@@ -25,8 +25,8 @@ stages:
     VENV_ENV_NAME: "quartz-env"
 
 # .on_ruby:
-#   HOST : [ "ruby" ]
-#   VENV_ENV_NAME: [ "ruby-env" ]
+#   HOST : "ruby"
+#   VENV_ENV_NAME: "ruby-env"
 
 .pip-env-setup:
   stage: setup
@@ -70,13 +70,13 @@ setup_on_quartz:
 
 build_on_quartz:
   RUNNER_TYPE: "shell"
-  needs: [.setup_on_quartz]
+  needs: [setup_on_quartz]
   extends: [.on_quartz, .job_tags, .pip-build]
 
 test_on_quartz:
   RUNNER_TYPE: "batch"
   LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
-  needs: [.build_on_quartz]
+  needs: [build_on_quartz]
   extends: [.on_quartz, .job_tags, .pip-test]
 
 # setup_on_ruby:
