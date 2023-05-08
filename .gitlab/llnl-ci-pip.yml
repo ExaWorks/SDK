@@ -14,20 +14,19 @@ stages:
     - chgrp -fR exaworks ${PIP_WORK_DIR} || true
     - chmod -fR 02770 ${PIP_WORK_DIR}    || true
 
-pip-env-setup:
+# .on_quartz:
+#   variables:
+#   HOST: "quartz"
+#   VENV_ENV_NAME: [ "quartz-env" ]
+#   RUNNER_TYPE: "shell"
+
+# .on_ruby:
+#   HOST : [ "ruby" ]
+#   VENV_ENV_NAME: [ "ruby-env" ]
+#   RUNNER_TYPE: "shell"
+
+.pip-env-setup:
   stage: setup
-  parallel:
-    matrix:
-      - HOST : [ "quartz" ]
-        VENV_ENV_NAME: [ "quartz-env" ]
-        RUNNER_TYPE: "shell"
-      - HOST : [ "ruby" ]
-        VENV_ENV_NAME: [ "ruby-env" ]
-        RUNNER_TYPE: "shell"
-      # - HOST : [ "lassen" ]
-      #   ENVIRONMENT: [ "BATCH" ]
-      #   VENV_ENV_NAME: [ "lassen-env" ]
-      #   RUNNER_TYPE: "batch"
   tags:
     - $HOST
     - $RUNNER_TYPE
@@ -38,6 +37,44 @@ pip-env-setup:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install -U pip setuptools wheel
     - pip cache purge
+
+setup_on_quartz:
+  variables:
+    HOST: "quartz"
+    VENV_ENV_NAME: [ "quartz-env" ]
+    RUNNER_TYPE: "shell"
+  extends: [.pip-env-setup]
+
+setup_on_ruby:
+  HOST : [ "ruby" ]
+  VENV_ENV_NAME: [ "ruby-env" ]
+  RUNNER_TYPE: "shell"
+  extends: [.pip-env-setup]
+
+# pip-env-setup:
+#   stage: setup
+#   parallel:
+#     matrix:
+#       - HOST : [ "quartz" ]
+#         VENV_ENV_NAME: [ "quartz-env" ]
+#         RUNNER_TYPE: "shell"
+#       - HOST : [ "ruby" ]
+#         VENV_ENV_NAME: [ "ruby-env" ]
+#         RUNNER_TYPE: "shell"
+#       # - HOST : [ "lassen" ]
+#       #   ENVIRONMENT: [ "BATCH" ]
+#       #   VENV_ENV_NAME: [ "lassen-env" ]
+#       #   RUNNER_TYPE: "batch"
+#   tags:
+#     - $HOST
+#     - $RUNNER_TYPE
+#   script:
+#     - mkdir -p ${PIP_WORK_DIR}
+#     - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
+#     - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
+#     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+#     - pip install -U pip setuptools wheel
+#     - pip cache purge
 
 pip-build:
   stage: build
