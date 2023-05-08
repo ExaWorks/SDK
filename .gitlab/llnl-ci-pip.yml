@@ -24,8 +24,54 @@ stages:
 #   HOST : "ruby"
 #   VENV_ENV_NAME: "ruby-env"
 
-.pip-env-setup:
+# .pip-env-setup:
+#   stage: setup
+#   script:
+#     - mkdir -p ${PIP_WORK_DIR}
+#     - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
+#     - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
+#     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+#     - pip install -U pip setuptools wheel
+#     - pip cache purge
+
+# .pip-build:
+#   stage: build
+#   script:
+#     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+#     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
+#     - *finalize
+
+# .pip-test:
+#   stage: test
+#   script:
+#     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+#     - export run_id=${CI_PIPELINE_ID}
+#     - export branch=${CI_COMMIT_BRANCH}
+#     - export url=${TESTING_HOST}
+#     - export test="Pip"
+#     - export location="llnl-$HOST"
+#     - export contact="arambula2@llnl.gov"
+#     - export imnumber="LLNL-MI-834241"
+#     - python3 ci/tests/test.py -s
+#     - for TEST in flux parsl rp swift-t parsl-flux rp-flux maestro; do
+#         python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
+#       done
+#     - python3 ci/tests/test.py -e
+#     - deactivate
+
+# .pip-env-cleanup:
+#   stage: cleanup
+#   script:
+#     - source ${PIP_WORK_DIR}/ruby-env/bin/activate
+#     - pip cache purge
+#     - *finalize
+
+
+
+setup_on_quartz:
   stage: setup
+  tags:
+    - "shell"
   script:
     - mkdir -p ${PIP_WORK_DIR}
     - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
@@ -33,16 +79,25 @@ stages:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install -U pip setuptools wheel
     - pip cache purge
+  extends: [.on_quartz]
 
-.pip-build:
+build_on_quartz:
   stage: build
+  tags:
+    - "shell"
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
     - *finalize
+  needs: [setup_on_quartz]
+  extends: [.on_quartz]
 
-.pip-test:
+test_on_quartz:
   stage: test
+  tags:
+    - "batch"
+  variables:
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - export run_id=${CI_PIPELINE_ID}
@@ -58,41 +113,20 @@ stages:
       done
     - python3 ci/tests/test.py -e
     - deactivate
+  needs: [build_on_quartz]
+  extends: [.on_quartz]
 
-.pip-env-cleanup:
+cleanup_on_quartz:
   stage: cleanup
+  tags:
+    - "shell"
   script:
     - source ${PIP_WORK_DIR}/ruby-env/bin/activate
     - pip cache purge
     - *finalize
-
-
-
-setup_on_quartz:
-  tags:
-    - "shell"
-  extends: [.on_quartz, .pip-env-setup]
-
-build_on_quartz:
-  tags:
-    - "shell"
-  needs: [setup_on_quartz]
-  extends: [.on_quartz, .pip-build]
-
-test_on_quartz:
-  tags:
-    - "batch"
-  variables:
-    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
-  needs: [build_on_quartz]
-  extends: [.on_quartz, .pip-test]
-
-cleanup_on_quartz:
-  tags:
-    - "shell"
   needs: [test_on_quartz]
   when: always
-  extends: [.on_quartz, .pip-env-cleanup]
+  extends: [.on_quartz]
 
 # setup_on_ruby:
 #   RUNNER_TYPE: "shell"
