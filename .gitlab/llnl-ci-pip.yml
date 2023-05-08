@@ -83,7 +83,7 @@ test_on_quartz:
   tags:
     - "batch"
   variables:
-    LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   needs: [build_on_quartz]
   extends: [.on_quartz, .pip-test]
 
