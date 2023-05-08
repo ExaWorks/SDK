@@ -63,6 +63,15 @@ stages:
     - python3 ci/tests/test.py -e
     - deactivate
 
+.pip-env-cleanup:
+  stage: cleanup
+  script:
+    - source ${PIP_WORK_DIR}/ruby-env/bin/activate
+    - pip cache purge
+    - *finalize
+
+
+
 setup_on_quartz:
   variables:
     RUNNER_TYPE: "shell"
@@ -80,6 +89,13 @@ test_on_quartz:
     LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
   needs: [build_on_quartz]
   extends: [.on_quartz, .job_tags, .pip-test]
+
+cleanup_on_quartz:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [test_on_quartz]
+  when: always
+  extends: [.job_tags, .pip-env-cleanup]
 
 # setup_on_ruby:
 #   RUNNER_TYPE: "shell"
@@ -193,16 +209,6 @@ test_on_quartz:
 #     - python3 ci/tests/test.py -e
 #     - deactivate
 
-.pip-env-cleanup: &pip-env-cleanup
-  stage: cleanup
-  tags:
-    - ruby
-    - shell
-  script:
-    - source ${PIP_WORK_DIR}/ruby-env/bin/activate
-    - pip cache purge
-    - *finalize
-
 # pip-cleanup-on-build-failure:
 #   needs:
 #     - job: pip-build
@@ -222,7 +228,4 @@ test_on_quartz:
 #   <<: *pip-env-cleanup
 
 
-# cleanup_on_quartz:
-#   needs: [build_on_quartz, test_on_quartz]
-#   when: on_failure
-#   extends: [pip-env-cleanup]
+
