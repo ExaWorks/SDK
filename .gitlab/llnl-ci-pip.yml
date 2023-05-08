@@ -24,9 +24,9 @@ stages:
     HOST: [ "quartz" ]
     VENV_ENV_NAME: [ "quartz-env" ]
 
-.on_ruby:
-  HOST : [ "ruby" ]
-  VENV_ENV_NAME: [ "ruby-env" ]
+# .on_ruby:
+#   HOST : [ "ruby" ]
+#   VENV_ENV_NAME: [ "ruby-env" ]
 
 .pip-env-setup:
   stage: setup
@@ -39,7 +39,8 @@ stages:
     - pip cache purge
 
 setup_on_quartz:
-  RUNNER_TYPE: "shell"
+  variables:
+    RUNNER_TYPE: "shell"
   extends: [.on_quartz, .job_tags, .pip-env-setup]
 
 # setup_on_ruby:
