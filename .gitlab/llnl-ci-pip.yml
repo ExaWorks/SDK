@@ -21,8 +21,8 @@ stages:
 
 .on_quartz:
   variables:
-    HOST: [ "quartz" ]
-    VENV_ENV_NAME: [ "quartz-env" ]
+    HOST: "quartz"
+    VENV_ENV_NAME: "quartz-env"
 
 # .on_ruby:
 #   HOST : [ "ruby" ]
@@ -38,10 +38,46 @@ stages:
     - pip install -U pip setuptools wheel
     - pip cache purge
 
+.pip-build:
+  stage: build
+  script:
+    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
+    - *finalize
+
+.pip-test:
+  stage: test
+  script:
+    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - export run_id=${CI_PIPELINE_ID}
+    - export branch=${CI_COMMIT_BRANCH}
+    - export url=${TESTING_HOST}
+    - export test="Pip"
+    - export location="llnl-$HOST"
+    - export contact="arambula2@llnl.gov"
+    - export imnumber="LLNL-MI-834241"
+    - python3 ci/tests/test.py -s
+    - for TEST in flux parsl rp swift-t parsl-flux rp-flux maestro; do
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
+      done
+    - python3 ci/tests/test.py -e
+    - deactivate
+
 setup_on_quartz:
   variables:
     RUNNER_TYPE: "shell"
   extends: [.on_quartz, .job_tags, .pip-env-setup]
+
+build_on_quartz:
+  RUNNER_TYPE: "shell"
+  needs: [.setup_on_quartz]
+  extends: [.on_quartz, .job_tags, .pip-build]
+
+test_on_quartz:
+  RUNNER_TYPE: "batch"
+  LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
+  needs: [.build_on_quartz]
+  extends: [.on_quartz, .job_tags, .pip-test]
 
 # setup_on_ruby:
 #   RUNNER_TYPE: "shell"
@@ -72,17 +108,7 @@ setup_on_quartz:
 #     - pip install -U pip setuptools wheel
 #     - pip cache purge
 
-.pip-build:
-  stage: build
-  script:
-    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
-    - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
-    - *finalize
 
-build_on_quartz:
-  RUNNER_TYPE: "shell"
-  needs: [.setup_on_quartz]
-  extends: [.on_quartz, .job_tags, .pip-build]
 
 # build_on_ruby:
 #   HOST : [ "ruby" ]
@@ -116,29 +142,7 @@ build_on_quartz:
 #     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
 #     - *finalize
 
-.pip-test:
-  stage: test
-  script:
-    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
-    - export run_id=${CI_PIPELINE_ID}
-    - export branch=${CI_COMMIT_BRANCH}
-    - export url=${TESTING_HOST}
-    - export test="Pip"
-    - export location="llnl-$HOST"
-    - export contact="arambula2@llnl.gov"
-    - export imnumber="LLNL-MI-834241"
-    - python3 ci/tests/test.py -s
-    - for TEST in flux parsl rp swift-t parsl-flux rp-flux maestro; do
-        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
-      done
-    - python3 ci/tests/test.py -e
-    - deactivate
 
-test_on_quartz:
-  RUNNER_TYPE: "batch"
-  LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
-  needs: [.build_on_quartz]
-  extends: [.on_quartz, .job_tags, .pip-test]
 
 # test_on_ruby:
 #   HOST : [ "ruby" ]
