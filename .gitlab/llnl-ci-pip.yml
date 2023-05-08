@@ -95,7 +95,7 @@ cleanup_on_quartz:
     RUNNER_TYPE: "shell"
   needs: [test_on_quartz]
   when: always
-  extends: [.job_tags, .pip-env-cleanup]
+  extends: [.on_quartz, .job_tags, .pip-env-cleanup]
 
 # setup_on_ruby:
 #   RUNNER_TYPE: "shell"
