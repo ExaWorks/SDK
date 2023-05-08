@@ -16,8 +16,9 @@ stages:
 
 .on_quartz:
   tags:
-    - "quartz"
+    "quartz"
   variables:
+    HOST: "quartz"
     VENV_ENV_NAME: "quartz-env"
 
 # .on_ruby:
@@ -85,6 +86,8 @@ build_on_quartz:
   stage: build
   tags:
     - "shell"
+  variables:
+    RUNNER_TYPE: "shell"
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
