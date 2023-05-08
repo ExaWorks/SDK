@@ -69,13 +69,15 @@ setup_on_quartz:
   extends: [.on_quartz, .job_tags, .pip-env-setup]
 
 build_on_quartz:
-  RUNNER_TYPE: "shell"
+  variables:
+    RUNNER_TYPE: "shell"
   needs: [setup_on_quartz]
   extends: [.on_quartz, .job_tags, .pip-build]
 
 test_on_quartz:
-  RUNNER_TYPE: "batch"
-  LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
   needs: [build_on_quartz]
   extends: [.on_quartz, .job_tags, .pip-test]
 
