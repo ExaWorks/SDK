@@ -100,6 +100,7 @@ test_on_quartz:
   tags:
     - "batch"
   variables:
+    RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
@@ -123,6 +124,8 @@ cleanup_on_quartz:
   stage: cleanup
   tags:
     - "shell"
+  variables:
+    RUNNER_TYPE: "shell"
   script:
     - source ${PIP_WORK_DIR}/ruby-env/bin/activate
     - pip cache purge
