@@ -9,14 +9,17 @@ stages:
   - test
   - cleanup
 
+.job_tags:
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+
 .final_steps:
   script: &finalize
     - chgrp -fR exaworks ${PIP_WORK_DIR} || true
     - chmod -fR 02770 ${PIP_WORK_DIR}    || true
 
 .on_quartz:
-  tags:
-    "quartz"
   variables:
     HOST: "quartz"
     VENV_ENV_NAME: "quartz-env"
@@ -71,8 +74,6 @@ stages:
 
 setup_on_quartz:
   stage: setup
-  tags:
-    - "shell"
   script:
     - mkdir -p ${PIP_WORK_DIR}
     - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
@@ -80,12 +81,10 @@ setup_on_quartz:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install -U pip setuptools wheel
     - pip cache purge
-  extends: [.on_quartz]
+  extends: [.on_quartz, .job_tags]
 
 build_on_quartz:
   stage: build
-  tags:
-    - "shell"
   variables:
     RUNNER_TYPE: "shell"
   script:
@@ -93,12 +92,10 @@ build_on_quartz:
     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
     - *finalize
   needs: [setup_on_quartz]
-  extends: [.on_quartz]
+  extends: [.on_quartz, .job_tags]
 
 test_on_quartz:
   stage: test
-  tags:
-    - "batch"
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
@@ -118,12 +115,10 @@ test_on_quartz:
     - python3 ci/tests/test.py -e
     - deactivate
   needs: [build_on_quartz]
-  extends: [.on_quartz]
+  extends: [.on_quartz, .job_tags]
 
 cleanup_on_quartz:
   stage: cleanup
-  tags:
-    - "shell"
   variables:
     RUNNER_TYPE: "shell"
   script:
@@ -132,7 +127,7 @@ cleanup_on_quartz:
     - *finalize
   needs: [test_on_quartz]
   when: always
-  extends: [.on_quartz]
+  extends: [.on_quartz, .job_tags]
 
 # setup_on_ruby:
 #   RUNNER_TYPE: "shell"
