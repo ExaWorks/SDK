@@ -28,7 +28,7 @@ stages:
 #   HOST : "ruby"
 #   VENV_ENV_NAME: "ruby-env"
 
-.pip-env-setup:
+.pip_env_setup:
   stage: setup
   script:
     - mkdir -p ${PIP_WORK_DIR}
@@ -38,14 +38,14 @@ stages:
     - pip install -U pip setuptools wheel
     - pip cache purge
 
-.pip-build:
+.pip_build:
   stage: build
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
     - *finalize
 
-.pip-test:
+.pip_test:
   stage: test
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
@@ -63,7 +63,7 @@ stages:
     - python3 ci/tests/test.py -e
     - deactivate
 
-.pip-env-cleanup:
+.pip_env_cleanup:
   stage: cleanup
   script:
     - source ${PIP_WORK_DIR}/ruby-env/bin/activate
