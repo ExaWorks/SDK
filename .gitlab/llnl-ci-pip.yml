@@ -73,54 +73,54 @@ stages:
 
 
 
-setup_on_quartz:
+pip_setup_quartz:
   variables:
     RUNNER_TYPE: "shell"
   extends: [.on_quartz, .job_tags, .pip_env_setup]
 
-build_on_quartz:
+pip_build_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [setup_on_quartz]
+  needs: [pip_setup_quartz]
   extends: [.on_quartz, .job_tags, .pip_build]
 
-test_on_quartz:
+pip_test_quartz:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
-  needs: [build_on_quartz]
+  needs: [pip_build_quartz]
   extends: [.on_quartz, .job_tags, .pip_test]
 
-cleanup_on_quartz:
+pip_cleanup_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [test_on_quartz]
+  needs: [pip_test_quartz]
   when: always
   extends: [.on_quartz, .job_tags, .pip_env_cleanup]
 
 
-setup_on_ruby:
+pip_setup_ruby:
   variables:
     RUNNER_TYPE: "shell"
   extends: [.on_ruby, .job_tags, .pip_env_setup]
 
-build_on_ruby:
+pip_build_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [setup_on_ruby]
+  needs: [pip_setup_ruby]
   extends: [.on_ruby, .job_tags, .pip_build]
 
-test_on_ruby:
+pip_test_ruby:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
-  needs: [build_on_ruby]
+  needs: [pip_build_ruby]
   extends: [.on_ruby, .job_tags, .pip_test]
 
-cleanup_on_ruby:
+pip_cleanup_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [test_on_ruby]
+  needs: [pip_test_ruby]
   when: always
   extends: [.on_ruby, .job_tags, .pip_env_cleanup]
 
