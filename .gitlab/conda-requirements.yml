@@ -5,7 +5,7 @@ channels:
   - defaults
 dependencies:
   - python>=3.7
-  - swift-t
+  # - swift-t
   - parsl
   - radical.pilot
   - flux-core
