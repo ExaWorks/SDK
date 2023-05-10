@@ -67,7 +67,7 @@ conda-env-setup:
     - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
     - conda update -y -n base -c defaults conda
-    - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} python=3.7 -y
+    - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
     - *finalize
 
 conda-build:
