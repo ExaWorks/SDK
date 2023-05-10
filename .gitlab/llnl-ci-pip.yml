@@ -9,16 +9,7 @@ stages:
   - test
   - cleanup
 
-.job_tags:
-  tags:
-    - $HOST
-    - $RUNNER_TYPE
-
-.final_steps:
-  script: &finalize
-    - chgrp -fR exaworks ${PIP_WORK_DIR} || true
-    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
-
+### MACHINES
 .on_quartz:
   variables:
     HOST: "quartz"
@@ -28,6 +19,12 @@ stages:
   variables:
     HOST : "ruby"
     VENV_ENV_NAME: "ruby-env"
+
+### SCRIPTS
+.job_tags:
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
 
 .pip_env_setup:
   stage: setup
@@ -71,8 +68,13 @@ stages:
     - pip cache purge
     - *finalize
 
+.final_steps:
+  script: &finalize
+    - chgrp -fR exaworks ${PIP_WORK_DIR} || true
+    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
 
-
+### JOBS
+# QUARTZ
 pip_setup_quartz:
   variables:
     RUNNER_TYPE: "shell"
@@ -98,7 +100,7 @@ pip_cleanup_quartz:
   when: always
   extends: [.on_quartz, .job_tags, .pip_env_cleanup]
 
-
+# RUBY
 pip_setup_ruby:
   variables:
     RUNNER_TYPE: "shell"
