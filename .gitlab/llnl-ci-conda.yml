@@ -85,6 +85,43 @@ stages:
   script:
     - *finalize
 
+
+
+conda-setup-quartz:
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [.on_quartz, .job_tags, .conda_setup]
+
+conda-env-setup-quartz:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs:
+    - job: "conda-setup-quartz"
+  extends: [.on_quartz, .job_tags, .conda_env-setup]
+
+conda-build-quartz:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs:
+    - job: "conda-env-setup-quartz"
+  extends: [.on_quartz, .job_tags, .conda_build]
+
+conda-tests-quartz:
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 60" ]
+  needs:
+    - job: "conda-build-quartz"
+  extends: [.on_quartz, .job_tags, .conda_tests]
+
+.conda-env-cleanup-quartz:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs:
+    - job: "conda-env-setup-quartz"
+  when: always
+  extends: [.on_quartz, .job_tags, .conda_env-cleanup]
+
 # conda-setup:
 #   stage: setup
 #   parallel:
