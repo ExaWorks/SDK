@@ -109,7 +109,7 @@ conda-build-quartz:
 conda-tests-quartz:
   variables:
     RUNNER_TYPE: "batch"
-    LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 60" ]
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
   needs:
     - job: "conda-build-quartz"
   extends: [.on-quartz, .job-tags, .conda-tests]
