@@ -68,6 +68,10 @@ stages:
       done
     - python3 ci/tests/test.py -e
 
+.conda-env-cleanup:
+  stage: cleanup
+  script:
+    - *finalize
 
 # conda-setup:
 #   stage: setup
