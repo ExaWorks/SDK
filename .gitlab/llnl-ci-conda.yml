@@ -39,6 +39,16 @@ stages:
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
     - *finalize
 
+.conda-build:
+  stage: build
+  script:
+    - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
+    - eval "$(conda shell.posix hook)"
+    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
+    - conda env update --file ${CONDA_REQUIREMENTS}
+    - conda update -y --all
+    - *finalize
+
 # conda-setup:
 #   stage: setup
 #   parallel:
