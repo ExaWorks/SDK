@@ -9,6 +9,11 @@ stages:
   - test
   - cleanup
 
+.job_tags:
+  tags:
+    - ${HOST}
+    - ${RUNNER_TYPE}
+
 .final_steps:
   script: &finalize
     - chgrp -fR exaworks ${CONDA_WORK_DIR} || true
