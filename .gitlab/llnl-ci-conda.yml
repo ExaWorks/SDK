@@ -19,6 +19,16 @@ stages:
     - chgrp -fR exaworks ${CONDA_WORK_DIR} || true
     - chmod -fR 02770 ${CONDA_WORK_DIR}    || true
 
+.conda-setup:
+  stage: setup
+  script:
+    - mkdir -p ${CONDA_WORK_DIR}
+    - test -d ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH} && exit 0
+    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-${CONDA_ARCH}.sh -O ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
+    - chmod +x ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
+    - ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh -b -p ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}
+    - *finalize
+
 # conda-setup:
 #   stage: setup
 #   parallel:
