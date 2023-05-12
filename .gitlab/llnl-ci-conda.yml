@@ -34,6 +34,7 @@ stages:
 .conda-setup:
   stage: setup
   script:
+    - echo ${CONDA_WORK_DIR}
     - mkdir -p ${CONDA_WORK_DIR}
     - test -d ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH} && exit 0
     - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-${CONDA_ARCH}.sh -O ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
@@ -44,6 +45,7 @@ stages:
 .conda-env-setup:
   stage: setup
   script:
+    - echo ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
     - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
