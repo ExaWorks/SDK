@@ -9,22 +9,22 @@ stages:
   - test
   - cleanup
 
-.on_quartz:
+.on-quartz:
   variables:
     HOST: "quartz"
     CONDA_WORK_DIR: "quartz-env"
     CONDA_ARCH: "x86_64"
 
-.on_ruby:
+.on-ruby:
   variables:
     HOST: "ruby"
     CONDA_WORK_DIR: "ruby-env"
     CONDA_ARCH: "x86_64"
 
-.job_tags:
+.job-tags:
   tags:
-    - ${HOST}
-    - ${RUNNER_TYPE}
+    - $HOST
+    - $RUNNER_TYPE
 
 .final_steps:
   script: &finalize
@@ -90,21 +90,21 @@ stages:
 conda-setup-quartz:
   variables:
     RUNNER_TYPE: "shell"
-  extends: [.on_quartz, .job_tags, .conda_setup]
+  extends: [.on-quartz, .job-tags, .conda-setup]
 
 conda-env-setup-quartz:
   variables:
     RUNNER_TYPE: "shell"
   needs:
     - job: "conda-setup-quartz"
-  extends: [.on_quartz, .job_tags, .conda_env-setup]
+  extends: [.on-quartz, .job-tags, .conda-env-setup]
 
 conda-build-quartz:
   variables:
     RUNNER_TYPE: "shell"
   needs:
     - job: "conda-env-setup-quartz"
-  extends: [.on_quartz, .job_tags, .conda_build]
+  extends: [.on-quartz, .job-tags, .conda-build]
 
 conda-tests-quartz:
   variables:
@@ -112,7 +112,7 @@ conda-tests-quartz:
     LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 60" ]
   needs:
     - job: "conda-build-quartz"
-  extends: [.on_quartz, .job_tags, .conda_tests]
+  extends: [.on-quartz, .job-tags, .conda-tests]
 
 .conda-env-cleanup-quartz:
   variables:
@@ -120,7 +120,7 @@ conda-tests-quartz:
   needs:
     - job: "conda-env-setup-quartz"
   when: always
-  extends: [.on_quartz, .job_tags, .conda_env-cleanup]
+  extends: [.on-quartz, .job-tags, .conda-env-cleanup]
 
 # conda-setup:
 #   stage: setup
