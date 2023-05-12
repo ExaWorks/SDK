@@ -34,6 +34,7 @@ stages:
 .conda-setup:
   stage: setup
   script:
+    - echo ${SDK_WORK_DIR}
     - echo ${CONDA_WORK_DIR}
     - mkdir -p ${CONDA_WORK_DIR}
     - test -d ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH} && exit 0
