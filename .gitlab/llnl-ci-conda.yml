@@ -46,6 +46,7 @@ stages:
 .conda-env-setup:
   stage: setup
   script:
+    - exit 1
     - echo ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
     - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
