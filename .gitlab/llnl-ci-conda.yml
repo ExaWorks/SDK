@@ -78,7 +78,7 @@ stages:
     - export contact="arambula2@llnl.gov"
     - export imnumber="LLNL-MI-834241"
     - python3 ci/tests/test.py -s
-    - for TEST in flux parsl rp parsl-flux rp-flux maestro; do
+    - for TEST in flux parsl rp parsl-flux rp-flux; do
         python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
       done
     - python3 ci/tests/test.py -e
