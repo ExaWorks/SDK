@@ -140,3 +140,57 @@ conda-tests-cleanup-quartz:
   extends: [.on-quartz, .job-tags, .conda-env-cleanup]
 
 
+
+
+
+conda-setup-ruby:
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [.on-ruby, .job-tags, .conda-setup]
+
+conda-env-setup-ruby:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ "conda-setup-ruby" ]
+  extends: [.on-ruby, .job-tags, .conda-env-setup]
+
+conda-build-ruby:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ "conda-env-setup-ruby" ]
+  extends: [.on-ruby, .job-tags, .conda-build]
+
+conda-tests-ruby:
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
+  needs: [ "conda-build-ruby" ]
+  extends: [.on-ruby, .job-tags, .conda-tests]
+
+conda-setup-cleanup-ruby:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ "conda-setup-ruby" ]
+  when: on_failure
+  extends: [.on-ruby, .job-tags, .conda-env-cleanup]
+
+conda-env-setup-cleanup-ruby:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ "conda-env-setup-ruby" ]
+  when: on_failure
+  extends: [.on-ruby, .job-tags, .conda-env-cleanup]
+
+conda-build-cleanup-ruby:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ "conda-build-ruby" ]
+  when: on_failure
+  extends: [.on-ruby, .job-tags, .conda-env-cleanup]
+
+conda-tests-cleanup-ruby:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ "conda-tests-ruby" ]
+  when: always
+  extends: [.on-ruby, .job-tags, .conda-env-cleanup]
