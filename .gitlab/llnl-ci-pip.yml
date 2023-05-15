@@ -64,7 +64,7 @@ stages:
 .pip_env_cleanup:
   stage: cleanup
   script:
-    - source ${PIP_WORK_DIR}/ruby-env/bin/activate
+    - source ${PIP_WORK_DIR}/ruby-env/bin/activate # This is not a valid dir on Quartz, maybe dont hardcode machine name
     - pip cache purge
     - *finalize
 
@@ -125,6 +125,13 @@ pip_cleanup_ruby:
   needs: [pip_test_ruby]
   when: always
   extends: [.on_ruby, .job_tags, .pip_env_cleanup]
+
+
+### Need to add clean up on failed build back in
+
+### Change the way that finalize is called to match with extends calls
+### Maybe add the job_tags extend under machines so that it doesn't need to be repeated
+
 
 # setup_on_ruby:
 #   RUNNER_TYPE: "shell"
