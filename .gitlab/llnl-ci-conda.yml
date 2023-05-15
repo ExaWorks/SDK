@@ -98,23 +98,20 @@ conda-setup-quartz:
 conda-env-setup-quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs:
-    - job: "conda-setup-quartz"
+  needs: [ "conda-setup-quartz" ]
   extends: [.on-quartz, .job-tags, .conda-env-setup]
 
 conda-build-quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs:
-    - job: "conda-env-setup-quartz"
+  needs: [ "conda-env-setup-quartz" ]
   extends: [.on-quartz, .job-tags, .conda-build]
 
 conda-tests-quartz:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
-  needs:
-    - job: "conda-build-quartz"
+  needs: [ "conda-build-quartz" ]
   extends: [.on-quartz, .job-tags, .conda-tests]
 
 .conda-env-cleanup-quartz:
