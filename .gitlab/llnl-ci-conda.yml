@@ -114,12 +114,17 @@ conda-tests-quartz:
   needs: [ "conda-build-quartz" ]
   extends: [.on-quartz, .job-tags, .conda-tests]
 
-.conda-env-cleanup-quartz:
+conda-env-cleanup-quartz:
   variables:
     RUNNER_TYPE: "shell"
   needs:
     - job: "conda-env-setup-quartz"
-  when: always
+      optional: true
+    - job: "conda-build-quartz"
+      optional: true
+    - job: "conda-tests-quartz"
+      optional: true
+  when: on_failure
   extends: [.on-quartz, .job-tags, .conda-env-cleanup]
 
 # conda-setup:
