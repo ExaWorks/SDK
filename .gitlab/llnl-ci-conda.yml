@@ -12,13 +12,13 @@ stages:
 .on-quartz:
   variables:
     HOST: "quartz"
-    CONDA_WORK_DIR: "quartz-env"
+    CONDA_ENV_NAME: "quartz-env"
     CONDA_ARCH: "x86_64"
 
 .on-ruby:
   variables:
     HOST: "ruby"
-    CONDA_WORK_DIR: "ruby-env"
+    CONDA_ENV_NAME: "ruby-env"
     CONDA_ARCH: "x86_64"
 
 .job-tags:
