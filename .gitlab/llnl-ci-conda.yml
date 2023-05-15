@@ -115,18 +115,34 @@ conda-tests-quartz:
   needs: [ "conda-build-quartz" ]
   extends: [.on-quartz, .job-tags, .conda-tests]
 
-conda-env-cleanup-quartz:
+conda-setup-cleanup-quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs:
-    - job: "conda-env-setup-quartz"
-      optional: true
-    - job: "conda-build-quartz"
-      optional: true
-    - job: "conda-tests-quartz"
-      optional: true
+  needs: [ "conda-setup-quartz" ]
   when: on_failure
   extends: [.on-quartz, .job-tags, .conda-env-cleanup]
+
+conda-env-setup-cleanup-quartz:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ "conda-env-setup-quartz" ]
+  when: on_failure
+  extends: [.on-quartz, .job-tags, .conda-env-cleanup]
+
+conda-build-cleanup-quartz:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ "conda-build-quartz" ]
+  when: on_failure
+  extends: [.on-quartz, .job-tags, .conda-env-cleanup]
+
+conda-tests-cleanup-quartz:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ "conda-tests-quartz" ]
+  when: always
+  extends: [.on-quartz, .job-tags, .conda-env-cleanup]
+
 
 # conda-setup:
 #   stage: setup
