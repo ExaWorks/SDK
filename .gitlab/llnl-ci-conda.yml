@@ -41,7 +41,6 @@ stages:
     - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-${CONDA_ARCH}.sh -O ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
     - chmod +x ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
     - ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh -b -p ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}
-    - *finalize
 
 .conda-env-setup:
   stage: setup
@@ -52,7 +51,6 @@ stages:
     - eval "$(conda shell.posix hook)"
     - conda update -y -n base -c defaults conda
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
-    - *finalize
 
 .conda-build:
   stage: build
@@ -62,7 +60,6 @@ stages:
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - conda env update --file ${CONDA_REQUIREMENTS}
     - conda update -y --all
-    - *finalize
 
 .conda-tests:
   stage: test
