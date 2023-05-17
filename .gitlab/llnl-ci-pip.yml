@@ -41,7 +41,8 @@ stages:
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
-    - *finalize
+    - chgrp -fR exaworks ${PIP_WORK_DIR} || true
+    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
 
 .pip_test:
   stage: test
@@ -60,18 +61,6 @@ stages:
       done
     - python3 ci/tests/test.py -e
     - deactivate
-
-.pip_env_cleanup:
-  stage: cleanup
-  script:
-    - source ${PIP_WORK_DIR}/ruby-env/bin/activate # This is not a valid dir on Quartz, maybe dont hardcode machine name
-    - pip cache purge
-    - *finalize
-
-.final_steps:
-  script: &finalize
-    - chgrp -fR exaworks ${PIP_WORK_DIR} || true
-    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
 
 ### JOBS
 # QUARTZ
@@ -93,13 +82,6 @@ pip_test_quartz:
   needs: [pip_build_quartz]
   extends: [.on_quartz, .job_tags, .pip_test]
 
-pip_cleanup_quartz:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [pip_test_quartz]
-  when: always
-  extends: [.on_quartz, .job_tags, .pip_env_cleanup]
-
 # RUBY
 pip_setup_ruby:
   variables:
@@ -118,150 +100,3 @@ pip_test_ruby:
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   needs: [pip_build_ruby]
   extends: [.on_ruby, .job_tags, .pip_test]
-
-pip_cleanup_ruby:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [pip_test_ruby]
-  when: always
-  extends: [.on_ruby, .job_tags, .pip_env_cleanup]
-
-
-### Need to add clean up on failed build back in
-
-### Change the way that finalize is called to match with extends calls
-### Maybe add the job_tags extend under machines so that it doesn't need to be repeated
-
-
-# setup_on_ruby:
-#   RUNNER_TYPE: "shell"
-#   extends: [.on_ruby, .pip-env-setup]
-
-# pip-env-setup:
-#   stage: setup
-#   parallel:
-#     matrix:
-#       - HOST : [ "quartz" ]
-#         VENV_ENV_NAME: [ "quartz-env" ]
-#         RUNNER_TYPE: "shell"
-#       - HOST : [ "ruby" ]
-#         VENV_ENV_NAME: [ "ruby-env" ]
-#         RUNNER_TYPE: "shell"
-#       # - HOST : [ "lassen" ]
-#       #   ENVIRONMENT: [ "BATCH" ]
-#       #   VENV_ENV_NAME: [ "lassen-env" ]
-#       #   RUNNER_TYPE: "batch"
-#   tags:
-#     - $HOST
-#     - $RUNNER_TYPE
-#   script:
-#     - mkdir -p ${PIP_WORK_DIR}
-#     - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
-#     - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
-#     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
-#     - pip install -U pip setuptools wheel
-#     - pip cache purge
-
-
-
-# build_on_ruby:
-#   HOST : [ "ruby" ]
-#   VENV_ENV_NAME: [ "ruby-env" ]
-#   RUNNER_TYPE: "shell"
-#   needs: [setup-on_ruby]
-#   extends: [.pip-build]
-
-
-# pip-build:
-#   stage: build
-#   needs:
-#     - job: pip-env-setup
-#   parallel:
-#     matrix:
-#       - HOST : [ "quartz" ]
-#         VENV_ENV_NAME: [ "quartz-env" ]
-#         RUNNER_TYPE: "shell"
-#       - HOST : [ "ruby" ]
-#         VENV_ENV_NAME: [ "ruby-env" ]
-#         RUNNER_TYPE: "shell"
-#       # - HOST : [ "lassen" ]
-#       #   ENVIRONMENT: [ "BATCH" ]
-#       #   VENV_ENV_NAME: [ "lassen-env" ]
-#       #   RUNNER_TYPE: "batch"
-#   tags:
-#     - $HOST
-#     - $RUNNER_TYPE
-#   script:
-#     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
-#     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
-#     - *finalize
-
-
-
-# test_on_ruby:
-#   HOST : [ "ruby" ]
-#   VENV_ENV_NAME: [ "ruby-env" ]
-#   RUNNER_TYPE: "batch"
-#   LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
-#   needs: [build_on_ruby]
-#   extends: [pip-test]
-
-# pip-tests:
-#   stage: test
-#   needs: 
-#     - job: pip-build
-#   parallel:
-#     matrix:
-#       - HOST : [ "quartz" ]
-#         VENV_ENV_NAME: [ "quartz-env" ]
-#         RUNNER_TYPE: "batch"
-#         LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
-#       - HOST : [ "ruby" ]
-#         VENV_ENV_NAME: [ "ruby-env" ]
-#         RUNNER_TYPE: "batch"
-#         LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
-#       # - HOST : [ "lassen" ]
-#       #   ENVIRONMENT: [ "BATCH" ]
-#       #   VENV_ENV_NAME: [ "lassen-env" ]
-#       #   RUNNER_TYPE: "batch"
-#         # LLNL_LSF_SCHEDULER_PARAMETERS: [ "-nnodes 1 -W 30" ]
-#         # LSB_JOB_STARTER: [ "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD" ]
-#   tags:
-#     - $HOST
-#     - $RUNNER_TYPE
-#   script:
-#     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
-#     - export run_id=${CI_PIPELINE_ID}
-#     - export branch=${CI_COMMIT_BRANCH}
-#     - export url=${TESTING_HOST}
-#     - export test="Pip"
-#     - export location="llnl-$HOST"
-#     - export contact="arambula2@llnl.gov"
-#     - export imnumber="LLNL-MI-834241"
-#     - python3 ci/tests/test.py -s
-#     - for TEST in flux parsl rp swift-t parsl-flux rp-flux maestro; do
-#         python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
-#       done
-#     - python3 ci/tests/test.py -e
-#     - deactivate
-
-# pip-cleanup-on-build-failure:
-#   needs:
-#     - job: pip-build
-#   when: on_failure
-#   <<: *pip-env-cleanup
-
-# pip-cleanup-on-test-failure:
-#   needs:
-#     - job: pip-tests
-#   when: on_failure
-#   <<: *pip-env-cleanup
-
-# pip-cleanup-on-success:
-#   needs:
-#     - job: pip-tests
-#   when: on_success
-#   <<: *pip-env-cleanup
-
-
-
