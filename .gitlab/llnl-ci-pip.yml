@@ -17,8 +17,13 @@ stages:
 
 .on_ruby:
   variables:
-    HOST : "ruby"
+    HOST: "ruby"
     VENV_ENV_NAME: "ruby-env"
+
+.on_lassen:
+  variables:
+    HOST: "lassen"
+    VENV_ENV_NAME: "lassen-env"
 
 ### SCRIPTS
 .job_tags:
@@ -100,3 +105,22 @@ pip_test_ruby:
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   needs: [pip_build_ruby]
   extends: [.on_ruby, .job_tags, .pip_test]
+
+# LASSEN
+pip_setup_lassen:
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [.on_lassen, .job_tags, .pip_env_setup]
+
+pip_build_lassen:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [pip_setup_lassen]
+  extends: [.on_lassen, .job_tags, .pip_build]
+
+pip_test_lassen:
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
+  needs: [pip_build_lassen]
+  extends: [.on_lassen, .job_tags, .pip_test]
