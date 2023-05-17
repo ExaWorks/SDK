@@ -8,19 +8,19 @@ stages:
   - build
   - test
 
-.on-quartz:
+.on_quartz:
   variables:
     HOST: "quartz"
     CONDA_ENV_NAME: "quartz-env"
     CONDA_ARCH: "x86_64"
 
-.on-ruby:
+.on_ruby:
   variables:
     HOST: "ruby"
     CONDA_ENV_NAME: "ruby-env"
     CONDA_ARCH: "x86_64"
 
-.job-tags:
+.job_tags:
   tags:
     - $HOST
     - $RUNNER_TYPE
@@ -30,7 +30,7 @@ stages:
     - chgrp -fR exaworks ${CONDA_WORK_DIR} || true
     - chmod -fR 02770 ${CONDA_WORK_DIR}    || true
 
-.conda-setup:
+.conda_setup:
   stage: setup
   script:
     - echo ${SDK_WORK_DIR}
@@ -41,7 +41,7 @@ stages:
     - chmod +x ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
     - ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh -b -p ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}
 
-.conda-env-setup:
+.conda_env_setup:
   stage: setup
   script:
     - echo ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
@@ -51,7 +51,7 @@ stages:
     - conda update -y -n base -c defaults conda
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
 
-.conda-build:
+.conda_build:
   stage: build
   script:
     - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
@@ -60,7 +60,7 @@ stages:
     - conda env update --file ${CONDA_REQUIREMENTS}
     - conda update -y --all
 
-.conda-tests:
+.conda_tests:
   stage: test
   script:
     - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
@@ -82,53 +82,53 @@ stages:
 
 
 
-conda-setup-quartz:
+conda_setup_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  extends: [.on-quartz, .job-tags, .conda-setup]
+  extends: [.on_quartz, .job_tags, .conda_setup]
 
-conda-env-setup-quartz:
+conda_env_setup_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ "conda-setup-quartz" ]
-  extends: [.on-quartz, .job-tags, .conda-env-setup]
+  needs: [ "conda_setup_quartz" ]
+  extends: [.on_quartz, .job_tags, .conda_env_setup]
 
-conda-build-quartz:
+conda_build_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ "conda-env-setup-quartz" ]
-  extends: [.on-quartz, .job-tags, .conda-build]
+  needs: [ "conda_env_setup_quartz" ]
+  extends: [.on_quartz, .job_tags, .conda_build]
 
-conda-tests-quartz:
+conda_tests_quartz:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
-  needs: [ "conda-build-quartz" ]
-  extends: [.on-quartz, .job-tags, .conda-tests]
+  needs: [ "conda_build_quartz" ]
+  extends: [.on_quartz, .job_tags, .conda_tests]
 
 
 
 
-conda-setup-ruby:
+conda_setup_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  extends: [.on-ruby, .job-tags, .conda-setup]
+  extends: [.on_ruby, .job_tags, .conda_setup]
 
-conda-env-setup-ruby:
+conda_env_setup_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ "conda-setup-ruby" ]
-  extends: [.on-ruby, .job-tags, .conda-env-setup]
+  needs: [ "conda_setup_ruby" ]
+  extends: [.on_ruby, .job_tags, .conda_env_setup]
 
-conda-build-ruby:
+conda_build_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ "conda-env-setup-ruby" ]
-  extends: [.on-ruby, .job-tags, .conda-build]
+  needs: [ "conda_env_setup_ruby" ]
+  extends: [.on_ruby, .job_tags, .conda_build]
 
-conda-tests-ruby:
+conda_tests_ruby:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
-  needs: [ "conda-build-ruby" ]
-  extends: [.on-ruby, .job-tags, .conda-tests]
+  needs: [ "conda_build_ruby" ]
+  extends: [.on_ruby, .job_tags, .conda_tests]
