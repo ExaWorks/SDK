@@ -7,7 +7,6 @@ stages:
   - setup
   - build
   - test
-  - cleanup
 
 .on-quartz:
   variables:
@@ -80,10 +79,6 @@ stages:
       done
     - python3 ci/tests/test.py -e
 
-.conda-env-cleanup:
-  stage: cleanup
-  script:
-    - *finalize
 
 
 
@@ -111,35 +106,6 @@ conda-tests-quartz:
   needs: [ "conda-build-quartz" ]
   extends: [.on-quartz, .job-tags, .conda-tests]
 
-conda-setup-cleanup-quartz:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [ "conda-setup-quartz" ]
-  when: on_failure
-  extends: [.on-quartz, .job-tags, .conda-env-cleanup]
-
-conda-env-setup-cleanup-quartz:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [ "conda-env-setup-quartz" ]
-  when: on_failure
-  extends: [.on-quartz, .job-tags, .conda-env-cleanup]
-
-conda-build-cleanup-quartz:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [ "conda-build-quartz" ]
-  when: on_failure
-  extends: [.on-quartz, .job-tags, .conda-env-cleanup]
-
-conda-tests-cleanup-quartz:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [ "conda-tests-quartz" ]
-  when: always
-  extends: [.on-quartz, .job-tags, .conda-env-cleanup]
-
-
 
 
 
@@ -166,31 +132,3 @@ conda-tests-ruby:
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
   needs: [ "conda-build-ruby" ]
   extends: [.on-ruby, .job-tags, .conda-tests]
-
-conda-setup-cleanup-ruby:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [ "conda-setup-ruby" ]
-  when: on_failure
-  extends: [.on-ruby, .job-tags, .conda-env-cleanup]
-
-conda-env-setup-cleanup-ruby:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [ "conda-env-setup-ruby" ]
-  when: on_failure
-  extends: [.on-ruby, .job-tags, .conda-env-cleanup]
-
-conda-build-cleanup-ruby:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [ "conda-build-ruby" ]
-  when: on_failure
-  extends: [.on-ruby, .job-tags, .conda-env-cleanup]
-
-conda-tests-cleanup-ruby:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [ "conda-tests-ruby" ]
-  when: always
-  extends: [.on-ruby, .job-tags, .conda-env-cleanup]
