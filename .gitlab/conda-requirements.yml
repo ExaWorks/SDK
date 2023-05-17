@@ -1,6 +1,6 @@
 channels:
   - conda-forge
-  - lightsource2-tag
+  # - lightsource2-tag
 dependencies:
   - python>=3.7
   # - swift-t
