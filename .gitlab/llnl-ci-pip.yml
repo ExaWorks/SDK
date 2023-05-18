@@ -82,7 +82,7 @@ pip_build_quartz:
 
 pip_test_quartz:
   variables:
-    RUNNER_TYPE: "batch"
+    RUNNER_TYPE: ["batch", "slurm"]
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   needs: [pip_build_quartz]
   extends: [.on_quartz, .job_tags, .pip_test]
