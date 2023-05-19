@@ -47,6 +47,7 @@ stages:
     - eval "$(conda shell.posix hook)"
     - conda update -y -n base -c defaults conda
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
+    - conda install -c conda-forge mamba -y
 
 .conda_build:
   stage: build
@@ -54,8 +55,7 @@ stages:
     - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
-    - conda env update --file ${CONDA_REQUIREMENTS}
-    - conda update -y --all
+    - mamba env update --file ${CONDA_REQUIREMENTS}
 
 .conda_tests:
   stage: test
