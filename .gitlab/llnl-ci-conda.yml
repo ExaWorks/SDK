@@ -46,6 +46,7 @@ stages:
     - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
+    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - conda install -c conda-forge mamba -y
 
 .conda_build:
