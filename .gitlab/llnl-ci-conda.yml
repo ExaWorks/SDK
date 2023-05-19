@@ -35,16 +35,16 @@ stages:
   script:
     - mkdir -p ${CONDA_WORK_DIR}
     - test -d ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH} && exit 0
-    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-${CONDA_ARCH}.sh -O ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
-    - chmod +x ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
-    - ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh -b -p ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}
+    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-${CONDA_ARCH}.sh -O ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}-${HOST}.sh
+    - chmod +x ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}-${HOST}.sh
+    - ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}-${HOST}.sh -b -p ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}-${HOST}
     - *finalize
 
 .conda_env_setup:
   stage: setup
   script:
     - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
-    - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
+    - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}-${HOST}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
     - conda update -y -n base -c conda-forge conda
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
@@ -55,7 +55,7 @@ stages:
 .conda_build:
   stage: build
   script:
-    - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
+    - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}-${HOST}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - mamba env update --file ${CONDA_REQUIREMENTS}
@@ -64,7 +64,7 @@ stages:
 .conda_tests:
   stage: test
   script:
-    - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
+    - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}-${HOST}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - export run_id=${CI_PIPELINE_ID}
