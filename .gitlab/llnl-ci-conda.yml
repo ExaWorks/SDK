@@ -45,6 +45,7 @@ stages:
     - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
     - source ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
+    - conda update -y -n base -c defaults conda
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
     - conda install -c conda-forge mamba -y
 
