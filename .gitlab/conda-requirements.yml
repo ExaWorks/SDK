@@ -1,13 +1,13 @@
 channels:
-  - anaconda
   - conda-forge
-  - lightsource2-tag
-  - defaults
+  - swift-t
 dependencies:
-  - python=3.7
+  - python>=3.7
   - swift-t
   - parsl
   - radical.pilot
+  - flux-core
+  - flux-sched
   - pip
   - pip:
     - pytest==7.2.2
