@@ -38,6 +38,7 @@ stages:
     - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-${CONDA_ARCH}.sh -O ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
     - chmod +x ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh
     - ${CONDA_WORK_DIR}/miniconda-${CONDA_ARCH}.sh -b -p ${CONDA_WORK_DIR}/miniconda3-${CONDA_ARCH}
+    - *finalize
 
 .conda_env_setup:
   stage: setup
@@ -49,6 +50,7 @@ stages:
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - conda install -c conda-forge mamba -y
+    - *finalize
 
 .conda_build:
   stage: build
@@ -57,6 +59,7 @@ stages:
     - eval "$(conda shell.posix hook)"
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - mamba env update --file ${CONDA_REQUIREMENTS}
+    - *finalize
 
 .conda_tests:
   stage: test
@@ -76,6 +79,7 @@ stages:
         python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
       done
     - python3 ci/tests/test.py -e
+    - *finalize
 
 
 
