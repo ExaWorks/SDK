@@ -1,9 +1,9 @@
 channels:
   - conda-forge
-  - lightsource2-tag
+  - swift-t
 dependencies:
   - python>=3.7
-  # - swift-t
+  - swift-t
   - parsl
   - radical.pilot
   - flux-core
