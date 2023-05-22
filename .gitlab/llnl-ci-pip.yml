@@ -40,14 +40,14 @@ stages:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install -U pip setuptools wheel
     - pip cache purge
+    - *finalize
 
 .pip_build:
   stage: build
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
-    - chgrp -fR exaworks ${PIP_WORK_DIR} || true
-    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
+    - *finalize
 
 .pip_test:
   stage: test
@@ -66,6 +66,11 @@ stages:
       done
     - python3 ci/tests/test.py -e
     - deactivate
+
+.final_steps:
+  script: &finalize
+    - chgrp -fR exaworks ${PIP_WORK_DIR} || true
+    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
 
 ### JOBS
 # QUARTZ
