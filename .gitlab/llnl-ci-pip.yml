@@ -24,6 +24,7 @@ stages:
   variables:
     HOST: "lassen"
     VENV_ENV_NAME: "lassen-env"
+    EVIRONMENT: "BATCH"
 
 ### SCRIPTS
 .job_tags:
@@ -82,7 +83,7 @@ pip_build_quartz:
 
 pip_test_quartz:
   variables:
-    RUNNER_TYPE: ["batch", "slurm"]
+    RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   needs: [pip_build_quartz]
   extends: [.on_quartz, .job_tags, .pip_test]
@@ -121,6 +122,7 @@ pip_build_lassen:
 pip_test_lassen:
   variables:
     RUNNER_TYPE: "batch"
-    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
+    LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 30"
+    LSB_JOB_STARTER: "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD"
   needs: [pip_build_lassen]
   extends: [.on_lassen, .job_tags, .pip_test]
