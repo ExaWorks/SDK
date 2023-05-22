@@ -24,7 +24,6 @@ stages:
   variables:
     HOST: "lassen"
     VENV_ENV_NAME: "lassen-env"
-    EVIRONMENT: "BATCH"
 
 ### SCRIPTS
 .job_tags:
@@ -124,5 +123,6 @@ pip_test_lassen:
     RUNNER_TYPE: "batch"
     LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 30"
     LSB_JOB_STARTER: "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD"
+    EVIRONMENT: "BATCH"
   needs: [pip_build_lassen]
   extends: [.on_lassen, .job_tags, .pip_test]
