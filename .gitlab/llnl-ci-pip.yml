@@ -26,6 +26,11 @@ stages:
     VENV_ENV_NAME: "lassen-env"
 
 ### SCRIPTS
+.final_steps:
+  script: &finalize
+    - chgrp -fR exaworks ${PIP_WORK_DIR} || true
+    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
+
 .job_tags:
   tags:
     - $HOST
@@ -66,11 +71,6 @@ stages:
       done
     - python3 ci/tests/test.py -e
     - deactivate
-
-.final_steps:
-  script: &finalize
-    - chgrp -fR exaworks ${PIP_WORK_DIR} || true
-    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
 
 ### JOBS
 # QUARTZ
