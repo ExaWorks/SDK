@@ -125,7 +125,7 @@ pip_build_lassen:
 
 pip_test_lassen:
   variables:
-    RUNNER_TYPE: "lsf"
+    RUNNER_TYPE: "batch"
     LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 30"
     LSB_JOB_STARTER: "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD"
     EVIRONMENT: "BATCH"
