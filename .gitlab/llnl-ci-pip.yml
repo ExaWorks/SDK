@@ -131,3 +131,13 @@ pip_test_lassen:
     EVIRONMENT: "BATCH"
   needs: [pip_build_lassen]
   extends: [.on_lassen, .job_tags, .pip_test]
+
+# ALWAYS
+pip_cleanup_all:
+  stage: cleanup
+  when: always
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_quartz, .job_tags ]
+  script:
+    - *finalize
