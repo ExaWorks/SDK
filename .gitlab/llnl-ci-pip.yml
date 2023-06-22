@@ -43,6 +43,7 @@ stages:
     - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
     - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - pip --version
     - pip install -U pip setuptools wheel
     - pip cache purge
     - *finalize
