@@ -122,6 +122,8 @@ pip_setup_lassen:
 pip_build_lassen:
   variables:
     RUNNER_TYPE: "shell"
+  script:
+    - module load clang/ibm-10.0.1-gcc-8.3.1
   needs: [pip_setup_lassen]
   extends: [.on_lassen, .job_tags, .pip_build]
 
