@@ -42,35 +42,44 @@ RUN printf '\n\
 WORKDIR /tutorials/
 COPY --chown=${NB_UID}:${NB_GID} ./ ./
 
+# RADICAL-Cybertools (RADICAL-EnTK and RADICAL-Pilot)
+
+RUN mamba install -y -c conda-forge \
+    'radical.entk>=1.30'
+
+# Parsl-RP integration usecase NWChem
+
+RUN mamba install -y -c conda-forge \
+    nwchem
+
+# PSI/J - MPI example
+
+RUN mamba install -y -c conda-forge \
+    gxx_linux-64 \
+    openmpi
+
+# Swift/T
+
+RUN mamba install -y -c conda-forge \
+    gcc zsh openjdk=11 openmpi numpy \
+ && mamba install -y -c conda-forge \
+    http://web.cels.anl.gov/~woz/swift-t-1.6.0-py39_1.tar.bz2
+
+# Clonning repos and creation of environments from there
+
+RUN git clone -b main --single-branch \
+    https://github.com/ExaWorks/Tutorial.git \
+    /tutorials/sdk-examples \
+ && git clone -b main --single-branch \
+    https://github.com/ExaWorks/molecular-design-parsl-demo \
+    /tutorials/molecular-design-parsl-demo
+
 # Parsl
 
-RUN git clone -b main --single-branch https://github.com/ExaWorks/molecular-design-parsl-demo \
- && cd molecular-design-parsl-demo \
+RUN cd /tutorials/molecular-design-parsl-demo \
  && sed -i '1d' environment.yml \
  && mamba env create -n parsl -f environment.yml \
  && mamba update -y -n parsl \
     jupyterlab_widgets \
     ipywidgets
 
-# RADICAL-Pilot (RP) & RADICAL-EnTK (RE)
-
-RUN mamba install -y -c conda-forge \
-    radical.pilot=1.20 \
-    radical.entk=1.20
-
-# Parsl-RP Integration usecase NWChem
-
-RUN mamba install -y -c conda-forge \
-    nwchem
-
-# Needed for MPI example in PSI/J
-
-RUN mamba install -y -c conda-forge \
-    gxx_linux-64 \
-    openmpi
-
-# Swift/T: Install last to avoid dependency issues
-
-RUN mamba install -y -c conda-forge gcc zsh openjdk=11 openmpi numpy
-RUN mamba install -y -c conda-forge http://web.cels.anl.gov/~woz/swift-t-1.6.0-py39_1.tar.bz2
-RUN git clone https://github.com/ExaWorks/Tutorial.git sdk-examples

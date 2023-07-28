@@ -1,0 +1,15 @@
+channels:
+  - conda-forge
+  - swift-t
+dependencies:
+  - python>=3.7
+  - swift-t
+  - parsl
+  - radical.pilot
+  - flux-core
+  - flux-sched
+  - pip
+  - pip:
+    - pytest==7.2.2
+    - pytest-tap==3.3
+    - requests==2.28.1

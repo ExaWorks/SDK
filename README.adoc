@@ -18,9 +18,9 @@ Pure Python library for describing and managing parallel computation on one to m
 Flux is a workload management system (à la Slurm, PBS, LSF), with
 single-user and multi-user (a.k.a. system instance) modes.
 
-=== https://radical-cybertools.github.io[RADICAL-Pilot]
+=== https://radical-cybertools.github.io[RADICAL-Cybertools]
 
-RADICAL-Pilot is an abstractions-based suite of middleware building blocks that are architected for scalable, interoperable and sustainable approaches to support science on a range of high-performance and distributed computing systems.
+RADICAL-Cybertools is an abstractions-based suite of middleware building blocks that are architected for scalable, interoperable and sustainable approaches to support science on a range of high-performance and distributed computing systems.
 
 === http://swift-lang.org/Swift-T[Swift/T]
 

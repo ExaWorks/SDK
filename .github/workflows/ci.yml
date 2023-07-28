@@ -8,12 +8,6 @@ jobs:
     name: Run test suite
     runs-on: ubuntu-latest
 
-    services:
-      rabbitmq:
-        image: rabbitmq
-        ports:
-          - 5672/tcp
-
     strategy:
       fail-fast: false
       matrix:
@@ -63,10 +57,9 @@ jobs:
       run: |
         total=0
         export tag=${{ env.DOCKER_TAG }}
-        for core in flux parsl rp re swift flux-parsl
+        for core in flux parsl rp re swift parsl-flux rp-flux
         do
           docker run \
-            --network ${{ job.services.rabbitmq.network }} \
             exaworks_sdk:${{ env.DOCKER_TAG }} \
             bash --login -c /tests/$core/test.sh
           ret=$?

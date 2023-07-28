@@ -3,7 +3,7 @@ version: "3.4"
 services:
 
   sdk-tutorials:
-    image: exaworks/sdk-tutorials
+    image: exaworks/sdk-tutorials:${SDK_TUTORIALS_TAG:-latest}
     container_name: sdk-tutorials
     build:
       context: ../../docs/source/tutorials/
@@ -14,7 +14,6 @@ services:
       - sdk-network
     depends_on:
       - mongodb
-      - rabbitmq
 
   mongodb:
     image: mongo:4.4
@@ -48,16 +47,7 @@ services:
     depends_on:
       - mongodb
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: sdk-rabbitmq
-    hostname: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - sdk-network
-
 networks:
   sdk-network:
     name: sdk-network
+

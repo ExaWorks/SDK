@@ -16,22 +16,29 @@ SDK Tutorials container is based on
 **NOTE**: for ARM platform, please, pull the image from the DockerHub directly
 
 ```shell
-docker pull exaworks/sdk-tutorials
+# use a specific tag if needed, otherwise "latest" is used (by default)
+docker pull exaworks/sdk-tutorials:latest
 ```
 
 ## A. Run container image (base)
 
 ```shell
 docker run --rm -it -p 8888:8888 exaworks/sdk-tutorials
+# OR
+#   run.sh [tag_name]
+# OR with mounted tutorials directory
+#   run-local.sh [tag_name]
 ```
 
 ## B. Run `docker-compose` (extended)
 
-It starts `sdk-tutorials` container with auxiliary services, such as MongoDB
-and RabbitMQ, which are used by the RADICAL-Cybertools components.
+It starts `sdk-tutorials` container with an auxiliary service - MongoDB - which
+is used by the RADICAL-Cybertools components (part of a communication layer).
 
 ```shell
 cd docker/tutorials
+# if a specific tag is needed, then export the following env variable, e.g.,
+#   export SDK_TUTORIALS_TAG=ecp-tutorials-2023
 
 docker compose up -d
 docker compose logs -f sdk-tutorials
@@ -41,7 +48,7 @@ docker compose logs -f sdk-tutorials
 #   docker compose rm -f
 ```
 
-## C. Run container image with MongoDB and RabbitMQ services manually
+## C. Run container image with MongoDB service manually
 
 These steps do the same as `docker-compose`, but all necessary commands are
 executed manually.
@@ -69,24 +76,18 @@ docker exec sdk-mongodb bash -c \
                            roles: [{role: 'readWrite', db: 'default'}]});\""
 ```
 
-Launch RabbitMQ service:
-
-```shell
-docker run -d --hostname rabbitmq --name sdk-rabbitmq -p 15672:15672 \
-           -p 5672:5672 --network sdk-network rabbitmq:3-management
-```
-
 Run container with network:
 
 ```shell
 docker run --rm -it -p 8888:8888 --network sdk-network exaworks/sdk-tutorials
 ```
 
-Stop services after work is done:
+Stop an auxiliary service after work is done:
 
 ```shell
-# stop containers
-docker stop sdk-mongodb sdk-rabbitmq
-# stop and remove containers
-#   docker rm -f sdk-mongodb sdk-rabbitmq
+# stop container
+docker stop sdk-mongodb
+# stop and remove container
+#   docker rm -f sdk-mongodb
 ```
+
