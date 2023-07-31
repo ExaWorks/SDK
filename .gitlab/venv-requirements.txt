@@ -3,5 +3,3 @@ radical.pilot
 pytest
 pytest-tap
 maestrowf
-bcrypt<4.0.0
-cryptography==3.3.2
