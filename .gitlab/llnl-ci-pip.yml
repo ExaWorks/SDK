@@ -140,4 +140,6 @@ pip_cleanup_all:
     RUNNER_TYPE: "shell"
   extends: [ .on_quartz, .job_tags ]
   script:
-    - *finalize
+   - source ${PIP_WORK_DIR}/quartz-env/bin/activate
+   - pip cache purge
+   - *finalize
