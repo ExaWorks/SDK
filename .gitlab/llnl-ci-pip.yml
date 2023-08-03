@@ -138,8 +138,8 @@ pip_cleanup_all:
   when: always
   variables:
     RUNNER_TYPE: "shell"
-  extends: [ .on_quartz, .job_tags ]
+  extends: [ .on_lassen, .job_tags ]
   script:
-   - source ${PIP_WORK_DIR}/quartz-env/bin/activate
+   - source ${PIP_WORK_DIR}/lassen-env/bin/activate
    - pip cache purge
    - *finalize
