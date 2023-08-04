@@ -1,13 +1,15 @@
 variables:
   PIP_WORK_DIR: ${SDK_WORK_DIR}/pip
-  PIP_REQUIREMENTS: .gitlab/venv-requirements.txt
+  PIP_REQUIREMENTS: .gitlab/pip-requirements.txt
   RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+
 
 stages:
   - setup
   - build
   - test
   - cleanup
+
 
 ### MACHINES
 .on_quartz:
@@ -24,6 +26,7 @@ stages:
   variables:
     HOST: "lassen"
     VENV_ENV_NAME: "lassen-env"
+
 
 ### SCRIPTS
 .final_steps:
@@ -73,55 +76,60 @@ stages:
     - deactivate
 
 ### JOBS
+
 # QUARTZ
 pip_setup_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  extends: [.on_quartz, .job_tags, .pip_env_setup]
+  extends: [ .on_quartz, .job_tags, .pip_env_setup ]
 
 pip_build_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [pip_setup_quartz]
-  extends: [.on_quartz, .job_tags, .pip_build]
+  needs: [ pip_setup_quartz ]
+  extends: [ .on_quartz, .job_tags, .pip_build ]
 
 pip_test_quartz:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
-  needs: [pip_build_quartz]
-  extends: [.on_quartz, .job_tags, .pip_test]
+  needs: [ pip_build_quartz ]
+  extends: [ .on_quartz, .job_tags, .pip_test ]
+
 
 # RUBY
 pip_setup_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  extends: [.on_ruby, .job_tags, .pip_env_setup]
+  extends: [ .on_ruby, .job_tags, .pip_env_setup ]
 
 pip_build_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [pip_setup_ruby]
-  extends: [.on_ruby, .job_tags, .pip_build]
+  needs: [ pip_setup_ruby ]
+  extends: [ .on_ruby, .job_tags, .pip_build ]
 
 pip_test_ruby:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
-  needs: [pip_build_ruby]
-  extends: [.on_ruby, .job_tags, .pip_test]
+  needs: [ pip_build_ruby ]
+  extends: [ .on_ruby, .job_tags, .pip_test ]
+
 
 # LASSEN
 pip_setup_lassen:
   variables:
     RUNNER_TYPE: "shell"
-  extends: [.on_lassen, .job_tags, .pip_env_setup]
+  extends: [ .on_lassen, .job_tags, .pip_env_setup ]
 
 pip_build_lassen:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [pip_setup_lassen]
-  extends: [.on_lassen, .job_tags, .pip_build]
+  needs: [ pip_setup_lassen ]
+  extends: [ .on_lassen, .job_tags, .pip_build ]
+  before_script:
+    - .gitlab/llnl-lassen-openssl-parsl.sh ${PIP_WORK_DIR}/${VENV_ENV_NAME}
 
 pip_test_lassen:
   variables:
@@ -129,8 +137,9 @@ pip_test_lassen:
     LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 30"
     LSB_JOB_STARTER: "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD"
     EVIRONMENT: "BATCH"
-  needs: [pip_build_lassen]
-  extends: [.on_lassen, .job_tags, .pip_test]
+  needs: [ pip_build_lassen ]
+  extends: [ .on_lassen, .job_tags, .pip_test ]
+
 
 # ALWAYS
 pip_cleanup_all:
@@ -138,8 +147,7 @@ pip_cleanup_all:
   when: always
   variables:
     RUNNER_TYPE: "shell"
-  extends: [ .on_lassen, .job_tags ]
+  extends: [ .on_quartz, .job_tags ]
   script:
-   - source ${PIP_WORK_DIR}/lassen-env/bin/activate
-   - pip cache purge
    - *finalize
+

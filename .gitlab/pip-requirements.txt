@@ -1,0 +1,14 @@
+# parsl dependencies to avoid rust installation
+bcrypt<4.0.0
+cryptography==3.3.2
+globus_sdk<3.1
+
+# core components
+parsl
+radical.pilot
+maestrowf
+
+# tests
+pytest
+pytest-tap
+
