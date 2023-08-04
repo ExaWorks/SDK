@@ -3,11 +3,15 @@ variables:
   CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
   RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
 
+
 stages:
   - setup
   - build
   - test
+  - cleanup
 
+
+### MACHINES
 .on_quartz:
   variables:
     HOST: "quartz"
@@ -20,15 +24,17 @@ stages:
     CONDA_ENV_NAME: "ruby-env"
     CONDA_ARCH: "x86_64"
 
-.job_tags:
-  tags:
-    - $HOST
-    - $RUNNER_TYPE
 
+### SCRIPTS
 .final_steps:
   script: &finalize
     - chgrp -fR exaworks ${CONDA_WORK_DIR} || true
     - chmod -fR 02770 ${CONDA_WORK_DIR}    || true
+
+.job_tags:
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
 
 .conda_setup:
   stage: setup
@@ -78,56 +84,67 @@ stages:
     - python3 ci/tests/test.py -e
     - *finalize
 
+### JOBS
 
-
-
+# QUARTZ
 conda_setup_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  extends: [.on_quartz, .job_tags, .conda_setup]
+  extends: [ .on_quartz, .job_tags, .conda_setup ]
 
 conda_env_setup_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ "conda_setup_quartz" ]
-  extends: [.on_quartz, .job_tags, .conda_env_setup]
+  needs: [ conda_setup_quartz ]
+  extends: [ .on_quartz, .job_tags, .conda_env_setup ]
 
 conda_build_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ "conda_env_setup_quartz" ]
-  extends: [.on_quartz, .job_tags, .conda_build]
+  needs: [ conda_env_setup_quartz ]
+  extends: [ .on_quartz, .job_tags, .conda_build ]
 
 conda_tests_quartz:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
-  needs: [ "conda_build_quartz" ]
-  extends: [.on_quartz, .job_tags, .conda_tests]
+  needs: [ conda_build_quartz ]
+  extends: [ .on_quartz, .job_tags, .conda_tests ]
 
 
-
-
+# RUBY
 conda_setup_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  extends: [.on_ruby, .job_tags, .conda_setup]
+  extends: [ .on_ruby, .job_tags, .conda_setup ]
 
 conda_env_setup_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ "conda_setup_ruby" ]
-  extends: [.on_ruby, .job_tags, .conda_env_setup]
+  needs: [ conda_setup_ruby ]
+  extends: [ .on_ruby, .job_tags, .conda_env_setup ]
 
 conda_build_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ "conda_env_setup_ruby" ]
-  extends: [.on_ruby, .job_tags, .conda_build]
+  needs: [ conda_env_setup_ruby ]
+  extends: [ .on_ruby, .job_tags, .conda_build ]
 
 conda_tests_ruby:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
-  needs: [ "conda_build_ruby" ]
-  extends: [.on_ruby, .job_tags, .conda_tests]
+  needs: [ conda_build_ruby ]
+  extends: [ .on_ruby, .job_tags, .conda_tests ]
+
+
+# ALWAYS
+conda_cleanup_all:
+  stage: cleanup
+  when: always
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_quartz, .job_tags ]
+  script:
+   - *finalize
+
