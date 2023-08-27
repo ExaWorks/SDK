@@ -14,7 +14,8 @@ Please fullfil the initial requirements from the following document:
 - [ ] Description of the tool
 - [ ] GitHub repository (URL)
 - [ ] Supported package managers: **pip**, **conda**, **spack**
-- [ ] Version to be used: **specific** or **the latest**
+- [ ] Specific version to be used (i.e., "stable") and possibility to run 
+      **the latest** version is optional
 - [ ] List of all dependencies
   - Direct dependencies
   - Transitive dependencies (dependencies of dependencies)
