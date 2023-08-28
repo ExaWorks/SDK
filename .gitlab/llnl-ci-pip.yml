@@ -78,7 +78,7 @@ stages:
 ### JOBS
 
 # QUARTZ
-pip_setup_quartz:
+pip_env_setup_quartz:
   variables:
     RUNNER_TYPE: "shell"
   extends: [ .on_quartz, .job_tags, .pip_env_setup ]
@@ -86,7 +86,7 @@ pip_setup_quartz:
 pip_build_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ pip_setup_quartz ]
+  needs: [ pip_env_setup_quartz ]
   extends: [ .on_quartz, .job_tags, .pip_build ]
 
 pip_test_quartz:
@@ -98,7 +98,7 @@ pip_test_quartz:
 
 
 # RUBY
-pip_setup_ruby:
+pip_env_setup_ruby:
   variables:
     RUNNER_TYPE: "shell"
   extends: [ .on_ruby, .job_tags, .pip_env_setup ]
@@ -106,7 +106,7 @@ pip_setup_ruby:
 pip_build_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ pip_setup_ruby ]
+  needs: [ pip_env_setup_ruby ]
   extends: [ .on_ruby, .job_tags, .pip_build ]
 
 pip_test_ruby:
@@ -118,7 +118,7 @@ pip_test_ruby:
 
 
 # LASSEN
-pip_setup_lassen:
+pip_env_setup_lassen:
   variables:
     RUNNER_TYPE: "shell"
   extends: [ .on_lassen, .job_tags, .pip_env_setup ]
@@ -126,7 +126,7 @@ pip_setup_lassen:
 pip_build_lassen:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ pip_setup_lassen ]
+  needs: [ pip_env_setup_lassen ]
   extends: [ .on_lassen, .job_tags, .pip_build ]
   before_script:
     - .gitlab/llnl-lassen-openssl-parsl.sh ${PIP_WORK_DIR}/${VENV_ENV_NAME}
@@ -142,7 +142,7 @@ pip_test_lassen:
 
 
 # ALWAYS
-pip_cleanup_all:
+pip_cleanup:
   stage: cleanup
   when: always
   variables:

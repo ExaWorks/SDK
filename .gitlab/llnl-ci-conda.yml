@@ -64,7 +64,7 @@ stages:
     - conda env update --file ${CONDA_REQUIREMENTS}
     - *finalize
 
-.conda_tests:
+.conda_test:
   stage: test
   script:
     - source ${CONDA_WORK_DIR}/miniconda3-${HOST}/etc/profile.d/conda.sh
@@ -104,12 +104,12 @@ conda_build_quartz:
   needs: [ conda_env_setup_quartz ]
   extends: [ .on_quartz, .job_tags, .conda_build ]
 
-conda_tests_quartz:
+conda_test_quartz:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
   needs: [ conda_build_quartz ]
-  extends: [ .on_quartz, .job_tags, .conda_tests ]
+  extends: [ .on_quartz, .job_tags, .conda_test ]
 
 
 # RUBY
@@ -130,16 +130,16 @@ conda_build_ruby:
   needs: [ conda_env_setup_ruby ]
   extends: [ .on_ruby, .job_tags, .conda_build ]
 
-conda_tests_ruby:
+conda_test_ruby:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
   needs: [ conda_build_ruby ]
-  extends: [ .on_ruby, .job_tags, .conda_tests ]
+  extends: [ .on_ruby, .job_tags, .conda_test ]
 
 
 # ALWAYS
-conda_cleanup_all:
+conda_cleanup:
   stage: cleanup
   when: always
   variables:

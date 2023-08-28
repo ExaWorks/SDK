@@ -1,6 +1,7 @@
 variables:
-  SPACK_WORK_DIR: ${SDK_WORK_DIR}/spack 
+  SPACK_WORK_DIR: ${SDK_WORK_DIR}/spack
   RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+
 
 stages:
   - setup
@@ -8,42 +9,43 @@ stages:
   - test
   - cleanup
 
+
+### MACHINES
+.on_quartz:
+  variables:
+    HOST: "quartz"
+    SPACK_ENV_NAME: "rhel7-broadwell"
+    COMPILER: "gcc@8.1.0"
+    TARGET_ARCH_OPT: "target=x86_64"
+
+.on_ruby:
+  variables:
+    HOST: "ruby"
+    SPACK_ENV_NAME: "rhel7-cascadelake"
+    COMPILER: "gcc@8.2.0"
+    TARGET_ARCH_OPT: ""
+
+.on_lassen:
+  variables:
+    HOST: "lassen"
+    SPACK_ENV_NAME: "rhel7-ppc64le"
+    COMPILER: "gcc@9.4.0"
+    TARGET_ARCH_OPT: "target=ppc64le"
+
+
+### SCRIPTS
 .final_steps:
   script: &finalize
     - chgrp -fR exaworks ${SPACK_WORK_DIR} || true
     - chmod -fR 02770 ${SPACK_WORK_DIR}    || true
 
-spack-setup:
-  stage: setup
-  tags:
-    - ruby
-    - shell
-  script:
-    - test -d ${SPACK_WORK_DIR} && exit 0
-    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git ${SPACK_WORK_DIR}
-    - *finalize
-
-spack-compile:
-  stage: setup
-  needs:
-    - job: spack-setup
-  parallel:
-    matrix:
-      - HOST: [ "quartz" ]
-        SPACK_ENV_NAME: [ "rhel7-broadwell" ]
-        COMPILER: [ "gcc@8.1.0" ]
-        TARGET_ARCH_OPT: [ "target=x86_64" ]
-      - HOST: [ "lassen" ]
-        SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
-        COMPILER: [ "gcc@9.4.0" ]
-        TARGET_ARCH_OPT: [ "target=ppc64le" ]
-      - HOST: [ "ruby" ]
-        SPACK_ENV_NAME: [ "rhel7-cascadelake" ]
-        COMPILER: [ "gcc@8.2.0" ]
-        TARGET_ARCH_OPT: [ "" ]
+.job_tags:
   tags:
     - $HOST
-    - shell
+    - $RUNNER_TYPE
+
+.spack_env_setup:
+  stage: setup
   script:
     - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
     - test "$(spack env list | grep $SPACK_ENV_NAME)" && exit 0
@@ -60,38 +62,8 @@ spack-compile:
     - spack compiler add $(spack location -i $COMPILER)
     - *finalize
 
-spack-update:
-  stage: setup
-  needs:
-    - job: spack-compile
-  tags:
-    - ruby
-    - shell
-  script:
-    - cd ${SPACK_WORK_DIR}
-    - git checkout HEAD^ .
-    - git reset --hard HEAD
-    - git pull --ff
-    - *finalize
-
-spack-build:
+.spack_build:
   stage: build
-  needs:
-    - job: spack-update
-  parallel:
-    matrix:
-      - HOST: [ "quartz" ]
-        SPACK_ENV_NAME: [ "rhel7-broadwell" ]
-        COMPILER: [ "gcc@8.1.0" ]
-      - HOST: [ "lassen" ]
-        SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
-        COMPILER: [ "gcc@9.4.0" ]
-      - HOST: [ "ruby" ]
-        SPACK_ENV_NAME: [ "rhel7-cascadelake" ]
-        COMPILER: [ "gcc@8.2.0" ]
-  tags:
-    - $HOST
-    - shell
   script:
     - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
     - for i in {1..3}; do
@@ -103,28 +75,8 @@ spack-build:
     - spack install
     - *finalize
 
-spack-tests:
+.spack_test:
   stage: test
-  needs:
-    - job: spack-build
-  before_script:
-    - whoami
-  parallel:
-    matrix:
-      - HOST: [ "quartz" ]
-        SPACK_ENV_NAME: [ "rhel7-broadwell" ]
-        LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
-      - HOST: [ "lassen" ]
-        SPACK_ENV_NAME: [ "rhel7-ppc64le" ]
-        LLNL_LSF_SCHEDULER_PARAMETERS: [ "-nnodes 1 -W 30" ]
-        LSB_JOB_STARTER: [ "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD" ]
-        ENVIRONMENT: [ "BATCH" ]
-      - HOST: [ "ruby" ]
-        SPACK_ENV_NAME: [ "rhel7-cascadelake" ]
-        LLNL_SLURM_SCHEDULER_PARAMETERS: [ "--nodes=1 -t 30" ]
-  tags:
-    - $HOST
-    - batch
   script:
     - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
     - for i in {1..3}; do
@@ -143,14 +95,104 @@ spack-tests:
         python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
       done
     - python3 ci/tests/test.py -e
-  after_script:
-    - whoami
 
-.spack-cleanup: &spack-cleanup
+### JOBS
+
+spack_setup:
+  stage: setup
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_ruby, .job_tags ]
+  script:
+    - test -d ${SPACK_WORK_DIR} && exit 0
+    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git ${SPACK_WORK_DIR}
+    - *finalize
+
+spack_update:
+  stage: build
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_ruby, .job_tags ]
+  script:
+    - cd ${SPACK_WORK_DIR}
+    - git checkout HEAD^ .
+    - git reset --hard HEAD
+    - git pull --ff
+    - *finalize
+
+
+# QUARTZ
+spack_env_setup_quartz:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ spack_setup ]
+  extends: [ .on_quartz, .job_tags, .spack_env_setup ]
+
+spack_build_quartz:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ spack_update ]
+  extends: [ .on_quartz, .job_tags, .spack_build ]
+
+spack_test_quartz:
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
+  needs: [ spack_build_quartz ]
+  extends: [ .on_quartz, .job_tags, .spack_test ]
+
+
+# RUBY
+spack_env_setup_ruby:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ spack_setup ]
+  extends: [ .on_ruby, .job_tags, .spack_env_setup ]
+
+spack_build_ruby:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ spack_update ]
+  extends: [ .on_ruby, .job_tags, .spack_build ]
+
+spack_test_ruby:
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
+  needs: [ spack_build_ruby ]
+  extends: [ .on_ruby, .job_tags, .spack_test ]
+
+
+# LASSEN
+spack_env_setup_lassen:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ spack_setup ]
+  extends: [ .on_lassen, .job_tags, .spack_env_setup ]
+
+spack_build_lassen:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ spack_update ]
+  extends: [ .on_lassen, .job_tags, .spack_build ]
+
+spack_test_lassen:
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 30"
+    LSB_JOB_STARTER: "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD"
+    ENVIRONMENT: "BATCH"
+  needs: [ spack_build_lassen ]
+  extends: [ .on_lassen, .job_tags, .spack_test ]
+
+
+# ALWAYS
+spack_cleanup:
   stage: cleanup
-  tags:
-    - ruby
-    - shell
+  when: always
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_ruby, .job_tags ]
   script:
     - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
     - spack clean -a || true
@@ -158,26 +200,3 @@ spack-tests:
     - spack providers
     - *finalize
 
-spack-cleanup-on-compile-failure:
-  needs: 
-    - job: spack-compile
-  when: on_failure
-  <<: *spack-cleanup
-
-spack-cleanup-on-build-failure:
-  needs:
-    - job: spack-build
-  when: on_failure
-  <<: *spack-cleanup
-
-spack-cleanup-on-success:
-  needs:
-    - job: spack-tests
-  when: on_success
-  <<: *spack-cleanup
-
-spack-cleanup-on-test-failure:
-  needs:
-    - job: spack-tests
-  when: on_failure
-  <<: *spack-cleanup
