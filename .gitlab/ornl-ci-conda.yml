@@ -1,0 +1,118 @@
+variables:
+  CONDA_WORK_DIR: ${SDK_WORK_DIR}/conda
+  CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
+  RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+
+
+stages:
+  - setup
+  - build
+  - test
+  - cleanup
+
+
+### MACHINES
+.on_crusher:
+  variables:
+    HOST: "crusher"
+    CONDA_ENV_NAME: "crusher-env"
+    CONDA_ARCH: "x86_64"
+
+
+### SCRIPTS
+.final_steps:
+  script: &finalize
+    - chgrp -fR exaworks ${CONDA_WORK_DIR} || true
+    - chmod -fR 02770 ${CONDA_WORK_DIR}    || true
+
+.job_tags:
+  tags:
+    - $HOST
+    - $RUNNER_TYPE
+
+.conda_setup:
+  stage: setup
+  script:
+    - mkdir -p ${CONDA_WORK_DIR}
+    - test -d ${CONDA_WORK_DIR}/miniconda3-${HOST} && exit 0
+    - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-${CONDA_ARCH}.sh -O ${CONDA_WORK_DIR}/miniconda-${HOST}.sh
+    - chmod +x ${CONDA_WORK_DIR}/miniconda-${HOST}.sh
+    - ${CONDA_WORK_DIR}/miniconda-${HOST}.sh -b -p ${CONDA_WORK_DIR}/miniconda3-${HOST}
+    - *finalize
+
+.conda_env_setup:
+  stage: setup
+  script:
+    - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
+    - source ${CONDA_WORK_DIR}/miniconda3-${HOST}/etc/profile.d/conda.sh
+    - eval "$(conda shell.posix hook)"
+    - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
+    - *finalize
+
+.conda_build:
+  stage: build
+  script:
+    - source ${CONDA_WORK_DIR}/miniconda3-${HOST}/etc/profile.d/conda.sh
+    - eval "$(conda shell.posix hook)"
+    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
+    - conda env update --file ${CONDA_REQUIREMENTS}
+    - *finalize
+
+.conda_test:
+  stage: test
+  script:
+    - source ${CONDA_WORK_DIR}/miniconda3-${HOST}/etc/profile.d/conda.sh
+    - eval "$(conda shell.posix hook)"
+    - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
+    - export run_id=${CI_PIPELINE_ID}
+    - export branch=${CI_COMMIT_BRANCH}
+    - export url=${TESTING_HOST}
+    - export test="Conda"
+    - export location="ornl-$HOST"
+    - export contact="km0@ornl.gov"
+    - export imnumber="ORNL-MI-834241"
+    - python3 ci/tests/test.py -s
+    - for TEST in flux parsl rp swift-t parsl-flux rp-flux; do
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
+      done
+    - python3 ci/tests/test.py -e
+    - *finalize
+
+### JOBS
+
+# QUARTZ
+conda_setup_crusher:
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_crusher, .job_tags, .conda_setup ]
+
+conda_env_setup_crusher:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ conda_setup_crusher ]
+  extends: [ .on_crusher, .job_tags, .conda_env_setup ]
+
+conda_build_crusher:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ conda_env_setup_crusher ]
+  extends: [ .on_crusher, .job_tags, .conda_build ]
+
+conda_test_crusher:
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 60"
+  needs: [ conda_build_crusher ]
+  extends: [ .on_crusher, .job_tags, .conda_test ]
+
+
+# ALWAYS
+conda_cleanup:
+  stage: cleanup
+  when: always
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_crusher, .job_tags ]
+  script:
+   - *finalize
+
