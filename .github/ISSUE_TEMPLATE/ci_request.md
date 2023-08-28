@@ -1,6 +1,6 @@
 ---
 name: Request to include a software tool into the CI
-description: Use this template to create a request for including a software tool into CI pipelines for one or more facilities.
+about: Use this template to create a request for including a software tool into CI pipelines for one or more facilities.
 title: "[CI Request]: [SOFTWARE TOOL NAME]"
 labels: "Continuous Integration"
 assignees: "mtitov, danlaney"
