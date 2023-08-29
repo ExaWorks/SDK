@@ -14,17 +14,17 @@ stages:
 ### MACHINES
 .on_quartz:
   variables:
-    HOST: "quartz"
+    SITE: "quartz"
     VENV_ENV_NAME: "quartz-env"
 
 .on_ruby:
   variables:
-    HOST: "ruby"
+    SITE: "ruby"
     VENV_ENV_NAME: "ruby-env"
 
 .on_lassen:
   variables:
-    HOST: "lassen"
+    SITE: "lassen"
     VENV_ENV_NAME: "lassen-env"
 
 
@@ -36,7 +36,7 @@ stages:
 
 .job_tags:
   tags:
-    - $HOST
+    - $SITE
     - $RUNNER_TYPE
 
 .pip_env_setup:
@@ -59,15 +59,13 @@ stages:
 
 .pip_test:
   stage: test
+  variables:
+    MAINTAINER: "arambula2@llnl.gov"
+    IM_NUMBER: "LLNL-MI-834241"
+    TESTS_GROUP: "pip"
+    SITE_ID: "llnl-$SITE"
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
-    - export run_id=${CI_PIPELINE_ID}
-    - export branch=${CI_COMMIT_BRANCH}
-    - export url=${TESTING_HOST}
-    - export test="Pip"
-    - export location="llnl-$HOST"
-    - export contact="arambula2@llnl.gov"
-    - export imnumber="LLNL-MI-834241"
     - python3 ci/tests/test.py -s
     - for TEST in flux parsl rp parsl-flux rp-flux maestro; do
         python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh" --stdout;
@@ -92,7 +90,7 @@ pip_build_quartz:
 pip_test_quartz:
   variables:
     RUNNER_TYPE: "batch"
-    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
   needs: [ pip_build_quartz ]
   extends: [ .on_quartz, .job_tags, .pip_test ]
 
@@ -112,7 +110,7 @@ pip_build_ruby:
 pip_test_ruby:
   variables:
     RUNNER_TYPE: "batch"
-    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
   needs: [ pip_build_ruby ]
   extends: [ .on_ruby, .job_tags, .pip_test ]
 
@@ -134,7 +132,7 @@ pip_build_lassen:
 pip_test_lassen:
   variables:
     RUNNER_TYPE: "batch"
-    LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 30"
+    LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 45"
     LSB_JOB_STARTER: "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD"
     EVIRONMENT: "BATCH"
   needs: [ pip_build_lassen ]
