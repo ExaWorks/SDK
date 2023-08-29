@@ -1,3 +1,4 @@
+
 import argparse
 import os
 import requests.adapters
@@ -7,31 +8,156 @@ import urllib3
 
 from datetime import datetime
 
-test = os.getenv("test")
-run_id = os.getenv("run_id")
-branch = os.getenv("branch")
-url = os.getenv("url")
-location = os.getenv("location")
-maintainer_email = os.getenv("contact")
-imnumber = os.getenv("imnumber")
 
-config = { "maintainer_email" : maintainer_email}
+class CITestsHandler:
 
-extras = { "config" : config,
-           "test": test,
-           "git_branch" : branch,
-           "start_time" : str(datetime.now())
-         }
-
-if imnumber:
-    config["IM Number"] = imnumber
-
-data = { "run_id" : run_id,
-         "branch": branch,
+    dashboard_url = os.getenv('SDK_DASHBOARD_URL') or os.getenv('TESTING_HOST')
+    record = {
+        'id': os.getenv('location'),  # site_id
+        'key': os.getenv('SDK_DASHBOARD_TOKEN'),  # site_token
+        'data': {
+            'run_id': os.getenv('CI_PIPELINE_ID') or os.getenv('RANDOM'),
+            'branch': os.getenv('CI_COMMIT_BRANCH') or os.getenv('branch'),
+            'test_name': '',
+            'test_start_time': '',
+            'test_end_time': '',
+            'module': '',
+            'function': '',
+            'results': {},
+            'extras': {}
         }
+    }
+
+    def __init__(self):
+        self._args = self.get_args()
+
+        ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+        ctx.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
+        ctx.check_hostname = False
+        self._session = requests.session()
+        self._session.mount('https://', TransportAdapter(ctx))
+
+    def run(self):
+        if self._args.start:
+            self.record['data'].update({
+                'test_name': 'Set Environment',
+                'test_start_time': str(datetime.now()),
+                'test_end_time': str(datetime.now()),
+                'module': '_conftest',
+                'function': '_discover_environment',
+                'extras': {
+                    'pkg_manager': os.getenv('test', '').lower(),
+                    'start_time': str(datetime.now()),  # run_start_time
+                    'git_branch': self.record['data']['branch'],
+                    'config': {
+                        'im_number': os.getenv('imnumber'),
+                        'maintainer_email': os.getenv('maintainer_email') or
+                                            os.getenv('contact')
+                    }
+                }
+            })
+
+        elif self._args.end:
+            self.record['data'].update({
+                'test_name': 'Final State',
+                'test_start_time': str(datetime.now()),
+                'test_end_time': str(datetime.now()),
+                'module': '_conftest',
+                'function': '_end'
+            })
+
+        elif self._args.command:
+            start_time = str(datetime.now())
+            name = self._args.name or self._args.command.split()[0]
+
+            results, out = self.execute_test(self._args.command)
+            self.record['data'].update({
+                'test_name': name,
+                'test_start_time': start_time,
+                'test_end_time': str(datetime.now()),
+                'module': 'test',
+                'function': 'main',
+                'results': results
+            })
+
+            print('### %s: %s' % (name, results['call']['status']))
+            if self._args.stdout:
+                print(out)
+
+        else:
+            raise RuntimeError('No viable option called, exiting...')
+
+        self._session.post(self.dashboard_url, json=self.record, verify=False)
+
+    @staticmethod
+    def execute_test(command):
+        results = {'setup': {'passed': True,
+                             'status': 'passed',
+                             'exception': None,
+                             'report': ''},
+                   'call':  {'passed': False,
+                             'status': '',  # passed, failed, skipped
+                             'exception': None,
+                             'report': ''}}
+
+        try:
+            out = subprocess.check_output(command, shell=True,
+                                          stderr=subprocess.STDOUT,
+                                          timeout=1200)
+        except subprocess.CalledProcessError as exc:
+            out = exc.output
+            status = 'failed'
+            exception = repr(exc)
+        except subprocess.TimeoutExpired as exc:
+            out = exc.output
+            status = 'timeout'
+            exception = repr(exc)
+        else:
+            status = 'passed'
+            exception = None
+
+        out = out.decode('utf-8') if out else ''
+        passed = bool(status == 'passed')
+        results['call'].update({'passed': passed,
+                                'status': status,
+                                'exception': str(exception),
+                                'report': out if not passed else ''})
+
+        return results, out
+
+    @staticmethod
+    def get_args():
+        """
+        Get arguments.
+        :return: Arguments namespace.
+        :rtype: _AttributeHolder
+        """
+        parser = argparse.ArgumentParser(
+            description='Run SDK Tests by providing a corresponding command')
+
+        test_group = parser.add_mutually_exclusive_group(required=True)
+        test_group.add_argument(
+            '-c', '--command', action='store', type=str, default=None,
+            help='Command to be executed')
+        test_group.add_argument(
+            '-s', '--start', action='store_true', default=False,
+            help='Start a series of test runs with the same id')
+        test_group.add_argument(
+            '-e', '--end', action='store_true', default=False,
+            help='End a series of test runs with the same id')
+
+        parser.add_argument(
+            '-n', '--name', action='store', type=str, required=True,
+            help='Name of the software tool (abbreviation)')
+        parser.add_argument(
+            '--stdout', action='store_true', default=False,
+            help='Add STDOUT of the test run to the result')
+
+        return parser.parse_args()
 
 
 class TransportAdapter(requests.adapters.HTTPAdapter):
+
     """
     Transport adapter that allows to use custom ssl_context.
     """
@@ -40,127 +166,17 @@ class TransportAdapter(requests.adapters.HTTPAdapter):
         self.ssl_context = ssl_context
         super().__init__(**kwargs)
 
-    def init_poolmanager(self, connections, maxsize, block=False, **pool_kwargs):
+    def init_poolmanager(self, connections, maxsize, block=False, **kwargs):
+        # save these values for pickling
+        self._pool_connections = connections
+        self._pool_maxsize = maxsize
+        self._pool_block = block
+
         self.poolmanager = urllib3.poolmanager.PoolManager(
-            num_pools=connections, maxsize=maxsize,
-            block=block, ssl_context=self.ssl_context
-        )
-
-
-def get_legacy_session():
-    ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-    ctx.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
-    ctx.check_hostname = False
-    session = requests.session()
-    session.mount('https://', TransportAdapter(ctx))
-    return session
-
-
-def get_conf():
-    results = {}
-    data.update( {"test_name" : "Set Environment",
-                  "results" : results,
-                  "extras": extras,
-                  "test_start_time": str(datetime.now()),
-                  "test_end_time" : str(datetime.now()),
-                  'function' : '_discover_environment',
-                  "module" : '_conftest' })
-    return data
-
-
-def get_result(command, name, stdout):
-    if not name:
-        name = command.split()[0]
-    start = str(datetime.now())
-
-    try:
-        out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, timeout=1200).decode("utf-8")
-        results = {name: {"passed": True,
-                          "status": "passed",
-                          "exception": None,
-                          "report": ""}}
-        extras['returncode'] = 0
-        print(f"Test: {name} succeeded.\n{out}")
-    except subprocess.CalledProcessError as exc:
-        out = exc.output.decode("utf-8")
-        results = {name: {"passed": False,
-                          "status": "failed",
-                          "exception": repr(exc),
-                          "report": ""}}
-        extras['returncode'] = exc.returncode
-        print(f"Test: {name} failed.\n{out}")
-    except subprocess.TimeoutExpired as exc:
-        out = exc.output.decode("utf-8")
-        results = {name: {"passed": False,
-                          "status": "timeout",
-                          "exception": repr(exc),
-                          "report": ""}}
-        extras['returncode'] = 1
-        print(f"Test: {name} timed out.\n{out}")
-
-    end = str(datetime.now())
-    data.update({ "test_name" : name,
-                  "results" : results,
-                  "test_start_time": start,
-                  "test_end_time" : end,
-                  "extras": extras,
-                  "function" : name,
-                  "module" : "Sanity Checks",
-            })
-    if stdout:
-        data["stdout"] = out
-    else:
-        print(out)
-
-    return data
-
-def get_end():
-    results = {}
-    data.update( {"test_name" : "Set Environment",
-                  "results" : results,
-                  "extras": extras,
-                  "test_start_time": str(datetime.now()),
-                  "test_end_time" : str(datetime.now()),
-                  'function' : '_discover_environment',
-                  "module" : '_end' })
-
-    return data
-
-
-def get_args():
-    parser = argparse.ArgumentParser(description='Runs SDK Tests by passing in shell commands')
-    test_group = parser.add_mutually_exclusive_group(required=True)
-    test_group.add_argument('-c', '--command', action='store', type=str, default=None,
-                        help='The command in which you want to test.')
-    parser.add_argument('-n', '--name', action='store', type=str, default=None,
-                        help='The name of the test.')
-    test_group.add_argument('-s', '--start', action="store_true",  default=False,
-                        help='Start a series of test runs with the same id')
-    test_group.add_argument('-e', '--end', action="store_true",  default=False,
-                        help='End a series of test runs with the same id')
-    parser.add_argument('--stdout', action="store_true",  default=False,
-                        help='Add std out of test to result')
-    args = parser.parse_args()
-    return args
-
-
-def main():
-    args = get_args()
-
-    if args.start:
-        data = get_conf()
-    elif args.end:
-        data = get_end()
-    elif args.command:
-        data = get_result(args.command, args.name, args.stdout)
-    else:
-        print("No viable option called, Exiting")
-        exit(1)
-
-    msg = {"id": location, "key": "42", "data": data}
-    get_legacy_session().post(url, json=msg, verify=False)
+            num_pools=connections, maxsize=maxsize, block=block,
+            ssl_context=self.ssl_context, **kwargs)
 
 
 if __name__ == '__main__':
-    main()
+    CITestsHandler().run()
 
