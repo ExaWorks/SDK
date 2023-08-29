@@ -21,6 +21,7 @@ cat > .radical/pilot/configs/resource_local.json <<EOF
 }
 EOF
 export RADICAL_CONFIG_USER_DIR=$(pwd)
+export RADICAL_REPORT_ANIME=FALSE
 
 wget -q "https://raw.githubusercontent.com/radical-cybertools/radical.pilot/v$rp_version/examples/config.json"
 wget -q "https://raw.githubusercontent.com/radical-cybertools/radical.pilot/v$rp_version/examples/00_getting_started.py"
