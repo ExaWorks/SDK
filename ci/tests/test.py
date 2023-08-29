@@ -147,7 +147,7 @@ class CITestsHandler:
             help='End a series of test runs with the same id')
 
         parser.add_argument(
-            '-n', '--name', action='store', type=str, required=True,
+            '-n', '--name', action='store', type=str,
             help='Name of the software tool (abbreviation)')
         parser.add_argument(
             '--stdout', action='store_true', default=False,
