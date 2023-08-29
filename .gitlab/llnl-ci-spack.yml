@@ -92,7 +92,7 @@ stages:
     - export imnumber="LLNL-MI-834241"
     - python3 ci/tests/test.py -s
     - for TEST in flux parsl rp swift-t parsl-flux rp-flux; do
-        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh" --stdout;
       done
     - python3 ci/tests/test.py -e
 
