@@ -13,11 +13,11 @@ class CITestsHandler:
 
     dashboard_url = os.getenv('SDK_DASHBOARD_URL') or os.getenv('TESTING_HOST')
     record = {
-        'id': os.getenv('location'),  # site_id
+        'id': os.getenv('SITE_ID'),
         'key': os.getenv('SDK_DASHBOARD_TOKEN'),  # site_token
         'data': {
             'run_id': os.getenv('CI_PIPELINE_ID') or os.getenv('RANDOM'),
-            'branch': os.getenv('CI_COMMIT_BRANCH') or os.getenv('branch'),
+            'branch': os.getenv('CI_COMMIT_BRANCH'),
             'test_name': '',
             'test_start_time': '',
             'test_end_time': '',
@@ -49,9 +49,8 @@ class CITestsHandler:
                     'start_time': str(datetime.now()),  # run_start_time
                     'git_branch': self.record['data']['branch'],
                     'config': {
-                        'im_number': os.getenv('imnumber'),
-                        'maintainer_email': os.getenv('maintainer_email') or
-                                            os.getenv('contact')
+                        'im_number': os.getenv('IM_NUMBER'),
+                        'maintainer_email': os.getenv('MAINTAINER')
                     }
                 }
             })
@@ -66,7 +65,7 @@ class CITestsHandler:
             })
 
         elif self._args.command:
-            tests_group = os.getenv('test', '').lower()  # pkg_manager
+            tests_group = os.getenv('TESTS_GROUP', '').lower()
             name = self._args.name or self._args.command.split()[0]
 
             start_time = str(datetime.now())
@@ -99,7 +98,7 @@ class CITestsHandler:
                              'exception': None,
                              'report': ''},
                    'call':  {'passed': False,
-                             'status': '',  # passed, failed, skipped
+                             'status': '',  # passed, failed, timeout
                              'exception': None,
                              'report': ''}}
 
@@ -110,11 +109,11 @@ class CITestsHandler:
         except subprocess.CalledProcessError as exc:
             out = exc.output
             status = 'failed'
-            exception = repr(exc)
+            exception = str(repr(exc))
         except subprocess.TimeoutExpired as exc:
             out = exc.output
             status = 'timeout'
-            exception = repr(exc)
+            exception = str(repr(exc))
         else:
             status = 'passed'
             exception = None
@@ -123,7 +122,7 @@ class CITestsHandler:
         passed = bool(status == 'passed')
         results['call'].update({'passed': passed,
                                 'status': status,
-                                'exception': str(exception),
+                                'exception': exception,
                                 'report': out if not passed else ''})
 
         return results, out
