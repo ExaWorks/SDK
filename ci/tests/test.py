@@ -103,7 +103,7 @@ class CITestsHandler:
         try:
             out = subprocess.check_output(command, shell=True,
                                           stderr=subprocess.STDOUT,
-                                          timeout=1200)
+                                          timeout=300)
         except subprocess.CalledProcessError as exc:
             out = exc.output
             status = 'failed'
