@@ -22,7 +22,8 @@ cat > .radical/pilot/configs/resource_local.json <<EOF
 EOF
 export RADICAL_CONFIG_USER_DIR=$(pwd)
 
-wget "https://raw.githubusercontent.com/radical-cybertools/radical.pilot/v$rp_version/examples/00_getting_started.py"
+wget -q "https://raw.githubusercontent.com/radical-cybertools/radical.pilot/v$rp_version/examples/00_getting_started.py"
+chmod +x 00_getting_started.py
 
 radical-stack
 ./00_getting_started.py local.localhost
