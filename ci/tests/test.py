@@ -46,7 +46,6 @@ class CITestsHandler:
                 'module': '_conftest',
                 'function': '_discover_environment',
                 'extras': {
-                    'pkg_manager': os.getenv('test', '').lower(),
                     'start_time': str(datetime.now()),  # run_start_time
                     'git_branch': self.record['data']['branch'],
                     'config': {
@@ -67,17 +66,21 @@ class CITestsHandler:
             })
 
         elif self._args.command:
-            start_time = str(datetime.now())
+            tests_group = os.getenv('test', '').lower()  # pkg_manager
             name = self._args.name or self._args.command.split()[0]
 
+            start_time = str(datetime.now())
             results, out = self.execute_test(self._args.command)
             self.record['data'].update({
                 'test_name': name,
                 'test_start_time': start_time,
                 'test_end_time': str(datetime.now()),
-                'module': 'test',
+                'module': tests_group,
                 'function': 'main',
-                'results': results
+                'results': results,
+                'extras': {
+                    'tests_group': tests_group
+                }
             })
 
             print('### %s: %s' % (name, results['call']['status']))
