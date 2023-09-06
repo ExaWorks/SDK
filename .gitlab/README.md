@@ -1,5 +1,17 @@
 # Troubleshooting
 
+## Environment variables
+
+The following environment variables should be set within CI/CD settings:
+- `SDK_DASHBOARD_URL` - used to publish results from the executed tests;
+- `SDK_DASHBOARD_TOKEN` - unique token per facility (randomly generated UUID);
+- `SDK_WORK_DIR` - working directory in a shared space;
+   - In case of OLCF: `SDK_WORK_DIR_OPEN`, `SDK_WORK_DIR_ALPINE`, 
+     `SDK_WORK_DIR_ORION`;
+- `RADICAL_PILOT_DBURL` - MongoDB URL for the RADICAL-Pilot component;
+   - In case of LLNL: `MONGODB_CONNECTION_STRING`, which will be used within 
+     configuration scripts for `RADICAL_PILOT_DBURL`.
+
 ## GitLab working directory
 
 ```shell
@@ -12,6 +24,7 @@ chmod 700 <scratch_space>/gitlab-runner
 `<scratch_space>` per facility
 * LLNL: `/usr/workspace/${USER}`
 * OLCF: `$MEMBERWORK/csc449`
+* ALCF: TBD...
 
 ## SPACK-related issues
 
