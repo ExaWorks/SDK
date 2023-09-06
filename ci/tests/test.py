@@ -5,6 +5,7 @@ import os
 import requests.adapters
 import ssl
 import subprocess
+import traceback
 import urllib3
 
 from datetime import datetime
@@ -116,6 +117,10 @@ class CITestsHandler:
                                           timeout=300)
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
             out = e.output
+            status = 'failed'
+            exception = str(repr(e))
+        except KeyboardInterrupt as e:
+            out = traceback.format_exc()
             status = 'failed'
             exception = str(repr(e))
         else:
