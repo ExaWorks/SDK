@@ -1,5 +1,6 @@
 
 import argparse
+import copy
 import os
 import requests.adapters
 import ssl
@@ -7,6 +8,9 @@ import subprocess
 import urllib3
 
 from datetime import datetime
+from typing import Any, Dict, Optional, Tuple
+
+urllib3.disable_warnings()
 
 
 class CITestsHandler:
@@ -29,17 +33,20 @@ class CITestsHandler:
     }
 
     def __init__(self):
-        self._args = self.get_args()
-
         ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
         ctx.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
         ctx.check_hostname = False
         self._session = requests.session()
         self._session.mount('https://', TransportAdapter(ctx))
 
-    def run(self):
-        if self._args.start:
-            self.record['data'].update({
+    def run(self, start: Optional[bool] = False, end: Optional[bool] = False,
+            command: Optional[str] = None, **kwargs: Any) -> None:
+        assert ismuex(start, end, command), 'Arguments are mutually exclusive'
+
+        record = copy.deepcopy(self.record)
+
+        if start:
+            record['data'].update({
                 'test_name': 'Set Environment',
                 'test_start_time': str(datetime.now()),
                 'test_end_time': str(datetime.now()),
@@ -47,7 +54,7 @@ class CITestsHandler:
                 'function': '_discover_environment',
                 'extras': {
                     'start_time': str(datetime.now()),  # run_start_time
-                    'git_branch': self.record['data']['branch'],
+                    'git_branch': record['data']['branch'],
                     'config': {
                         'im_number': os.getenv('IM_NUMBER'),
                         'maintainer_email': os.getenv('MAINTAINER')
@@ -55,22 +62,22 @@ class CITestsHandler:
                 }
             })
 
-        elif self._args.end:
-            self.record['data'].update({
-                'test_name': 'Final State',
+        elif end:
+            record['data'].update({
+                'test_name': 'End Test Series',
                 'test_start_time': str(datetime.now()),
                 'test_end_time': str(datetime.now()),
                 'module': '_conftest',
                 'function': '_end'
             })
 
-        elif self._args.command:
+        elif command:
             tests_group = os.getenv('TESTS_GROUP', '').lower()
-            name = self._args.name or self._args.command.split()[0]
+            name = kwargs.get('name') or command.split()[0]
 
             start_time = str(datetime.now())
-            results, out = self.execute_test(self._args.command)
-            self.record['data'].update({
+            results, out = self.execute_test(command)
+            record['data'].update({
                 'test_name': name,
                 'test_start_time': start_time,
                 'test_end_time': str(datetime.now()),
@@ -82,23 +89,24 @@ class CITestsHandler:
                 }
             })
 
-            print('### %s: %s' % (name, results['call']['status']))
-            if self._args.stdout:
+            if kwargs.get('stdout'):
                 print(out)
+
+            print('### %s: %s' % (name, results['call']['status']))
 
         else:
             raise RuntimeError('No viable option called, exiting...')
 
-        self._session.post(self.dashboard_url, json=self.record, verify=False)
+        self._session.post(self.dashboard_url, json=record, verify=False)
 
     @staticmethod
-    def execute_test(command):
+    def execute_test(command: str) -> Tuple[Dict, str]:
         results = {'setup': {'passed': True,
                              'status': 'passed',
                              'exception': None,
                              'report': ''},
                    'call':  {'passed': False,
-                             'status': '',  # passed, failed, timeout
+                             'status': '',  # passed, failed
                              'exception': None,
                              'report': ''}}
 
@@ -106,14 +114,10 @@ class CITestsHandler:
             out = subprocess.check_output(command, shell=True,
                                           stderr=subprocess.STDOUT,
                                           timeout=300)
-        except subprocess.CalledProcessError as exc:
-            out = exc.output
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+            out = e.output
             status = 'failed'
-            exception = str(repr(exc))
-        except subprocess.TimeoutExpired as exc:
-            out = exc.output
-            status = 'timeout'
-            exception = str(repr(exc))
+            exception = str(repr(e))
         else:
             status = 'passed'
             exception = None
@@ -127,35 +131,40 @@ class CITestsHandler:
 
         return results, out
 
-    @staticmethod
-    def get_args():
-        """
-        Get arguments.
-        :return: Arguments namespace.
-        :rtype: _AttributeHolder
-        """
-        parser = argparse.ArgumentParser(
-            description='Run SDK Tests by providing a corresponding command')
 
-        test_group = parser.add_mutually_exclusive_group(required=True)
-        test_group.add_argument(
-            '-c', '--command', action='store', type=str, default=None,
-            help='Command to be executed')
-        test_group.add_argument(
-            '-s', '--start', action='store_true', default=False,
-            help='Start a series of test runs with the same id')
-        test_group.add_argument(
-            '-e', '--end', action='store_true', default=False,
-            help='End a series of test runs with the same id')
+def ismuex(*a):
+    return not bool(sum(map(
+        lambda v: bool(v if isinstance(v, bool) else v is not None), a)) > 1)
 
-        parser.add_argument(
-            '-n', '--name', action='store', type=str,
-            help='Name of the software tool (abbreviation)')
-        parser.add_argument(
-            '--stdout', action='store_true', default=False,
-            help='Add STDOUT of the test run to the result')
 
-        return parser.parse_args()
+def get_args():
+    """
+    Get arguments.
+    :return: Arguments namespace.
+    :rtype: _AttributeHolder
+    """
+    parser = argparse.ArgumentParser(
+        description='Run SDK Tests by providing a corresponding command')
+
+    test_group = parser.add_mutually_exclusive_group(required=True)
+    test_group.add_argument(
+        '-c', '--command', action='store', type=str, default=None,
+        help='Command to be executed')
+    test_group.add_argument(
+        '-s', '--start', action='store_true', default=False,
+        help='Start a series of test runs with the same id')
+    test_group.add_argument(
+        '-e', '--end', action='store_true', default=False,
+        help='End a series of test runs with the same id')
+
+    parser.add_argument(
+        '-n', '--name', action='store', type=str,
+        help='Name of the software tool (abbreviation)')
+    parser.add_argument(
+        '--stdout', action='store_true', default=False,
+        help='Add STDOUT of the test run to the result')
+
+    return parser.parse_args()
 
 
 class TransportAdapter(requests.adapters.HTTPAdapter):
@@ -180,5 +189,10 @@ class TransportAdapter(requests.adapters.HTTPAdapter):
 
 
 if __name__ == '__main__':
-    CITestsHandler().run()
+    args = get_args()
+    CITestsHandler().run(start=args.start,
+                         end=args.end,
+                         command=args.command,
+                         **{'name': args.name,
+                            'stdout': args.stdout})
 
