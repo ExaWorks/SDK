@@ -116,7 +116,7 @@ class CITestsHandler:
                                           stderr=subprocess.STDOUT,
                                           timeout=300)
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-            out = e.output
+            out = e.output.decode('utf-8') if e.output else ''
             status = 'failed'
             exception = str(repr(e))
         except KeyboardInterrupt as e:
@@ -124,10 +124,10 @@ class CITestsHandler:
             status = 'failed'
             exception = str(repr(e))
         else:
+            out = out.decode('utf-8') if out else ''
             status = 'passed'
             exception = None
 
-        out = out.decode('utf-8') if out else ''
         passed = bool(status == 'passed')
         results['call'].update({'passed': passed,
                                 'status': status,
