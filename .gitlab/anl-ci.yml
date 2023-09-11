@@ -1,0 +1,8 @@
+include:
+  - local: '.gitlab/anl-ci-*.yml'
+
+stages:
+  - setup
+  - build
+  - test
+  - cleanup

@@ -1,0 +1,97 @@
+variables:
+  PIP_WORK_DIR: ${SDK_WORK_DIR}/pip
+  PIP_REQUIREMENTS: .gitlab/pip-requirements.txt
+  RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
+
+
+stages:
+  - setup
+  - build
+  - test
+  - cleanup
+
+
+### MACHINES
+
+.on_polaris:
+  variables:
+    SITE: "polaris"
+    VENV_ENV_NAME: "polaris-env"
+
+### SCRIPTS
+.final_steps:
+  script: &finalize
+    - chgrp -fR CSC249ADTR01 ${PIP_WORK_DIR} || true
+    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
+
+.job_tags:
+  tags:
+    - $SITE
+    - $RUNNER_TYPE
+
+.pip_env_setup:
+  stage: setup
+  script:
+    - mkdir -p ${PIP_WORK_DIR}
+    - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
+    - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
+    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - pip install -U pip setuptools wheel
+    - pip cache purge
+    - *finalize
+
+.pip_build:
+  stage: build
+  script:
+    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
+    - *finalize
+
+.pip_test:
+  stage: test
+  variables:
+    MAINTAINER: "wilke@anl.gov"
+    IM_NUMBER: ""
+    TESTS_GROUP: "pip"
+    SITE_ID: "anl-$SITE"
+  script:
+    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - python3 ci/tests/test.py -s
+    - for TEST in flux parsl rp parsl-flux rp-flux maestro; do
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh" --stdout;
+      done
+    - python3 ci/tests/test.py -e
+    - deactivate
+
+### JOBS
+
+# POLARIS
+pip_env_setup_polaris:
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_polaris, .job_tags, .pip_env_setup ]
+
+pip_build_polaris:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ pip_env_setup_polaris ]
+  extends: [ .on_polaris, .job_tags, .pip_build ]
+
+pip_test_polaris:
+  variables:
+    RUNNER_TYPE: "batch"
+    ANL_POLARIS_SCHEDULER_PARAMETERS: "-l select=1 -l filesystems=home:grand -l walltime=45:00"
+  needs: [ pip_build_polaris ]
+  extends: [ .on_polaris, .job_tags, .pip_test ]
+
+
+
+# ALWAYS
+pip_cleanup:
+  stage: cleanup
+  when: always
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_polaris, .job_tags ]
+  script:
+   - *finalize
