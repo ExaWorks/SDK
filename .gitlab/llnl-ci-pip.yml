@@ -14,17 +14,17 @@ stages:
 ### MACHINES
 .on_quartz:
   variables:
-    HOST: "quartz"
+    SITE: "quartz"
     VENV_ENV_NAME: "quartz-env"
 
 .on_ruby:
   variables:
-    HOST: "ruby"
+    SITE: "ruby"
     VENV_ENV_NAME: "ruby-env"
 
 .on_lassen:
   variables:
-    HOST: "lassen"
+    SITE: "lassen"
     VENV_ENV_NAME: "lassen-env"
 
 
@@ -36,7 +36,7 @@ stages:
 
 .job_tags:
   tags:
-    - $HOST
+    - $SITE
     - $RUNNER_TYPE
 
 .pip_env_setup:
@@ -59,18 +59,16 @@ stages:
 
 .pip_test:
   stage: test
+  variables:
+    MAINTAINER: "arambula2@llnl.gov"
+    IM_NUMBER: "LLNL-MI-834241"
+    TESTS_GROUP: "pip"
+    SITE_ID: "llnl-$SITE"
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
-    - export run_id=${CI_PIPELINE_ID}
-    - export branch=${CI_COMMIT_BRANCH}
-    - export url=${TESTING_HOST}
-    - export test="Pip"
-    - export location="llnl-$HOST"
-    - export contact="arambula2@llnl.gov"
-    - export imnumber="LLNL-MI-834241"
     - python3 ci/tests/test.py -s
-    - for TEST in flux parsl rp swift-t parsl-flux rp-flux maestro; do
-        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh";
+    - for TEST in flux parsl rp parsl-flux rp-flux maestro; do
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh" --stdout;
       done
     - python3 ci/tests/test.py -e
     - deactivate
@@ -78,7 +76,7 @@ stages:
 ### JOBS
 
 # QUARTZ
-pip_setup_quartz:
+pip_env_setup_quartz:
   variables:
     RUNNER_TYPE: "shell"
   extends: [ .on_quartz, .job_tags, .pip_env_setup ]
@@ -86,19 +84,19 @@ pip_setup_quartz:
 pip_build_quartz:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ pip_setup_quartz ]
+  needs: [ pip_env_setup_quartz ]
   extends: [ .on_quartz, .job_tags, .pip_build ]
 
 pip_test_quartz:
   variables:
     RUNNER_TYPE: "batch"
-    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
   needs: [ pip_build_quartz ]
   extends: [ .on_quartz, .job_tags, .pip_test ]
 
 
 # RUBY
-pip_setup_ruby:
+pip_env_setup_ruby:
   variables:
     RUNNER_TYPE: "shell"
   extends: [ .on_ruby, .job_tags, .pip_env_setup ]
@@ -106,19 +104,19 @@ pip_setup_ruby:
 pip_build_ruby:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ pip_setup_ruby ]
+  needs: [ pip_env_setup_ruby ]
   extends: [ .on_ruby, .job_tags, .pip_build ]
 
 pip_test_ruby:
   variables:
     RUNNER_TYPE: "batch"
-    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
   needs: [ pip_build_ruby ]
   extends: [ .on_ruby, .job_tags, .pip_test ]
 
 
 # LASSEN
-pip_setup_lassen:
+pip_env_setup_lassen:
   variables:
     RUNNER_TYPE: "shell"
   extends: [ .on_lassen, .job_tags, .pip_env_setup ]
@@ -126,7 +124,7 @@ pip_setup_lassen:
 pip_build_lassen:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ pip_setup_lassen ]
+  needs: [ pip_env_setup_lassen ]
   extends: [ .on_lassen, .job_tags, .pip_build ]
   before_script:
     - .gitlab/llnl-lassen-openssl-parsl.sh ${PIP_WORK_DIR}/${VENV_ENV_NAME}
@@ -134,7 +132,7 @@ pip_build_lassen:
 pip_test_lassen:
   variables:
     RUNNER_TYPE: "batch"
-    LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 30"
+    LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 45"
     LSB_JOB_STARTER: "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD"
     EVIRONMENT: "BATCH"
   needs: [ pip_build_lassen ]
@@ -142,7 +140,7 @@ pip_test_lassen:
 
 
 # ALWAYS
-pip_cleanup_all:
+pip_cleanup:
   stage: cleanup
   when: always
   variables:

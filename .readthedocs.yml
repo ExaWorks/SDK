@@ -12,6 +12,7 @@ build:
     - mpich
     - swig
     - zsh
+    - nwchem
   jobs:
     post_install:
       - wget http://swift-lang.github.io/swift-t-downloads/1.6/swift-t-1.6.0.tar.gz
