@@ -70,7 +70,7 @@ stages:
         spack env activate ${SPACK_ENV_NAME} && break || sleep 5;
       done
     - spack uninstall -y exaworks%${COMPILER} py-pytest%${COMPILER} || true
-    - spack add exaworks%${COMPILER} ^python@3.9 ^py-globus-sdk@:3.0 ^py-bcrypt@:3 ^py-cryptography@3.3.2 ^openssl@2: py-pytest%${COMPILER}
+    - spack add exaworks%${COMPILER} ^python@3.9 ^py-globus-sdk@:3.0 ^py-bcrypt@:3 ^py-cryptography@3.3.2 ^openssl@3 py-pytest%${COMPILER}
     - spack concretize -f
     - spack install
     - *finalize
