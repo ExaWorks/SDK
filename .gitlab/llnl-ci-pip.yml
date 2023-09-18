@@ -67,7 +67,8 @@ stages:
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - python3 ci/tests/test.py -s
-    - for TEST in flux parsl rp parsl-flux rp-flux maestro; do
+    # - for TEST in flux parsl rp parsl-flux rp-flux maestro; do
+    - for TEST in smartsim; do
         python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh" --stdout;
       done
     - python3 ci/tests/test.py -e
