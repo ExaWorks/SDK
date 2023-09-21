@@ -7,7 +7,9 @@ globus_sdk<3.1
 parsl
 radical.pilot
 maestrowf
+
 smartsim
+tensorflow==2.8.0
 
 # tests
 pytest
