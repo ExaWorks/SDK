@@ -1,7 +1,6 @@
 variables:
   CONDA_WORK_DIR: ${SDK_WORK_DIR}/conda
   CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
-  RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
 
 
 stages:
