@@ -1,5 +1,5 @@
 variables:
-  CONDA_WORK_DIR: ${SDK_WORK_DIR}/conda
+  CONDA_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/conda
   CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
 
 
