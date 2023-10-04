@@ -61,9 +61,8 @@ stages:
   stage: test
   variables:
     MAINTAINER: "arambula2@llnl.gov"
-    IM_NUMBER: "LLNL-MI-834241"
     TESTS_GROUP: "conda"
-    SITE_ID: "llnl-$SITE"
+    SITE_ID: "ornl-$SITE"
   script:
     - source ${CONDA_WORK_DIR}/miniconda3-${SITE}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
