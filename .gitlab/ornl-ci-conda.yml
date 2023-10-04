@@ -12,16 +12,10 @@ stages:
 
 
 ### MACHINES
-.on_quartz:
+.on_summit:
   variables:
-    SITE: "quartz"
-    CONDA_ENV_NAME: "quartz-env"
-    CONDA_ARCH: "x86_64"
-
-.on_ruby:
-  variables:
-    SITE: "ruby"
-    CONDA_ENV_NAME: "ruby-env"
+    SITE: "summit"
+    CONDA_ENV_NAME: "summit-env"
     CONDA_ARCH: "x86_64"
 
 
@@ -84,56 +78,30 @@ stages:
 
 ### JOBS
 
-# QUARTZ
-conda_setup_quartz:
+# SUMMIT
+conda_setup_summit:
   variables:
     RUNNER_TYPE: "shell"
-  extends: [ .on_quartz, .job_tags, .conda_setup ]
+  extends: [ .on_summit, .job_tags, .conda_setup ]
 
-conda_env_setup_quartz:
+conda_env_setup_summit:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ conda_setup_quartz ]
-  extends: [ .on_quartz, .job_tags, .conda_env_setup ]
+  needs: [ conda_setup_summit ]
+  extends: [ .on_summit, .job_tags, .conda_env_setup ]
 
-conda_build_quartz:
+conda_build_summit:
   variables:
     RUNNER_TYPE: "shell"
-  needs: [ conda_env_setup_quartz ]
-  extends: [ .on_quartz, .job_tags, .conda_build ]
+  needs: [ conda_env_setup_summit ]
+  extends: [ .on_summit, .job_tags, .conda_build ]
 
-conda_test_quartz:
+conda_test_summit:
   variables:
     RUNNER_TYPE: "batch"
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
-  needs: [ conda_build_quartz ]
-  extends: [ .on_quartz, .job_tags, .conda_test ]
-
-
-# RUBY
-conda_setup_ruby:
-  variables:
-    RUNNER_TYPE: "shell"
-  extends: [ .on_ruby, .job_tags, .conda_setup ]
-
-conda_env_setup_ruby:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [ conda_setup_ruby ]
-  extends: [ .on_ruby, .job_tags, .conda_env_setup ]
-
-conda_build_ruby:
-  variables:
-    RUNNER_TYPE: "shell"
-  needs: [ conda_env_setup_ruby ]
-  extends: [ .on_ruby, .job_tags, .conda_build ]
-
-conda_test_ruby:
-  variables:
-    RUNNER_TYPE: "batch"
-    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
-  needs: [ conda_build_ruby ]
-  extends: [ .on_ruby, .job_tags, .conda_test ]
+  needs: [ conda_build_summit ]
+  extends: [ .on_summit, .job_tags, .conda_test ]
 
 
 # ALWAYS
@@ -142,7 +110,7 @@ conda_cleanup:
   when: always
   variables:
     RUNNER_TYPE: "shell"
-  extends: [ .on_quartz, .job_tags ]
+  extends: [ .on_summit, .job_tags ]
   script:
    - *finalize
 
