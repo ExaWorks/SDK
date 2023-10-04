@@ -21,7 +21,7 @@ stages:
 ### SCRIPTS
 .final_steps:
   script: &finalize
-    - chgrp -fR exaworks ${CONDA_WORK_DIR} || true
+    - chgrp -fR csc449 ${PIP_WORK_DIR} || true
     - chmod -fR 02770 ${CONDA_WORK_DIR}    || true
 
 .job_tags:
