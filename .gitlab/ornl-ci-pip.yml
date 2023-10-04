@@ -1,7 +1,6 @@
 variables:
   PIP_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/pip
   PIP_REQUIREMENTS: .gitlab/pip-requirements.txt
-  RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
 
 
 stages:
