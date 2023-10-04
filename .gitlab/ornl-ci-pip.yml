@@ -67,12 +67,12 @@ stages:
 # SUMMIT
 pip_env_setup_summit:
   variables:
-    RUNNER_TYPE: "shell"
+    RUNNER_TYPE: "nobatch"
   extends: [ .on_summit, .job_tags, .pip_env_setup ]
 
 pip_build_summit:
   variables:
-    RUNNER_TYPE: "shell"
+    RUNNER_TYPE: "nobatch"
   needs: [ pip_env_setup_summit ]
   extends: [ .on_summit, .job_tags, .pip_build ]
 
@@ -89,7 +89,7 @@ pip_cleanup:
   stage: cleanup
   when: always
   variables:
-    RUNNER_TYPE: "shell"
+    RUNNER_TYPE: "nobatch"
   extends: [ .on_summit, .job_tags ]
   script:
    - *finalize
