@@ -1,5 +1,4 @@
 variables:
-  CONDA_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/conda
   CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
 
 
@@ -15,19 +14,19 @@ stages:
   variables:
     SITE: "ascent"
     VENV_ENV_NAME: "ascent-env"
-    PIP_WORK_DIR: ${SDK_WORK_DIR_OPEN}/pip
+    CONDA_WORK_DIR: ${SDK_WORK_DIR_OPEN}/conda
 
 # .on_summit:
 #   variables:
 #     SITE: "summit"
 #     VENV_ENV_NAME: "summit-env"
-#     PIP_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/pip
+#     CONDA_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/conda
 
 
 ### SCRIPTS
 .final_steps:
   script: &finalize
-    - chgrp -fR csc449 ${PIP_WORK_DIR} || true
+    - chgrp -fR csc449 ${CONDA_WORK_DIR} || true
     - chmod -fR 02770 ${CONDA_WORK_DIR}    || true
 
 .job_tags:
