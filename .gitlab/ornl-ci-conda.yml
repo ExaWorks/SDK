@@ -43,6 +43,7 @@ stages:
   stage: setup
   script:
     - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
+    - module add python/3.8.10
     - source ${CONDA_WORK_DIR}/miniconda3-${SITE}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
