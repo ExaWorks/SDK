@@ -15,12 +15,14 @@ stages:
     SITE: "ascent"
     VENV_ENV_NAME: "ascent-env"
     PIP_WORK_DIR: ${SDK_WORK_DIR_OPEN}/pip
+    PYTHON_MODULE: "python/3.8-anaconda3"
 
 # .on_summit:
 #   variables:
 #     SITE: "summit"
 #     VENV_ENV_NAME: "summit-env"
 #     PIP_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/pip
+#     PYTHON_MODULE: "python/3.8-anaconda3"
 
 
 ### SCRIPTS
@@ -39,7 +41,7 @@ stages:
   script:
     - mkdir -p ${PIP_WORK_DIR}
     - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
-    - module add python/3.8.10
+    - module add ${PYTHON_MODULE}
     - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install -U pip setuptools wheel
