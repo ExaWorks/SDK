@@ -11,11 +11,17 @@ stages:
 
 
 ### MACHINES
-.on_summit:
+.on_ascent:
   variables:
-    SITE: "summit"
-    CONDA_ENV_NAME: "summit-env"
-    CONDA_ARCH: "x86_64"
+    SITE: "ascent"
+    VENV_ENV_NAME: "ascent-env"
+    PIP_WORK_DIR: ${SDK_WORK_DIR_OPEN}/pip
+
+# .on_summit:
+#   variables:
+#     SITE: "summit"
+#     VENV_ENV_NAME: "summit-env"
+#     PIP_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/pip
 
 
 ### SCRIPTS
@@ -77,30 +83,30 @@ stages:
 
 ### JOBS
 
-# SUMMIT
-conda_setup_summit:
+# ASCENT
+conda_setup_ascent:
   variables:
     RUNNER_TYPE: "nobatch"
-  extends: [ .on_summit, .job_tags, .conda_setup ]
+  extends: [ .on_ascent, .job_tags, .conda_setup ]
 
-conda_env_setup_summit:
+conda_env_setup_ascent:
   variables:
     RUNNER_TYPE: "nobatch"
-  needs: [ conda_setup_summit ]
-  extends: [ .on_summit, .job_tags, .conda_env_setup ]
+  needs: [ conda_setup_ascent ]
+  extends: [ .on_ascent, .job_tags, .conda_env_setup ]
 
-conda_build_summit:
+conda_build_ascent:
   variables:
     RUNNER_TYPE: "nobatch"
-  needs: [ conda_env_setup_summit ]
-  extends: [ .on_summit, .job_tags, .conda_build ]
+  needs: [ conda_env_setup_ascent ]
+  extends: [ .on_ascent, .job_tags, .conda_build ]
 
-conda_test_summit:
+conda_test_ascent:
   variables:
     RUNNER_TYPE: "batch"
     SCHEDULER_PARAMETERS: "-P CSC449 -nnodes 1 -W 45"
-  needs: [ conda_build_summit ]
-  extends: [ .on_summit, .job_tags, .conda_test ]
+  needs: [ conda_build_ascent ]
+  extends: [ .on_ascent, .job_tags, .conda_test ]
 
 
 # ALWAYS
@@ -109,7 +115,7 @@ conda_cleanup:
   when: always
   variables:
     RUNNER_TYPE: "nobatch"
-  extends: [ .on_summit, .job_tags ]
+  extends: [ .on_ascent, .job_tags ]
   script:
    - *finalize
 
