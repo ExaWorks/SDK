@@ -1,0 +1,105 @@
+variables:
+  PIP_REQUIREMENTS: .gitlab/pip-requirements.txt
+
+
+stages:
+  - setup
+  - build
+  - test
+  - cleanup
+
+
+### MACHINES
+.on_ascent:
+  variables:
+    SITE: "ascent"
+    VENV_ENV_NAME: "ascent-env"
+    PIP_WORK_DIR: ${SDK_WORK_DIR_OPEN}/pip
+    PYTHON_MODULE: "python/3.8-anaconda3"
+
+# .on_summit:
+#   variables:
+#     SITE: "summit"
+#     VENV_ENV_NAME: "summit-env"
+#     PIP_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/pip
+#     PYTHON_MODULE: "python/3.8-anaconda3"
+
+
+### SCRIPTS
+.final_steps:
+  script: &finalize
+    - chgrp -fR csc449 ${PIP_WORK_DIR} || true
+    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
+
+.job_tags:
+  tags:
+    - $SITE
+    - $RUNNER_TYPE
+
+.pip_env_setup:
+  stage: setup
+  script:
+    - mkdir -p ${PIP_WORK_DIR}
+    - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
+    - module add ${PYTHON_MODULE}
+    - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
+    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - pip install -U pip setuptools wheel
+    - pip cache purge
+    - *finalize
+
+.pip_build:
+  stage: build
+  script:
+    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
+    - *finalize
+
+.pip_test:
+  stage: test
+  variables:
+    MAINTAINER: "arambula2@llnl.gov"
+    TESTS_GROUP: "pip"
+    SITE_ID: "ornl-$SITE"
+  script:
+    - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - python3 ci/tests/test.py -s
+    - for TEST in flux parsl rp parsl-flux rp-flux maestro; do
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh" --stdout;
+      done
+    - python3 ci/tests/test.py -e
+    - deactivate
+
+.pip_cleanup:
+  stage: cleanup
+  when: always
+  script:
+   - find ${PIP_WORK_DIR} -maxdepth 0 -type d -ctime +5 | xargs rm -rf
+   - *finalize
+
+### JOBS
+
+# ascent
+pip_env_setup_ascent:
+  variables:
+    RUNNER_TYPE: "nobatch"
+  extends: [ .on_ascent, .job_tags, .pip_env_setup ]
+
+pip_build_ascent:
+  variables:
+    RUNNER_TYPE: "nobatch"
+  needs: [ pip_env_setup_ascent ]
+  extends: [ .on_ascent, .job_tags, .pip_build ]
+
+pip_test_ascent:
+  variables:
+    RUNNER_TYPE: "batch"
+    SCHEDULER_PARAMETERS: "-P CSC449 -nnodes 1 -W 45"
+  needs: [ pip_build_ascent ]
+  extends: [ .on_ascent, .job_tags, .pip_test ]
+
+pip_cleanup_ascent:
+  variables:
+    RUNNER_TYPE: "nobatch"
+  extends: [ .on_ascent, .job_tags, .pip_cleanup ]
+
