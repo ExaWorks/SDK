@@ -82,6 +82,14 @@ stages:
     - python3 ci/tests/test.py -e
     - *finalize
 
+.conda_cleanup:
+  stage: cleanup
+  when: always
+  script:
+   - find ${CONDA_WORK_DIR} -maxdepth 0 -type d -ctime +5 | xargs rm -rf
+   - *finalize
+
+
 ### JOBS
 
 # ASCENT
@@ -111,12 +119,10 @@ conda_test_ascent:
 
 
 # ALWAYS
-conda_cleanup:
+conda_cleanup_ascent:
   stage: cleanup
   when: always
   variables:
     RUNNER_TYPE: "nobatch"
-  extends: [ .on_ascent, .job_tags ]
-  script:
-   - *finalize
+  extends: [ .on_ascent, .job_tags .conda_cleanup ]
 
