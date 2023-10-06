@@ -196,5 +196,6 @@ spack_cleanup:
     - spack clean -a || true
     - rm -rf ${HOME}/.spack/cache
     - spack providers
+    - find ${SPACK_WORK_DIR} -maxdepth 0 -type d -ctime +5 | xargs rm -rf
     - *finalize
 
