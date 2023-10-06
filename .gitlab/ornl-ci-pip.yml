@@ -39,6 +39,7 @@ stages:
   script:
     - mkdir -p ${PIP_WORK_DIR}
     - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
+    - module add python/3.8.10
     - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install -U pip setuptools wheel
