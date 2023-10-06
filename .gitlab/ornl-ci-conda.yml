@@ -15,12 +15,14 @@ stages:
     SITE: "ascent"
     VENV_ENV_NAME: "ascent-env"
     CONDA_WORK_DIR: ${SDK_WORK_DIR_OPEN}/conda
+    PYTHON_MODULE: "python/3.8-anaconda3"
 
 # .on_summit:
 #   variables:
 #     SITE: "summit"
 #     VENV_ENV_NAME: "summit-env"
 #     CONDA_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/conda
+#     PYTHON_MODULE: "python/3.8-anaconda3"
 
 
 ### SCRIPTS
@@ -48,7 +50,7 @@ stages:
   stage: setup
   script:
     - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
-    - module add python/3.8.10
+    - module add ${PYTHON_MODULE}
     - source ${CONDA_WORK_DIR}/miniconda3-${SITE}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
