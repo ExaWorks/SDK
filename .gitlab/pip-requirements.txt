@@ -8,8 +8,8 @@ parsl
 radical.pilot
 maestrowf
 
-smartsim
-tensorflow==2.8.0
+smartsim==0.5.1; python_version>="3.8" and platform_machine=="x86_64"
+tensorflow==2.8.0; python_version>="3.8" and platform_machine=="x86_64"
 
 # tests
 pytest
