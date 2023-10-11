@@ -13,7 +13,7 @@ stages:
 .on_ascent:
   variables:
     SITE: "ascent"
-    VENV_ENV_NAME: "ascent-env"
+    CONDA_ENV_NAME: "ascent-env"
     CONDA_WORK_DIR: ${SDK_WORK_DIR_OPEN}/conda
     PYTHON_MODULE: "python/3.8-anaconda3"
     CONDA_ARCH: "ppc64le" 
@@ -21,7 +21,7 @@ stages:
 # .on_summit:
 #   variables:
 #     SITE: "summit"
-#     VENV_ENV_NAME: "summit-env"
+#     CONDA_ENV_NAME: "summit-env"
 #     CONDA_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/conda
 #     PYTHON_MODULE: "python/3.8-anaconda3"
 #     CONDA_ARCH: "ppc64le"
