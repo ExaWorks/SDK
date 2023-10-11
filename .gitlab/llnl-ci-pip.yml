@@ -55,7 +55,7 @@ stages:
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
-    - smart clean && smart build
+    - (smart clean && smart build) > /dev/null 2>&1
     - *finalize
 
 .pip_test:
