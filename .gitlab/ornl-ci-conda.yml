@@ -122,9 +122,7 @@ conda_test_ascent:
 
 # ALWAYS
 conda_cleanup_ascent:
-  stage: cleanup
-  when: always
   variables:
     RUNNER_TYPE: "nobatch"
-  extends: [ .on_ascent, .job_tags .conda_cleanup ]
+  extends: [ .on_ascent, .job_tags, .conda_cleanup ]
 
