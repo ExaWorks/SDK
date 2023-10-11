@@ -55,6 +55,7 @@ stages:
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install --no-cache-dir -r ${PIP_REQUIREMENTS}
+    - (smart clean && smart build) > /dev/null 2>&1 || true
     - *finalize
 
 .pip_test:
@@ -67,7 +68,7 @@ stages:
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - python3 ci/tests/test.py -s
-    - for TEST in flux parsl rp parsl-flux rp-flux maestro; do
+    - for TEST in flux parsl rp parsl-flux rp-flux maestro smartsim; do
         python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh" --stdout;
       done
     - python3 ci/tests/test.py -e
