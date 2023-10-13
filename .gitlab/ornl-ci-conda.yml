@@ -1,7 +1,3 @@
-variables:
-  CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
-
-
 stages:
   - setup
   - build
@@ -15,6 +11,7 @@ stages:
     SITE: "ascent"
     CONDA_ENV_NAME: "ascent-env"
     CONDA_WORK_DIR: ${SDK_WORK_DIR_OPEN}/conda
+    CONDA_REQUIREMENTS: .gitlab/conda-requirements-ppc64le.yml
     PYTHON_MODULE: "python/3.8-anaconda3"
     CONDA_ARCH: "ppc64le" 
 
@@ -23,6 +20,7 @@ stages:
 #     SITE: "summit"
 #     CONDA_ENV_NAME: "summit-env"
 #     CONDA_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/conda
+#     CONDA_REQUIREMENTS: .gitlab/conda-requirements-ppc64le.yml
 #     PYTHON_MODULE: "python/3.8-anaconda3"
 #     CONDA_ARCH: "ppc64le"
 
