@@ -17,6 +17,7 @@ stages:
     CONDA_ENV_NAME: "quartz-env"
     CONDA_ARCH: "x86_64"
     CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
+    PYTHON_MODULE: "python/3.9.12"
 
 .on_ruby:
   variables:
@@ -24,6 +25,7 @@ stages:
     CONDA_ENV_NAME: "ruby-env"
     CONDA_ARCH: "x86_64"
     CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
+    PYTHON_MODULE: "python/3.9.12"
 
 .on_lassen:
   variables:
@@ -31,6 +33,7 @@ stages:
     CONDA_ENV_NAME: "lassen-env"
     CONDA_ARCH: "ppc64le"
     CONDA_REQUIREMENTS: .gitlab/conda-requirements-ppc64le.yml
+    PYTHON_MODULE: "python/3.8.2"
 
 ### SCRIPTS
 .final_steps:
@@ -57,6 +60,7 @@ stages:
   stage: setup
   script:
     - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
+    - module add ${PYTHON_MODULE}
     - source ${CONDA_WORK_DIR}/miniconda3-${SITE}/etc/profile.d/conda.sh
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
