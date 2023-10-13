@@ -114,6 +114,7 @@ class CITestsHandler:
         try:
             out = subprocess.check_output(command, shell=True,
                                           stderr=subprocess.STDOUT,
+                                          env=os.environ,
                                           timeout=300)
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
             out = e.output.decode('utf-8') if e.output else ''
