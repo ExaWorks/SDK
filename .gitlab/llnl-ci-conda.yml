@@ -1,6 +1,5 @@
 variables:
   CONDA_WORK_DIR: ${SDK_WORK_DIR}/conda
-  CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
   RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
 
 
@@ -17,13 +16,21 @@ stages:
     SITE: "quartz"
     CONDA_ENV_NAME: "quartz-env"
     CONDA_ARCH: "x86_64"
+    CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
 
 .on_ruby:
   variables:
     SITE: "ruby"
     CONDA_ENV_NAME: "ruby-env"
     CONDA_ARCH: "x86_64"
+    CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
 
+.on_lassen:
+  variables:
+    SITE: "lassen"
+    CONDA_ENV_NAME: "lassen-env"
+    CONDA_ARCH: "ppc64le"
+    CONDA_REQUIREMENTS: .gitlab/conda-requirements-ppc64le.yml
 
 ### SCRIPTS
 .final_steps:
@@ -134,6 +141,32 @@ conda_test_ruby:
     LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
   needs: [ conda_build_ruby ]
   extends: [ .on_ruby, .job_tags, .conda_test ]
+
+
+# LASSEN
+conda_setup_lassen:
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_lassen, .job_tags, .conda_setup ]
+
+conda_env_setup_lassen:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ conda_setup_lassen ]
+  extends: [ .on_lassen, .job_tags, .conda_env_setup ]
+
+conda_build_lassen:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ conda_env_setup_lassen ]
+  extends: [ .on_lassen, .job_tags, .conda_build ]
+
+conda_test_lassen:
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
+  needs: [ conda_build_lassen ]
+  extends: [ .on_lassen, .job_tags, .conda_test ]
 
 
 # ALWAYS
