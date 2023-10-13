@@ -16,16 +16,19 @@ stages:
   variables:
     SITE: "quartz"
     VENV_ENV_NAME: "quartz-env"
+    PYTHON_MODULE: "python/3.9.12"
 
 .on_ruby:
   variables:
     SITE: "ruby"
     VENV_ENV_NAME: "ruby-env"
+    PYTHON_MODULE: "python/3.9.12"
 
 .on_lassen:
   variables:
     SITE: "lassen"
     VENV_ENV_NAME: "lassen-env"
+    PYTHON_MODULE: "python/3.8.2"
 
 
 ### SCRIPTS
@@ -44,6 +47,7 @@ stages:
   script:
     - mkdir -p ${PIP_WORK_DIR}
     - test -d ${PIP_WORK_DIR}/${VENV_ENV_NAME} && exit 0
+    - module add ${PYTHON_MODULE}
     - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - pip install -U pip setuptools wheel
