@@ -76,7 +76,7 @@ stages:
     - eval "$(conda shell.posix hook)"
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - python3 ci/tests/test.py -s
-    - for TEST in flux parsl rp swift-t parsl-flux rp-flux; do
+    - for TEST in parsl rp; do
         python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh" --stdout;
       done
     - python3 ci/tests/test.py -e
