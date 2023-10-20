@@ -29,7 +29,7 @@ stages:
 .final_steps:
   script: &finalize
     - chgrp -fR csc449 ${CONDA_WORK_DIR} || true
-    - chmod -fR 02770 ${CONDA_WORK_DIR}    || true
+    - chmod -fR 02770 ${CONDA_WORK_DIR}  || true
 
 .job_tags:
   tags:

@@ -1,6 +1,5 @@
 variables:
   CONDA_WORK_DIR: ${SDK_WORK_DIR}/conda
-  RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
 
 
 stages:

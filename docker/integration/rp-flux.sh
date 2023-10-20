@@ -1,12 +1,5 @@
 #!/bin/bash
 
-echo "--- start MongoDB"
-if [[ -f "/etc/mongod.conf" ]]; then
-    CONFIG_OPT="--config /etc/mongod.conf"
-fi
-
-mongod --fork --logpath /tmp/mongodb.log $CONFIG_OPT
-
 radical-stack
 
 if [[ ! -d "/radical.pilot" ]]; then
@@ -27,8 +20,6 @@ ret=$?
 echo "--- smoke test $ret"
 
 test "$ret" = 0 && echo "Success!"
-
-mongod $CONFIG_OPT --shutdown
 
 exit $ret
 

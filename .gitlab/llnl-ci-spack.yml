@@ -1,6 +1,5 @@
 variables:
   SPACK_WORK_DIR: ${SDK_WORK_DIR}/spack
-  RADICAL_PILOT_DBURL: ${MONGODB_CONNECTION_STRING}?tlsAllowInvalidCertificates=true
 
 
 stages:

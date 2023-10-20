@@ -21,7 +21,6 @@ dependencies:
   - lua-luaposix
   - lz4
   - make
-  - mongodb
   - mpi
   - munge
   - openjdk=8
