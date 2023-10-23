@@ -42,7 +42,7 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         # install python
         ./scripts/install-python.sh $PYTHON_VERSION \
      && apt-get update -y \
-     && apt install -y \
+     && DEBIAN_FRONTEND=noninteractive apt install -y \
         # Flux-core Dependencies
         autoconf \
         automake \
