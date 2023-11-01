@@ -14,21 +14,18 @@ stages:
   variables:
     SITE: "quartz"
     SPACK_ENV_NAME: "rhel7-broadwell"
-    COMPILER: "gcc@8.1.0"
     TARGET_ARCH_OPT: "target=x86_64"
 
 .on_ruby:
   variables:
     SITE: "ruby"
     SPACK_ENV_NAME: "rhel7-cascadelake"
-    COMPILER: "gcc@8.2.0"
     TARGET_ARCH_OPT: ""
 
 .on_lassen:
   variables:
     SITE: "lassen"
     SPACK_ENV_NAME: "rhel7-ppc64le"
-    COMPILER: "gcc@9.4.0"
     TARGET_ARCH_OPT: "target=ppc64le"
 
 
@@ -67,8 +64,8 @@ stages:
     - for i in {1..3}; do
         spack env activate ${SPACK_ENV_NAME} && break || sleep 5;
       done
-    - spack uninstall -y exaworks%${COMPILER} py-pytest%${COMPILER} || true
-    - spack add exaworks%${COMPILER} ^python@3.9 py-pytest%${COMPILER}
+    - spack uninstall -y exaworks py-pytest || true
+    - spack add exaworks ^python@3.9 py-pytest
     - spack concretize -f
     - spack install
     - *finalize
