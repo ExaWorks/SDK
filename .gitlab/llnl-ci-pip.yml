@@ -17,18 +17,21 @@ stages:
     SITE: "quartz"
     VENV_ENV_NAME: "quartz-env"
     PYTHON_MODULE: "python/3.9.12"
+    TESTS: flux parsl rp parsl-flux rp-flux maestro smartsim
 
 .on_ruby:
   variables:
     SITE: "ruby"
     VENV_ENV_NAME: "ruby-env"
     PYTHON_MODULE: "python/3.9.12"
+    TESTS: flux parsl rp parsl-flux rp-flux maestro smartsim
 
 .on_lassen:
   variables:
     SITE: "lassen"
     VENV_ENV_NAME: "lassen-env"
     PYTHON_MODULE: "python/3.8.2"
+    TESTS: flux parsl rp parsl-flux rp-flux maestro 
 
 
 ### SCRIPTS
@@ -72,7 +75,7 @@ stages:
   script:
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
     - python3 ci/tests/test.py -s
-    - for TEST in flux parsl rp parsl-flux rp-flux maestro smartsim; do
+    - for TEST in ${TESTS}; do
         python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh" --stdout;
       done
     - python3 ci/tests/test.py -e

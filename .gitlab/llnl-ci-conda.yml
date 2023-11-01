@@ -17,6 +17,7 @@ stages:
     CONDA_ENV_NAME: "quartz-env"
     CONDA_ARCH: "x86_64"
     CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
+    TESTS: flux parsl rp swift-t parsl-flux rp-flux
 
 .on_ruby:
   variables:
@@ -24,6 +25,7 @@ stages:
     CONDA_ENV_NAME: "ruby-env"
     CONDA_ARCH: "x86_64"
     CONDA_REQUIREMENTS: .gitlab/conda-requirements.yml
+    TESTS: flux parsl rp swift-t parsl-flux rp-flux
 
 .on_lassen:
   variables:
@@ -31,6 +33,7 @@ stages:
     CONDA_ENV_NAME: "lassen-env"
     CONDA_ARCH: "ppc64le"
     CONDA_REQUIREMENTS: .gitlab/conda-requirements-ppc64le.yml
+    TESTS: parsl rp
 
 ### SCRIPTS
 .final_steps:
