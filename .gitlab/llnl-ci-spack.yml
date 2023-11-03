@@ -66,6 +66,7 @@ stages:
       done
     - spack uninstall -y exaworks py-pytest || true
     - spack add exaworks ^python@3.9 py-pytest
+    - spack config add concretizer:unify:when_possible
     - spack concretize -f
     - spack install
     - *finalize
