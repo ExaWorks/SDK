@@ -4,9 +4,6 @@
 ARG BASE_IMAGE=exaworks/sdk-base
 FROM ${BASE_IMAGE}
 
-RUN mkdir -p /data/db /var/log/mongodb /var/run/mongodb
-ENV RADICAL_PILOT_DBURL=mongodb://localhost/am
-
 # RCT installation (RADICAL-EnTK includes RADICAL-Pilot)
 RUN pip install \
     radical.entk
@@ -18,5 +15,5 @@ RUN git clone -b master --single-branch https://github.com/radical-cybertools/ra
 COPY run_rp_test.sh /tests/rp/test.sh
 COPY run_re_test.sh /tests/re/test.sh
 
-# start mongodb and run RP tests
+# run RP tests
 CMD  /bin/sh /tests/rp/test.sh

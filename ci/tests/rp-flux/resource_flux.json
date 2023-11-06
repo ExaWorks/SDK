@@ -1,18 +1,19 @@
 {
     "localhost_flux": {
-        "schemas"                     : ["local"],
-        "local"                       :
-        {
-            "job_manager_endpoint"    : "fork://localhost/",
-            "filesystem_endpoint"     : "file://localhost/"
+        "default_schema"              : "local",
+        "schemas"                     : {
+            "local"                   : {
+                "job_manager_endpoint": "fork://localhost/",
+                "filesystem_endpoint" : "file://localhost/"
+            }
         },
         "resource_manager"            : "FORK",
         "agent_scheduler"             : "FLUX",
         "agent_spawner"               : "FLUX",
         "launch_methods"              : {
-                                         "order"  : ["FLUX", "FORK"],
-                                         "FLUX"   : {},
-                                         "FORK"   : {}
+                                         "order" : ["FLUX", "FORK"],
+                                         "FLUX"  : {},
+                                         "FORK"  : {}
                                         },
         "default_remote_workdir"      : "$HOME",
         "python_dist"                 : "default",

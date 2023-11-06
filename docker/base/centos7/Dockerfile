@@ -32,14 +32,6 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
 
 RUN sed -i 's/http:\/\/vault.centos.org/https:\/\/vault.centos.org/g' /etc/yum.repos.d/* \
  && yum upgrade ca-certificates
- 
-# MongoDB Repository (RADICAL-Pilot Dependency)
-RUN echo -e "\
-[mongodb]\n\
-name     = MongoDB Repository \n\
-baseurl  = https://repo.mongodb.org/yum/redhat/7Server/mongodb-org/3.0/x86_64/ \n\
-gpgcheck = 0 \n\
-enabled  = 1 \n" >> /etc/yum.repos.d/mongodb.repo
 
 # copy over the python installation script in case we need it for pip
 # conda will install its own python version
@@ -112,8 +104,6 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         tcl \
         swig \
         zsh \
-        # RADICAL-Pilot Dependency
-        mongodb-org \
      && ./scripts/install-python.sh $PYTHON_VERSION \
      && yum clean all ; \
     fi

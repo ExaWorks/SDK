@@ -32,14 +32,6 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     wget \
     which
 
-# MongoDB Repository (RADICAL-Pilot Dependency)
-RUN echo -e "\
-[mongodb]\n\
-name     = MongoDB Repository \n\
-baseurl  = https://repo.mongodb.org/yum/redhat/8Server/mongodb-org/3.6/x86_64/ \n\
-gpgcheck = 0 \n\
-enabled  = 1 \n" >> /etc/yum.repos.d/mongodb.repo
-
 # copy over the python installation script in case we need it for pip
 # conda will install its own python version
 COPY ./scripts/install-python.sh /scripts/
@@ -89,8 +81,6 @@ RUN if [[ "${PACKAGE_MANAGER}" == "conda" ]] ; then \
         tcl-devel \
         swig \
         zsh \
-        # RADICAL-Pilot Dependency
-        mongodb-org \
      && ./scripts/install-python.sh $PYTHON_VERSION \
      && dnf clean all ; \
     fi
