@@ -107,6 +107,7 @@ spack_update:
   variables:
     RUNNER_TYPE: "shell"
   extends: [ .on_ruby, .job_tags ]
+  needs: [ spack_env_setup_ruby, spack_env_setup_quartz, spack_env_setup_lassen ]
   script:
     - cd ${SPACK_WORK_DIR}
     - git checkout HEAD^ .
