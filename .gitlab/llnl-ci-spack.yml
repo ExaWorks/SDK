@@ -49,7 +49,7 @@ stages:
     - for i in {1..3}; do
         spack env activate ${SPACK_ENV_NAME} && break || sleep 5;
       done
-    - spack config add concretizer:unify:true
+    - spack config add concretizer:unify:when_possible
     - spack config add concretizer:reuse:false
     - spack config add config:db_lock_timeout:300
     - module --latest load gcc && spack compiler find
@@ -66,7 +66,6 @@ stages:
       done
     - spack uninstall -y exaworks py-pytest || true
     - spack add exaworks ^python@3.9 py-pytest
-    - spack config add concretizer:unify:when_possible
     - spack concretize -f
     - spack install
     - *finalize
