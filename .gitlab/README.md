@@ -22,6 +22,7 @@ chmod 700 <scratch_space>/gitlab-runner
 * LLNL: `/usr/workspace/${USER}`
 * OLCF: `$MEMBERWORK/csc449`
 * ALCF: TBD...
+* NERSC: perlmutter: `/pscratch/sd/[FirstLetterOf${USER}]/${USER}`
 
 ## SPACK-related issues
 
@@ -84,6 +85,13 @@ spack stage -p pre-stage python
 
 * [CI/CD Workflows](https://docs.olcf.ornl.gov/services_and_applications/slate/workflows/overview.html)
 * [GitLab Runners](https://docs.olcf.ornl.gov/services_and_applications/slate/use_cases/gitlab_runner.html)
+
+### NERSC
+
+* [GitLab](https://docs.nersc.gov/services/gitlab/)
+* [Advanced GitLab Tutorial](https://www.nersc.gov/assets/Uploads/Advanced-Gitlab.pdf)
+* [GitLab CI Tutorial](https://www.nersc.gov/assets/Uploads/2017-02-06-Gitlab-CI.pdf)
+* [Spack GitLab Pipeline](https://docs.nersc.gov/applications/e4s/spack_gitlab_pipeline/)
 
 ---
 
