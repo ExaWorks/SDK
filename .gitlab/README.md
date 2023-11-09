@@ -89,6 +89,7 @@ spack stage -p pre-stage python
 ### NERSC
 
 * [GitLab](https://docs.nersc.gov/services/gitlab/)
+* [NERSC CI docs](https://software.nersc.gov/NERSC/nersc-ci-docs)
 * [Introduction to CI at NERSC](https://www.nersc.gov/assets/Uploads/Introduction-to-CI-at-NERSC-07072021.pdf)
 * [GitLab CI Tutorial](https://www.nersc.gov/assets/Uploads/2017-02-06-Gitlab-CI.pdf)
 * [Advanced GitLab Tutorial](https://www.nersc.gov/assets/Uploads/Advanced-Gitlab.pdf)
