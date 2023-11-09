@@ -23,7 +23,7 @@ stages:
 .final_steps:
   script: &finalize
     - chgrp -fR m3973 ${PIP_WORK_DIR} || true
-    - chmod -fR 02770 ${PIP_WORK_DIR}    || true
+    - chmod -fR 02770 ${PIP_WORK_DIR} || true
 
 .job_tags:
   tags:
