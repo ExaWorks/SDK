@@ -94,6 +94,7 @@ spack stage -p pre-stage python
 * [GitLab CI Tutorial](https://www.nersc.gov/assets/Uploads/2017-02-06-Gitlab-CI.pdf)
 * [Advanced GitLab Tutorial](https://www.nersc.gov/assets/Uploads/Advanced-Gitlab.pdf)
 * [Spack GitLab Pipeline](https://docs.nersc.gov/applications/e4s/spack_gitlab_pipeline/)
+* [CI examples, tutorials, and general resources](https://software.nersc.gov/ci-resources)
 
 ---
 
