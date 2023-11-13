@@ -83,7 +83,7 @@ pip_build_perlmutter:
 pip_test_perlmutter:
   variables:
     RUNNER_TYPE: "batch"
-#    [SITE]_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
+    SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
   needs: [ pip_build_perlmutter ]
   extends: [ .on_perlmutter, .job_tags, .pip_test ]
 
