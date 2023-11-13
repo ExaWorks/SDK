@@ -69,6 +69,7 @@ stages:
   stage: test
   variables:
     MAINTAINER: "arambula2@llnl.gov"
+    IM_NUMBER: ""
     TESTS_GROUP: "conda"
     SITE_ID: "ornl-$SITE"
   script:
