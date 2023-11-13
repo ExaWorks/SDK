@@ -163,7 +163,7 @@ conda_build_lassen:
 conda_test_lassen:
   variables:
     RUNNER_TYPE: "batch"
-    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
+    LLNL_LSF_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
   needs: [ conda_build_lassen ]
   extends: [ .on_lassen, .job_tags, .conda_test ]
 
