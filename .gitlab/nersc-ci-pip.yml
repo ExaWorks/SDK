@@ -54,7 +54,7 @@ stages:
   stage: test
   variables:
     MAINTAINER: "cowan@bnl.gov"
-#    IM_NUMBER: ""
+    IM_NUMBER: ""
     TESTS_GROUP: "pip"
     SITE_ID: "nersc-$SITE"
   script:
