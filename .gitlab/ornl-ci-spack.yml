@@ -1,0 +1,143 @@
+stages:
+  - setup
+  - build
+  - test
+  - cleanup
+
+
+### MACHINES
+.on_ascent:
+  variables:
+    SITE: "ascent"
+    SPACK_ENV_NAME: "ascent-env"
+    SPACK_WORK_DIR: ${SDK_WORK_DIR_OPEN}/spack
+
+# .on_summit:
+#   variables:
+#     SITE: "summit"
+#     SPACK_ENV_NAME: "summit-env"
+#     SPACK_WORK_DIR: ${SDK_WORK_DIR_ALPINE}/spack
+
+
+### SCRIPTS
+.final_steps:
+  script: &finalize
+    - chgrp -fR exaworks ${SPACK_WORK_DIR} || true
+    - chmod -fR 02770 ${SPACK_WORK_DIR}    || true
+
+.job_tags:
+  tags:
+    - $SITE
+    - $RUNNER_TYPE
+
+.spack_env_setup:
+  stage: setup
+  script:
+    - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
+    - test "$(spack env list | grep $SPACK_ENV_NAME)" && exit 0
+    - spack env create ${SPACK_ENV_NAME}
+    - for i in {1..3}; do
+        spack env activate ${SPACK_ENV_NAME} && break || sleep 5;
+      done
+    - spack config add concretizer:unify:when_possible
+    - spack config add concretizer:reuse:false
+    - spack config add config:db_lock_timeout:300
+    - module --latest load gcc && spack compiler find
+    - spack add rust ^openssl certs=system
+    - spack install || (spack env deactivate && spack env remove ${SPACK_ENV_NAME} -y && exit 1)
+    - *finalize
+
+.spack_build:
+  stage: build
+  script:
+    - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
+    - for i in {1..3}; do
+        spack env activate ${SPACK_ENV_NAME} && break || sleep 5;
+      done
+    - spack uninstall -y exaworks py-pytest || true
+    - spack add exaworks ^python@3.9 py-pytest
+    - spack concretize -f
+    - spack install
+    - *finalize
+
+.spack_test:
+  stage: test
+  variables:
+    MAINTAINER: "arambula2@llnl.gov"
+    IM_NUMBER: "LLNL-MI-834241"
+    TESTS_GROUP: "spack"
+    SITE_ID: "llnl-$SITE"
+  script:
+    - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
+    - for i in {1..3}; do
+        spack env activate ${SPACK_ENV_NAME} && break || sleep 5;
+      done
+    - spack load exaworks py-pytest
+    - python3 ci/tests/test.py -s
+    - for TEST in flux parsl rp swift-t parsl-flux rp-flux; do
+        python3 ci/tests/test.py -n $TEST -c "bash ci/tests/${TEST}/test.sh" --stdout;
+      done
+    - python3 ci/tests/test.py -e
+
+### JOBS
+
+spack_setup:
+  stage: setup
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_ascent, .job_tags ]
+  script:
+    - test -d ${SPACK_WORK_DIR} && exit 0
+    - git clone -c feature.manyFiles=true -c core.sharedRepository=true https://github.com/spack/spack.git ${SPACK_WORK_DIR}
+    - *finalize
+
+spack_update:
+  stage: build
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_ascent, .job_tags ]
+  needs: [ spack_env_setup_ascent ]
+  script:
+    - cd ${SPACK_WORK_DIR}
+    - git checkout HEAD^ .
+    - git reset --hard HEAD
+    - git pull --ff
+    - *finalize
+
+
+# ASCENT
+spack_env_setup_ascent:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ spack_setup ]
+  extends: [ .on_ascent, .job_tags, .spack_env_setup ]
+
+spack_build_ascent:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ spack_update ]
+  extends: [ .on_ascent, .job_tags, .spack_build ]
+
+spack_test_ascent:
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_SLURM_SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
+  needs: [ spack_build_ascent ]
+  extends: [ .on_ascent, .job_tags, .spack_test ]
+
+
+# ALWAYS
+spack_cleanup:
+  stage: cleanup
+  when: always
+  variables:
+    RUNNER_TYPE: "shell"
+  extends: [ .on_ascent, .job_tags ]
+  script:
+    - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
+    - spack clean -a || true
+    - rm -rf ${HOME}/.spack/cache
+    - spack providers
+    - find ${SPACK_WORK_DIR} -maxdepth 0 -type d -ctime +5 | xargs rm -rf
+    - *finalize
+
