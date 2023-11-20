@@ -64,9 +64,9 @@ stages:
   stage: test
   variables:
     MAINTAINER: "arambula2@llnl.gov"
-    IM_NUMBER: "LLNL-MI-834241"
+    IM_NUMBER: ""
     TESTS_GROUP: "spack"
-    SITE_ID: "llnl-$SITE"
+    SITE_ID: "ornl-$SITE"
   script:
     - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
     - for i in {1..3}; do
