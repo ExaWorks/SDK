@@ -84,7 +84,7 @@ stages:
 spack_setup:
   stage: setup
   variables:
-    RUNNER_TYPE: "shell"
+    RUNNER_TYPE: "nobatch"
   extends: [ .on_ascent, .job_tags ]
   script:
     - test -d ${SPACK_WORK_DIR} && exit 0
@@ -94,7 +94,7 @@ spack_setup:
 spack_update:
   stage: build
   variables:
-    RUNNER_TYPE: "shell"
+    RUNNER_TYPE: "nobatch"
   extends: [ .on_ascent, .job_tags ]
   needs: [ spack_env_setup_ascent ]
   script:
@@ -108,13 +108,13 @@ spack_update:
 # ASCENT
 spack_env_setup_ascent:
   variables:
-    RUNNER_TYPE: "shell"
+    RUNNER_TYPE: "nobatch"
   needs: [ spack_setup ]
   extends: [ .on_ascent, .job_tags, .spack_env_setup ]
 
 spack_build_ascent:
   variables:
-    RUNNER_TYPE: "shell"
+    RUNNER_TYPE: "nobatch"
   needs: [ spack_update ]
   extends: [ .on_ascent, .job_tags, .spack_build ]
 
@@ -131,7 +131,7 @@ spack_cleanup:
   stage: cleanup
   when: always
   variables:
-    RUNNER_TYPE: "shell"
+    RUNNER_TYPE: "nobatch"
   extends: [ .on_ascent, .job_tags ]
   script:
     - . ${SPACK_WORK_DIR}/share/spack/setup-env.sh
