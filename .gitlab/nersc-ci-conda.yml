@@ -98,7 +98,7 @@ conda_build_perlmutter:
 conda_test_perlmutter:
   variables:
     RUNNER_TYPE: "batch"
-    SCHEDULER_PARAMETERS: "--nodes=1 -t 45"
+    SCHEDULER_PARAMETERS: "--nodes=1 -t 30"
   needs: [ conda_build_perlmutter ]
   extends: [ .on_perlmutter, .job_tags, .conda_test ]
 
