@@ -44,6 +44,8 @@ class CITestsHandler:
             command: Optional[str] = None, **kwargs: Any) -> None:
         assert ismuex(start, end, command), 'Arguments are mutually exclusive'
 
+        tests_group = os.getenv('TESTS_GROUP', '').lower()
+
         record = copy.deepcopy(self.record)
 
         if start:
@@ -58,7 +60,8 @@ class CITestsHandler:
                     'git_branch': record['data']['branch'],
                     'config': {
                         'im_number': os.getenv('IM_NUMBER'),
-                        'maintainer_email': os.getenv('MAINTAINER')
+                        'maintainer_email': os.getenv('MAINTAINER'),
+                        'tests_group': tests_group
                     }
                 }
             })
@@ -73,7 +76,6 @@ class CITestsHandler:
             })
 
         elif command:
-            tests_group = os.getenv('TESTS_GROUP', '').lower()
             name = kwargs.get('name') or command.split()[0]
 
             start_time = str(datetime.now())
@@ -84,10 +86,7 @@ class CITestsHandler:
                 'test_end_time': str(datetime.now()),
                 'module': tests_group,
                 'function': 'main',
-                'results': results,
-                'extras': {
-                    'tests_group': tests_group
-                }
+                'results': results
             })
 
             if kwargs.get('stdout'):
@@ -97,6 +96,9 @@ class CITestsHandler:
 
         else:
             raise RuntimeError('No viable option called, exiting...')
+
+        if tests_group:
+            record['data']['branch'] += '::' + tests_group
 
         self._session.post(self.dashboard_url, json=record, verify=False)
 
