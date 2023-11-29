@@ -98,7 +98,7 @@ class CITestsHandler:
             raise RuntimeError('No viable option called, exiting...')
 
         if tests_group:
-            record['data']['branch'] += '::' + tests_group
+            record['data']['branch'] += '[%s]' % tests_group
 
         self._session.post(self.dashboard_url, json=record, verify=False)
 
