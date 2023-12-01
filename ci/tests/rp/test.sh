@@ -32,7 +32,7 @@ radical-stack
 ret=$?
 echo "--- smoke test $ret"
 
-SID=$(ls -rt | grep rp.session)
+SID=$(ls -rt | grep rp.session | tail -1)
 test -z "$SID" || rm -rf "$HOME/radical.pilot.sandbox/$SID"
 echo '--- cleaned pilot sandbox'
 
