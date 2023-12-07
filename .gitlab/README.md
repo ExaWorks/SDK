@@ -72,6 +72,17 @@ mkdir -p pre-stage
 spack stage -p pre-stage python
 ```
 
+### LLNL Machines not installing Swift-T
+
+When spack is installing Swift-T, it installs `ant` as a dependency.
+For an unknown reason, `ant` is unable to initialize the Java Virtual Machine,
+thus we're unable to install Swift-T. For now a [temporary solution](https://github.com/ExaWorks/SDK/blob/9c272ba2462298ff49e91e97f73fca029bd9c11b/.gitlab/llnl-ci-spack.yml#L55-L59) has been put in place.
+We chose to instruct Spack to use the available system install of `ant` instead of a Spack installation.
+
+Here is the related issue: [#174](https://github.com/ExaWorks/SDK/issues/174)
+
+The temporary solution can be improved upon once [Spack PR #40976](https://github.com/spack/spack/pull/40976) is merged into Spack
+
 ---
 
 ## References for GitLab-related services
