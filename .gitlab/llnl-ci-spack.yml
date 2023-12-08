@@ -52,6 +52,11 @@ stages:
     - spack config add concretizer:unify:when_possible
     - spack config add concretizer:reuse:false
     - spack config add config:db_lock_timeout:300
+    - spack config add packages:ant:buildable:false
+    - spack config add packages:ant:externals:spec:ant@1.10.5
+    # - spack config add packages:ant:externals:prefix:"/usr" # FIXME/NOTE: uncomment once spack PR: https://github.com/spack/spack/pull/40976 is merged
+    - sed -i '/- spec: ant@1\.10\.5/ a \ \ \ \ \ \  \ prefix: /usr' \
+        $(find $(spack location -e ${SPACK_ENV_NAME}) -name spack.yaml -print -quit) # NOTE: This is a temporary fix until pr above is merged
     - module --latest load gcc && spack compiler find
     - spack add rust ^openssl certs=system
     - spack install || (spack env deactivate && spack env remove ${SPACK_ENV_NAME} -y && exit 1)
