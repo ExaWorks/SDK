@@ -49,6 +49,10 @@ stages:
   script:
     - test -d ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} && exit 0
     - source ${CONDA_WORK_DIR}/miniconda3-${SITE}/etc/profile.d/conda.sh
+# confirm 'gitlab-runner exec shell ...' is setting pipefail
+    - set -o | grep pipe
+# disable pipefail because it causes eval and activate below to fail
+    - set +o pipefail
     - eval "$(conda shell.posix hook)"
     - conda create --prefix ${CONDA_WORK_DIR}/${CONDA_ENV_NAME} -y
 #    - chgrp -fR m3973 ${PIP_WORK_DIR} || true
@@ -58,12 +62,13 @@ stages:
   stage: build
   script:
     - source ${CONDA_WORK_DIR}/miniconda3-${SITE}/etc/profile.d/conda.sh
-    - eval "$(conda shell.posix hook)"
 # confirm 'gitlab-runner exec shell ...' is setting pipefail
     - set -o | grep pipe
-# disable pipefail because it causes 'conda activate ...' to fail
+# disable pipefail because it causes eval and activate below to fail
     - set +o pipefail
+    - eval "$(conda shell.posix hook)"
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
+    - set -o | grep pipe
     - conda env update --file ${CONDA_REQUIREMENTS}
 #    - chgrp -fR m3973 ${PIP_WORK_DIR} || true
 #    - chmod -fR 02770 ${PIP_WORK_DIR} || true
@@ -72,11 +77,11 @@ stages:
   stage: test
   script:
     - source ${CONDA_WORK_DIR}/miniconda3-${SITE}/etc/profile.d/conda.sh
-    - eval "$(conda shell.posix hook)"
 # confirm 'gitlab-runner exec shell ...' is setting pipefail
     - set -o | grep pipe
-# disable pipefail because it causes 'conda activate ...' to fail
+# disable pipefail because it causes eval and activate below to fail
     - set +o pipefail
+    - eval "$(conda shell.posix hook)"
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
     - python3 ci/tests/test.py -s
     - for TEST in parsl rp swift-t; do
