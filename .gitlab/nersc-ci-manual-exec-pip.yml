@@ -36,6 +36,7 @@ stages:
     - module add ${PYTHON_MODULE}
     - python3 -m venv ${PIP_WORK_DIR}/${VENV_ENV_NAME}
     - source ${PIP_WORK_DIR}/${VENV_ENV_NAME}/bin/activate
+    - pip install --upgrade pip
     - pip install -U pip setuptools wheel
     - pip cache purge
 #    - chgrp -fR m3973 ${PIP_WORK_DIR} || true
