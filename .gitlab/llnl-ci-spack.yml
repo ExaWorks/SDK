@@ -1,7 +1,7 @@
 variables:
   SPACK_WORK_DIR: ${SDK_WORK_DIR}/spack
   SPACK_DISABLE_LOCAL_CONFIG: "true"
-  SPACK_USER_CACHE_PATH: /tmp/spack
+  SPACK_USER_CACHE_PATH: ${CI_PROJECT_DIR}/tmp/spack
 
 stages:
   - setup
