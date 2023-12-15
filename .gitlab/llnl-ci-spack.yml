@@ -23,17 +23,11 @@ stages:
     SPACK_ENV_NAME: "rhel7-cascadelake"
     TARGET_ARCH_OPT: ""
 
-# NOTE: Commenting out Lassen, rationale:
-#       The exaworks spack virtual wraps the dependencies needed by the SDK
-#       Flux related packages, and swift-t are currently part of the virtual package
-#       However, flux and swift-t are conflicting with Lassen
-#       Therefore, we're disabling Lassen for the moment
-#
-# .on_lassen: 
-#   variables:
-#     SITE: "lassen"
-#     SPACK_ENV_NAME: "rhel7-ppc64le"
-#     TARGET_ARCH_OPT: "target=ppc64le"
+.on_lassen:
+  variables:
+    SITE: "lassen"
+    SPACK_ENV_NAME: "rhel7-ppc64le"
+    TARGET_ARCH_OPT: "target=ppc64le"
 
 
 ### SCRIPTS
@@ -119,7 +113,7 @@ spack_update:
   variables:
     RUNNER_TYPE: "shell"
   extends: [ .on_ruby, .job_tags ]
-  needs: [ spack_env_setup_ruby, spack_env_setup_quartz ]
+  needs: [ spack_env_setup_ruby, spack_env_setup_quartz, spack_env_setup_lassen ]
   script:
     - cd ${SPACK_WORK_DIR}
     - git checkout HEAD^ .
@@ -171,26 +165,26 @@ spack_test_ruby:
 
 
 # LASSEN
-# spack_env_setup_lassen:
-#   variables:
-#     RUNNER_TYPE: "shell"
-#   needs: [ spack_setup ]
-#   extends: [ .on_lassen, .job_tags, .spack_env_setup ]
+spack_env_setup_lassen:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ spack_setup ]
+  extends: [ .on_lassen, .job_tags, .spack_env_setup ]
 
-# spack_build_lassen:
-#   variables:
-#     RUNNER_TYPE: "shell"
-#   needs: [ spack_update ]
-#   extends: [ .on_lassen, .job_tags, .spack_build ]
+spack_build_lassen:
+  variables:
+    RUNNER_TYPE: "shell"
+  needs: [ spack_update ]
+  extends: [ .on_lassen, .job_tags, .spack_build ]
 
-# spack_test_lassen:
-#   variables:
-#     RUNNER_TYPE: "batch"
-#     LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 45"
-#     LSB_JOB_STARTER: "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD"
-#     ENVIRONMENT: "BATCH"
-#   needs: [ spack_build_lassen ]
-#   extends: [ .on_lassen, .job_tags, .spack_test ]
+spack_test_lassen:
+  variables:
+    RUNNER_TYPE: "batch"
+    LLNL_LSF_SCHEDULER_PARAMETERS: "-nnodes 1 -W 45"
+    LSB_JOB_STARTER: "ENVIRONMENT=BATCH /usr/tcetmp/bin/bsub_job_starter %USRCMD"
+    ENVIRONMENT: "BATCH"
+  needs: [ spack_build_lassen ]
+  extends: [ .on_lassen, .job_tags, .spack_test ]
 
 
 # ALWAYS
