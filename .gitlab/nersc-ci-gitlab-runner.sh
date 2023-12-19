@@ -55,9 +55,18 @@ export PIP_CONF_FILE=${PIP_CONF_FILE:-.gitlab/nersc-ci-manual-exec-pip.yml}
 ###	--env "CI_PIPELINE_ID=${RANDOM}" \
 ###	--env 'CI_COMMIT_BRANCH=master' \
 ###    --builds-dir ${BUILDS_DIR} --cicd-config-file ${PIP_CONF_FILE} pip_env_setup_perlmutter
-if [ "$1" == "pip" ]; then  # tmp for debug
+
+#if [ "$1" == "pip" ]; then  # tmp for debug
 for task in {pip_env_setup_,pip_build_,pip_test_}${SITE} pip_cleanup; do
     echo "### running: $task ..."
+    date
+    # hack to try to get cleanup working... give it a min to clear build dir from previous?
+    if [ "$task" == "pip_cleanup" ]; then
+	echo "sleeping for cleanup from previous..."
+	sleep 180
+    fi
+#    echo "### checking build dir ..."
+#    find ${BUILDS_DIR} -xdev -print0 | xargs -0r ls -altrd
     $RUNNER exec shell \
     	--env "SDK_DASHBOARD_TOKEN=${SDK_DASHBOARD_TOKEN}" \
     	--env "SDK_DASHBOARD_URL=${SDK_DASHBOARD_URL}" \
@@ -66,10 +75,18 @@ for task in {pip_env_setup_,pip_build_,pip_test_}${SITE} pip_cleanup; do
     	--env 'CI_COMMIT_BRANCH=master' \
         --builds-dir ${BUILDS_DIR} --cicd-config-file ${PIP_CONF_FILE} $task
 done    
-else  # tmp for debug
+#else  # tmp for debug
 export CONDA_CONF_FILE=${CONDA_CONF_FILE:-.gitlab/nersc-ci-manual-exec-conda.yml}
 for task in {conda_setup_,conda_env_setup_,conda_build_,conda_test_}${SITE} conda_cleanup; do
     echo "### running: $task ..."
+    date
+    # hack to try to get cleanup working... give it a min to clear build dir from previous?
+    if [ "$task" == "conda_cleanup" ]; then
+	echo "sleeping for cleanup from previous..."
+	sleep 180
+    fi
+#    echo "### checking build dir ..."
+#    find ${BUILDS_DIR} -xdev -print0 | xargs -0r ls -altrd
     $RUNNER exec shell \
     	--env "SDK_DASHBOARD_TOKEN=${SDK_DASHBOARD_TOKEN}" \
     	--env "SDK_DASHBOARD_URL=${SDK_DASHBOARD_URL}" \
@@ -78,4 +95,5 @@ for task in {conda_setup_,conda_env_setup_,conda_build_,conda_test_}${SITE} cond
     	--env 'CI_COMMIT_BRANCH=master' \
         --builds-dir ${BUILDS_DIR} --cicd-config-file ${CONDA_CONF_FILE} $task
 done    
-fi  # tmp for debug
+#fi  # tmp for debug
+date
