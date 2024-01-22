@@ -32,21 +32,43 @@
 # - set FF_ENABLE_JOB_CLEANUP ?  https://docs.gitlab.com/runner/configuration/feature-flags.html
 # - cleanup /tmp/{old,new}-env-[0-9]+.txt
 # ?
+# Yes!  Have too for scrontab and SDK_DASHBOARD_TOKEN atleast!
+# At a min, the rc file must be:
+#  * executable
+#  * and set the following (shown as example)
+#---start example rc
+### should customize all of these for your site + installation:
+# export RUNNER=${RUNNER:-~/packages/gitlab-runner/usr/bin/gitlab-runner}
+#
+# export SDK_DASHBOARD_TOKEN=${SDK_DASHBOARD_TOKEN:-[token acquired from dashboard token request service]}
+# export SDK_DASHBOARD_URL=${SDK_DASHBOARD_URL:-https://sdk.testing.exaworks.org/result}
+# export SDK_WORK_DIR=${SDK_WORK_DIR:-/global/cfs/cdirs/m[####]/sdk}
+#
+# export SITE=${SITE:-perlmutter}
+#
+# export PIP_CONF_FILE=${PIP_CONF_FILE:-.gitlab/nersc-ci-manual-exec-pip.yml}
+# export CONDA_CONF_FILE=${CONDA_CONF_FILE:-.gitlab/nersc-ci-manual-exec-conda.yml}
+#
+# export CI_PIPELINE_ID=${RANDOM}
+# export CI_COMMIT_BRANCH="master"
+# export BUILDS_DIR="${SDK_WORK_DIR}/builds"
+#---end example rc
 
-export RUNNER=${RUNNER:-~/packages/gitlab-runner/usr/bin/gitlab-runner}
+echo "starting $0 run at $(date) in $(pwd) ..."
+
+export SITE_CI_GITLAB_RUNNER_SH_RC=${SITE_CI_GITLAB_RUNNER_SH_RC:-${HOME}/.nersc-ci-gitlab-runner.sh.rc}
+if [ -x "${SITE_CI_GITLAB_RUNNER_SH_RC}" ]; then
+    . ${SITE_CI_GITLAB_RUNNER_SH_RC}
+fi
 
 if [ -z "$SDK_DASHBOARD_TOKEN" ]; then
     echo -e "$0:\tSDK_DASHBOARD_TOKEN env var must be set!!!\n"
     exit
 fi
-export SDK_DASHBOARD_URL=${SDK_DASHBOARD_URL:-https://sdk.testing.exaworks.org/result}
-export SDK_WORK_DIR=${SDK_WORK_DIR:-/global/cfs/cdirs/m3973/sdk}
-export CI_PIPELINE_ID=${CI_PIPELINE_ID:-${RANDOM}}
-export CI_COMMIT_BRANCH=${CI_COMMIT_BRANCH:-master}
-export BUILDS_DIR=${BUILDS_DIR:-${SDK_WORK_DIR}/builds}
-export SITE=${SITE:-perlmutter}
 
-export PIP_CONF_FILE=${PIP_CONF_FILE:-.gitlab/nersc-ci-manual-exec-pip.yml}
+echo "cd'ing to \$REPO_DIR ($REPO_DIR)..."
+pushd $REPO_DIR
+
 ### for temp dev hacking...
 ###$RUNNER exec shell \
 ###	--env "SDK_DASHBOARD_TOKEN=${SDK_DASHBOARD_TOKEN}" \
@@ -76,7 +98,6 @@ for task in {pip_env_setup_,pip_build_,pip_test_}${SITE} pip_cleanup; do
         --builds-dir ${BUILDS_DIR} --cicd-config-file ${PIP_CONF_FILE} $task
 done    
 #else  # tmp for debug
-export CONDA_CONF_FILE=${CONDA_CONF_FILE:-.gitlab/nersc-ci-manual-exec-conda.yml}
 for task in {conda_setup_,conda_env_setup_,conda_build_,conda_test_}${SITE} conda_cleanup; do
     echo "### running: $task ..."
     date

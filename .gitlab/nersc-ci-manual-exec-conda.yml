@@ -68,7 +68,6 @@ stages:
     - set +o pipefail
     - eval "$(conda shell.posix hook)"
     - conda activate ${CONDA_WORK_DIR}/${CONDA_ENV_NAME}
-    - set -o | grep pipe
     - conda env update --file ${CONDA_REQUIREMENTS}
 #    - chgrp -fR m3973 ${PIP_WORK_DIR} || true
 #    - chmod -fR 02770 ${PIP_WORK_DIR} || true
@@ -137,5 +136,5 @@ conda_cleanup:
 #  <<: *on_perlmutter_tmpl
   <<: *job_tags_tmpl
   script:
-    - chgrp -fR m3973 ${CONDA_WORK_DIR} || true
-    - chmod -fR 02770 ${CONDA_WORK_DIR} || true
+    - time chgrp -fR m3973 ${CONDA_WORK_DIR} || true
+    - time chmod -fR 02770 ${CONDA_WORK_DIR} || true

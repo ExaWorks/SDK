@@ -103,5 +103,5 @@ pip_cleanup:
 #  <<: *on_perlmutter_tmpl
   <<: *job_tags_tmpl
   script:
-    - chgrp -fR m3973 ${PIP_WORK_DIR} || true
-    - chmod -fR 02770 ${PIP_WORK_DIR} || true
+    - time chgrp -fR m3973 ${PIP_WORK_DIR} || true
+    - time chmod -fR 02770 ${PIP_WORK_DIR} || true
