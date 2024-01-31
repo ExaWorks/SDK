@@ -46,8 +46,8 @@
 #
 # export SITE=${SITE:-perlmutter}
 #
-# export PIP_CONF_FILE=${PIP_CONF_FILE:-.gitlab/nersc-ci-manual-exec-pip.yml}
-# export CONDA_CONF_FILE=${CONDA_CONF_FILE:-.gitlab/nersc-ci-manual-exec-conda.yml}
+# export PIP_CONF_FILE=${PIP_CONF_FILE:-.gitlab/nersc-manual-gitlab-runner-pip.yml}
+# export CONDA_CONF_FILE=${CONDA_CONF_FILE:-.gitlab/nersc-manual-gitlab-runner-conda.yml}
 #
 # export CI_PIPELINE_ID=${RANDOM}
 # export CI_COMMIT_BRANCH="master"
