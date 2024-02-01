@@ -1,0 +1,33 @@
+# Wanted to determine 2 sets of resources needed:
+# - presumably more resources helpful for initial ci run?
+# - and less needed for subsequent runs reusing envs built by initial run?
+# but didn't quite get that all ironed out.
+#
+# At a minimum, would need to replace these below:
+# - [nersc_project]
+# - [full_path_for_output_log]
+# - [full_path_for_SDK_repo]
+#
+#SCRON -q shared
+# for full runs with complete env setup and build...
+# '-n 5 --ntasks-per-core=1' seemed exceedingly slow for even checking out source!?
+##SCRON -n 5
+#SCRON -n 10
+#SCRON --ntasks-per-core=1
+#SCRON --mem=5G
+# 60 seems to not be quite enough in some cases?!
+#SCRON -t 90
+### for followup runs reusing previously built env... (haven't quite fully optimized this yet...)
+###SCRON -n 2
+###SCRON --ntasks-per-core=5
+###SCRON --mem=2G
+###SCRON -t 30
+#
+#SCRON -C cpu
+#SCRON -A [nersc_project]
+# full run from scratch = ~21m conda + ~34m pip =~ 60m
+# followup run = ~9m conda + ~19m pip =~ 30m
+#SCRON --dependency=singleton
+#SCRON -o [full_path_for_output_log]/scron-%j.log
+#SCRON --open-mode=append
+30 5 * * * [full_path_for_SDK_repo]/.gitlab/nersc-ci-gitlab-runner.sh
